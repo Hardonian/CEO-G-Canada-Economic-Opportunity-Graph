@@ -1,16 +1,21 @@
 package scoring
 
 import (
+	"crypto/sha256"
+	"encoding/hex"
+	"encoding/json"
 	"fmt"
 	"math"
+	"sort"
 	"time"
 
 	"github.com/Hardonian/CEO-G-Canada-Economic-Opportunity-Graph/internal/domain"
+	"github.com/Hardonian/CEO-G-Canada-Economic-Opportunity-Graph/internal/identity"
 	"github.com/google/uuid"
 )
 
 const (
-	VersionBuildability   = "buildability-v1.0"
+	VersionBuildability   = "buildability-v2.0"
 	VersionInvestability  = "investability-v1.0"
 	VersionSupplierability = "supplierability-v1.0"
 	VersionStrategicity   = "strategicity-v1.0"
@@ -30,136 +35,137 @@ type ProjectContext struct {
 func CalculateBuildability(ctx *ProjectContext) *domain.ProjectScore {
 	p := ctx.Project
 	factors := make(map[string]float64)
-
-	// 1. Stage Progress (15%)
-	stageScore := 10.0
-	switch p.CurrentStage {
-	case domain.StageDiscovered, domain.StageAnnounced:
-		stageScore = 20.0
-	case domain.StageEarlyDevelopment, domain.StageFeasibility:
-		stageScore = 35.0
-	case domain.StageEnvironmentalReview, domain.StagePermitting:
-		stageScore = 55.0
-	case domain.StageFinancing, domain.StageProcurement:
-		stageScore = 70.0
-	case domain.StageFIDLikely:
-		stageScore = 85.0
-	case domain.StageFID, domain.StageConstruction:
-		stageScore = 95.0
-	case domain.StageCommissioning, domain.StageOperating:
-		stageScore = 100.0
-	case domain.StageDelayed, domain.StagePaused:
-		stageScore = 25.0
-	case domain.StageCancelled:
-		stageScore = 0.0
+	weights := map[string]float64{
+		"stage_progress": 0.15, "financing_readiness": 0.15,
+		"indigenous_agreements": 0.15, "regulatory_environmental": 0.15,
+		"site_control": 0.10, "offtake_commercial": 0.10,
+		"infrastructure_readiness": 0.10, "execution_evidence": 0.10,
 	}
-	factors["stage_progress"] = stageScore
 
-	// 2. Financing Readiness (15%)
-	var totalCommitted int64
-	for _, c := range ctx.CapitalItems {
-		if c.Status == domain.CapitalCommitted || c.Status == domain.CapitalClosed || c.Status == domain.CapitalDisbursed {
-			totalCommitted += c.AmountCAD
+	if p.CurrentStage != "" && p.CurrentStage != domain.StageUnknown {
+		factors["stage_progress"] = stageProgressScore(p.CurrentStage)
+	}
+
+	if p.CapexCAD > 0 && isKnown(p.CapexStatus) && len(ctx.CapitalItems) > 0 {
+		var committed int64
+		for _, item := range ctx.CapitalItems {
+			if item.AmountType == "exact" && (item.Status == domain.CapitalCommitted || item.Status == domain.CapitalClosed || item.Status == domain.CapitalDisbursed) {
+				committed += item.AmountCAD
+			}
+		}
+		factors["financing_readiness"] = round(math.Min(100, float64(committed)/float64(p.CapexCAD)*100))
+	}
+
+	for _, relationship := range ctx.Relationships {
+		switch relationship.RelationType {
+		case "indigenous_partner", "participates_in", "partners_with":
+			factors["indigenous_agreements"] = 100
+		case "offtakes_from", "offtaker":
+			factors["offtake_commercial"] = 100
+		case "depends_on", "enables":
+			factors["infrastructure_readiness"] = 70
 		}
 	}
-	finScore := 20.0
-	if p.CapexCAD > 0 {
-		ratio := float64(totalCommitted) / float64(p.CapexCAD)
-		finScore = math.Min(100.0, 20.0+(ratio*80.0))
-	}
-	factors["financing_readiness"] = round(finScore)
 
-	// 3. Indigenous Agreements (15%)
-	indigScore := 20.0
-	for _, r := range ctx.Relationships {
-		if r.RelationType == "indigenous_partner" {
-			indigScore += 35.0
+	for _, event := range ctx.Events {
+		switch event.EventType {
+		case "indigenous_agreement", "impact_benefit_agreement":
+			factors["indigenous_agreements"] = 100
+		case "offtake_agreement", "power_purchase_agreement":
+			factors["offtake_commercial"] = 100
+		case "site_control_secured", "land_secured":
+			factors["site_control"] = 100
+		case "regulatory.impact_assessment_filing", "regulatory_filing", "terms_of_reference":
+			factors["regulatory_environmental"] = math.Max(factors["regulatory_environmental"], 50)
+		case "regulatory.impact_assessment_decision_issued", "environmental_approval", "ministerial_decision":
+			factors["regulatory_environmental"] = math.Max(factors["regulatory_environmental"], 90)
+		case "regulatory.hold_point_removed":
+			factors["regulatory_environmental"] = math.Max(factors["regulatory_environmental"], 95)
+		case "project.commercial_operations_started", "construction_started":
+			factors["execution_evidence"] = 100
+		}
+		if event.NewStage != nil && (*event.NewStage == domain.StageConstruction || *event.NewStage == domain.StageOperating) {
+			factors["execution_evidence"] = 100
 		}
 	}
-	for _, ev := range ctx.Events {
-		if ev.EventType == "indigenous_agreement" || ev.EventType == "impact_benefit_agreement" {
-			indigScore += 25.0
+
+	var weighted, coverage float64
+	var unknown []string
+	for factor, weight := range weights {
+		value, ok := factors[factor]
+		if !ok {
+			unknown = append(unknown, factor)
+			continue
 		}
+		weighted += value * weight
+		coverage += weight
 	}
-	factors["indigenous_agreements"] = math.Min(100.0, indigScore)
+	sort.Strings(unknown)
+	total := 0.0
+	if coverage > 0 { total = clamp(weighted/coverage, 0, 100) }
 
-	// 4. Regulatory & Environmental Progress (15%)
-	regScore := 30.0
-	for _, ev := range ctx.Events {
-		if ev.EventType == "regulatory_filing" || ev.EventType == "terms_of_reference" {
-			regScore += 15.0
-		}
-		if ev.EventType == "environmental_approval" || ev.EventType == "ministerial_decision" {
-			regScore += 40.0
-		}
-	}
-	factors["regulatory_environmental"] = math.Min(100.0, regScore)
-
-	// 5. Land & Site Control (10%)
-	siteScore := 40.0
-	if p.LocationName != "" && p.Latitude != 0 && p.Longitude != 0 {
-		siteScore += 30.0
-	}
-	if p.CurrentStage == domain.StageConstruction || p.CurrentStage == domain.StageFID {
-		siteScore = 100.0
-	}
-	factors["site_control"] = math.Min(100.0, siteScore)
-
-	// 6. Commercial & Offtake Agreements (10%)
-	offtakeScore := 20.0
-	for _, r := range ctx.Relationships {
-		if r.RelationType == "offtaker" {
-			offtakeScore += 40.0
-		}
-	}
-	for _, ev := range ctx.Events {
-		if ev.EventType == "offtake_agreement" || ev.EventType == "power_purchase_agreement" {
-			offtakeScore += 30.0
-		}
-	}
-	factors["offtake_commercial"] = math.Min(100.0, offtakeScore)
-
-	// 7. Energy & Infrastructure Readiness (10%)
-	infraScore := 45.0
-	if p.Sector == domain.SectorNuclearEnergy || p.Sector == domain.SectorCleanEnergy {
-		infraScore += 25.0
-	}
-	factors["infra_readiness"] = math.Min(100.0, infraScore)
-
-	// 8. Proponent Credibility (5%)
-	propScore := 50.0
-	if p.Proponent != nil && (p.Proponent.EntityType == "CrownCorp" || p.Proponent.EntityType == "Utility") {
-		propScore = 95.0
-	} else if p.Proponent != nil && p.Proponent.EntityType == "Corporation" {
-		propScore = 75.0
-	}
-	factors["proponent_credibility"] = propScore
-
-	// Weighted sum
-	total := (factors["stage_progress"] * 0.15) +
-		(factors["financing_readiness"] * 0.15) +
-		(factors["indigenous_agreements"] * 0.15) +
-		(factors["regulatory_environmental"] * 0.15) +
-		(factors["site_control"] * 0.10) +
-		(factors["offtake_commercial"] * 0.10) +
-		(factors["infra_readiness"] * 0.10) +
-		(factors["proponent_credibility"] * 0.10)
-
-	total = clamp(total, 0.0, 100.0)
-
-	explanation := fmt.Sprintf("Buildability calculated under %s: stage maturity (%.0f), financing (%.0f), Indigenous consensus (%.0f), and regulatory clearance (%.0f).",
-		VersionBuildability, factors["stage_progress"], factors["financing_readiness"], factors["indigenous_agreements"], factors["regulatory_environmental"])
+	confidence := domain.ConfidenceUnknown
+	if coverage >= 0.75 { confidence = domain.ConfidenceSupported } else if coverage >= 0.5 { confidence = domain.ConfidenceReported }
+	inputHash := buildabilityInputHash(ctx)
+	calculatedAt := latestInputTime(ctx)
+	explanation := fmt.Sprintf("%s uses only evidenced factors; %.0f%% of factor weight is currently covered and %d factors remain unknown.", VersionBuildability, coverage*100, len(unknown))
 
 	return &domain.ProjectScore{
-		ID:           uuid.New().String(),
+		ID:           identity.StableID("score", VersionBuildability, p.ID+":"+inputHash),
 		ProjectID:    p.ID,
 		ScoreType:    "buildability",
 		ScoreValue:   round(total),
 		ScoreVersion: VersionBuildability,
 		Factors:      factors,
+		UnknownFactors: unknown,
+		Coverage:     round(coverage * 100),
+		Confidence:   confidence,
+		InputHash:    inputHash,
 		Explanation:  explanation,
-		CalculatedAt: time.Now(),
+		CalculatedAt: calculatedAt,
 	}
+}
+
+func stageProgressScore(stage domain.LifecycleStage) float64 {
+	switch stage {
+	case domain.StageDiscovered, domain.StageAnnounced: return 20
+	case domain.StageReferred, domain.StageEarlyDevelopment, domain.StageFeasibility: return 35
+	case domain.StageEnvironmentalReview, domain.StagePermitting: return 55
+	case domain.StageFinancing, domain.StageProcurement: return 70
+	case domain.StageFIDLikely: return 85
+	case domain.StageFID, domain.StageConstruction: return 95
+	case domain.StageCommissioning, domain.StageOperating: return 100
+	case domain.StageDelayed, domain.StagePaused: return 25
+	case domain.StageCancelled: return 0
+	default: return 0
+	}
+}
+
+func isKnown(status domain.ConfidenceLevel) bool {
+	return status == domain.ConfidenceVerified || status == domain.ConfidenceSupported || status == domain.ConfidenceReported
+}
+
+func buildabilityInputHash(ctx *ProjectContext) string {
+	type input struct { Project *domain.Project; Events []string; Capital []string; Relationships []string; Procurements []string }
+	value := input{Project: ctx.Project}
+	for _, event := range ctx.Events { value.Events = append(value.Events, event.ID) }
+	for _, item := range ctx.CapitalItems { value.Capital = append(value.Capital, item.ID) }
+	for _, relationship := range ctx.Relationships { value.Relationships = append(value.Relationships, relationship.ID) }
+	for _, procurement := range ctx.Procurements { value.Procurements = append(value.Procurements, procurement.ID) }
+	sort.Strings(value.Events); sort.Strings(value.Capital); sort.Strings(value.Relationships); sort.Strings(value.Procurements)
+	data, _ := json.Marshal(value)
+	hash := sha256.Sum256(data)
+	return hex.EncodeToString(hash[:])
+}
+
+func latestInputTime(ctx *ProjectContext) time.Time {
+	latest := ctx.Project.UpdatedAt
+	for _, event := range ctx.Events { if event.EventDate.After(latest) { latest = event.EventDate } }
+	for _, item := range ctx.CapitalItems { if item.CreatedAt.After(latest) { latest = item.CreatedAt } }
+	for _, relationship := range ctx.Relationships { if relationship.CreatedAt.After(latest) { latest = relationship.CreatedAt } }
+	for _, procurement := range ctx.Procurements { if procurement.CreatedAt.After(latest) { latest = procurement.CreatedAt } }
+	if latest.IsZero() { return time.Unix(0, 0).UTC() }
+	return latest.UTC()
 }
 
 // CalculateInvestability computes capital opportunity attractiveness (0-100).

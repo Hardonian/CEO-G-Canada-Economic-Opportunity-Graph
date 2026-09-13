@@ -2,10 +2,9 @@ package propagation
 
 import (
 	"fmt"
-	"time"
 
 	"github.com/Hardonian/CEO-G-Canada-Economic-Opportunity-Graph/internal/domain"
-	"github.com/google/uuid"
+	"github.com/Hardonian/CEO-G-Canada-Economic-Opportunity-Graph/internal/identity"
 )
 
 // DependencyRule defines an upstream project requirement that propagates into downstream market opportunities.
@@ -50,7 +49,7 @@ func DefaultOntology() []DependencyRule {
 			Category:         "epcm_and_engineering",
 			TitleTemplate:    "EPCM Detailed Engineering & Project Management Contract",
 			Description:      "Turnkey Engineering, Procurement, and Construction Management (EPCM) package for processing mill and tailings management facility.",
-			Class:            domain.RequirementConfirmed,
+			Class:            domain.RequirementDerived,
 			TriggerMilestone: domain.StageFIDLikely,
 			CapexPercentMin:  0.08,
 			CapexPercentMax:  0.15,
@@ -60,7 +59,7 @@ func DefaultOntology() []DependencyRule {
 			Category:         "environmental_monitoring",
 			TitleTemplate:    "Long-Term Environmental Baseline & Water Quality Monitoring",
 			Description:      "Aquatic habitat monitoring, acid rock drainage surveillance, and Indigenous community guardian reporting systems.",
-			Class:            domain.RequirementConfirmed,
+			Class:            domain.RequirementDerived,
 			TriggerMilestone: domain.StageEnvironmentalReview,
 			CapexPercentMin:  0.01,
 			CapexPercentMax:  0.03,
@@ -92,7 +91,7 @@ func DefaultOntology() []DependencyRule {
 			Category:         "nuclear_grade_components",
 			TitleTemplate:    "CSA N285 / N299 Certified Pressure Vessel & Piping Fabrication",
 			Description:      "Nuclear-quality certified valves, calandria components, heat exchangers, and primary heat transport piping.",
-			Class:            domain.RequirementConfirmed,
+			Class:            domain.RequirementDerived,
 			TriggerMilestone: domain.StageEarlyDevelopment,
 			CapexPercentMin:  0.15,
 			CapexPercentMax:  0.25,
@@ -112,7 +111,7 @@ func DefaultOntology() []DependencyRule {
 			Category:         "heavy_civil_works",
 			TitleTemplate:    "Nuclear Containment Heavy Civil & Specialized Pour Concrete",
 			Description:      "Specialized seismic foundation, heavy aggregate shielding concrete, and intake/outfall cooling water structures.",
-			Class:            domain.RequirementConfirmed,
+			Class:            domain.RequirementDerived,
 			TriggerMilestone: domain.StageFID,
 			CapexPercentMin:  0.12,
 			CapexPercentMax:  0.20,
@@ -124,7 +123,7 @@ func DefaultOntology() []DependencyRule {
 			Category:         "power_interconnection",
 			TitleTemplate:    "Multi-Hundred Megawatt High-Voltage Interconnection & Substation",
 			Description:      "Dedicated 230kV/500kV redundant utility substation, switchgear, and on-site utility firm capacity allocation.",
-			Class:            domain.RequirementConfirmed,
+			Class:            domain.RequirementDerived,
 			TriggerMilestone: domain.StageEarlyDevelopment,
 			CapexPercentMin:  0.08,
 			CapexPercentMax:  0.15,
@@ -156,7 +155,7 @@ func DefaultOntology() []DependencyRule {
 			Category:         "permafrost_civil_engineering",
 			TitleTemplate:    "Arctic Thermosyphon Foundation & Cold-Weather Runway Hardening",
 			Description:      "Passive refrigeration thermosyphon foundations, all-weather gravel aggregate stabilization, and insulated utility corridors.",
-			Class:            domain.RequirementConfirmed,
+			Class:            domain.RequirementDerived,
 			TriggerMilestone: domain.StageEarlyDevelopment,
 			CapexPercentMin:  0.12,
 			CapexPercentMax:  0.22,
@@ -196,24 +195,19 @@ func PropagateOpportunities(project *domain.Project) []*domain.Opportunity {
 			continue
 		}
 
-		estCAD := int64(0)
-		if project.CapexCAD > 0 {
-			midPct := (rule.CapexPercentMin + rule.CapexPercentMax) / 2.0
-			estCAD = int64(float64(project.CapexCAD) * midPct)
-		}
-
 		opp := &domain.Opportunity{
-			ID:               uuid.New().String(),
+			ID:               identity.StableID("opportunity", "dependency-template-v1", project.ID+":"+rule.Category),
 			ProjectID:        project.ID,
 			ProjectName:      project.Name,
 			Title:            fmt.Sprintf("%s: %s", project.Name, rule.TitleTemplate),
 			Sector:           project.Sector,
 			RequirementClass: rule.Class,
 			Category:         rule.Category,
-			EstimatedCAD:     estCAD,
+			EstimatedCAD:     0,
+			EstimateStatus:   domain.ConfidenceUnknown,
 			Description:      rule.Description,
 			TriggerMilestone: string(rule.TriggerMilestone),
-			CreatedAt:        time.Now(),
+			CreatedAt:        project.UpdatedAt,
 		}
 		results = append(results, opp)
 	}
