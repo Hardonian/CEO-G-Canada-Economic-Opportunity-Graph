@@ -1,0 +1,23 @@
+{
+  "cegs_vocab": "project-stages",
+  "version": "0.1",
+  "stages": [
+    { "id": "DISCOVERED", "order": 1, "name": "Discovered", "description": "Project identified from early public signals or pre-feasibility exploratory notices." },
+    { "id": "ANNOUNCED", "order": 2, "name": "Announced", "description": "Formally announced by proponent or government sponsor via official press release." },
+    { "id": "REFERRED", "order": 3, "name": "Referred", "description": "Formally submitted to regulatory or environmental evaluation agencies (e.g. IAAC, CER)." },
+    { "id": "EARLY_DEVELOPMENT", "order": 4, "name": "Early Development", "description": "Initial engineering studies, baseline data collection, and stakeholder consultations underway." },
+    { "id": "FEASIBILITY", "order": 5, "name": "Feasibility", "description": "Preliminary Economic Assessment (PEA) or definitive feasibility study completed." },
+    { "id": "FINANCING", "order": 6, "name": "Financing", "description": "Actively assembling equity syndicates, debt underwriting, or Crown financing facilities." },
+    { "id": "ENVIRONMENTAL_REVIEW", "order": 7, "name": "Environmental Review", "description": "Detailed impact assessment statement submitted for public and Indigenous review." },
+    { "id": "PERMITTING", "order": 8, "name": "Permitting", "description": "Specific statutory license applications filed with provincial and federal regulators." },
+    { "id": "PROCUREMENT", "order": 9, "name": "Procurement", "description": "Major EPCM tenders, RFIs, RFPs, or long-lead component contracts actively in market." },
+    { "id": "FID_LIKELY", "order": 10, "name": "FID Likely", "description": "Permits in place, financing substantially committed; board approval imminently expected." },
+    { "id": "FID", "order": 11, "name": "Final Investment Decision (FID)", "description": "Formal board and investor sanction to proceed to full construction." },
+    { "id": "CONSTRUCTION", "order": 12, "name": "Construction", "description": "Active civil works, heavy equipment mobilization, and facility erection underway on site." },
+    { "id": "COMMISSIONING", "order": 13, "name": "Commissioning", "description": "Subsystem testing, grid synchronization, dry runs, and final regulatory certification." },
+    { "id": "OPERATING", "order": 14, "name": "Operating", "description": "Commercial operation achieved; regular revenue service active." },
+    { "id": "DELAYED", "order": 90, "name": "Delayed", "description": "Scheduled milestone dates slipped by 12+ months or regulatory process paused." },
+    { "id": "PAUSED", "order": 91, "name": "Paused", "description": "Development activities formally suspended pending market conditions or legal review." },
+    { "id": "CANCELLED", "order": 99, "name": "Cancelled", "description": "Project formally withdrawn or cancelled by proponent." }
+  ]
+}

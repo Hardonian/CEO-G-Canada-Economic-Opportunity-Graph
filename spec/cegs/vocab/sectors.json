@@ -1,0 +1,62 @@
+{
+  "cegs_vocab": "sectors",
+  "version": "0.1",
+  "terms": [
+    {
+      "id": "critical-minerals",
+      "canonical_name": "Critical Minerals",
+      "canonical_name_fr": "Minéraux critiques",
+      "description": "Exploration, extraction, and processing of Canada's 34 prioritized critical minerals including lithium, nickel, cobalt, graphite, and rare earth elements.",
+      "naics_codes": ["2122"]
+    },
+    {
+      "id": "nuclear-clean-power",
+      "canonical_name": "Nuclear & Clean Power",
+      "canonical_name_fr": "Nucléaire et énergie propre",
+      "description": "Nuclear power generation, Small Modular Reactors (SMRs), reactor refurbishments, and baseload clean power generation.",
+      "naics_codes": ["221113"]
+    },
+    {
+      "id": "clean-energy-grid",
+      "canonical_name": "Clean Energy & Grid",
+      "canonical_name_fr": "Énergie propre et réseau",
+      "description": "Hydroelectric generation, wind, solar, inter-provincial transmission corridors, battery energy storage systems, and clean hydrogen.",
+      "naics_codes": ["221111", "221114", "221115", "221121"]
+    },
+    {
+      "id": "ai-compute-data-centres",
+      "canonical_name": "AI Compute & Data Centres",
+      "canonical_name_fr": "Calcul IA et centres de données",
+      "description": "Sovereign AI supercompute clusters, hyperscale data centres, high-density power interconnects, and cooling infrastructure.",
+      "naics_codes": ["518210"]
+    },
+    {
+      "id": "defence-arctic",
+      "canonical_name": "Defence & Arctic",
+      "canonical_name_fr": "Défense et Arctique",
+      "description": "Arctic surveillance facilities, NORAD modernization radar sites, dual-use northern ports, all-weather military logistics, and domestic defence manufacturing.",
+      "naics_codes": ["9111"]
+    },
+    {
+      "id": "transportation-ports",
+      "canonical_name": "Transportation & Ports",
+      "canonical_name_fr": "Transports et ports",
+      "description": "National trade corridors, deep-water port expansions, freight rail links, marine terminals, and border logistics hubs.",
+      "naics_codes": ["4821", "4831", "4883"]
+    },
+    {
+      "id": "industrial-manufacturing",
+      "canonical_name": "Industrial & Manufacturing",
+      "canonical_name_fr": "Industrie et fabrication",
+      "description": "Electric vehicle battery gigafactories, clean steel/aluminum decarbonization, aerospace manufacturing, and advanced semiconductor facilities.",
+      "naics_codes": ["3359", "3311", "3364"]
+    },
+    {
+      "id": "housing-enabling-infrastructure",
+      "canonical_name": "Housing-Enabling Infrastructure",
+      "canonical_name_fr": "Infrastructures habilitantes pour le logement",
+      "description": "Municipal trunk water/wastewater mains, stormwater detention, district thermal networks, and arterial roads directly unlocking housing developments.",
+      "naics_codes": ["237110"]
+    }
+  ]
+}
