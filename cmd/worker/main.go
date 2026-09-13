@@ -9,6 +9,8 @@ import (
 	"time"
 
 	"github.com/Hardonian/CEO-G-Canada-Economic-Opportunity-Graph/adapters"
+	"github.com/Hardonian/CEO-G-Canada-Economic-Opportunity-Graph/adapters/gazette"
+	"github.com/Hardonian/CEO-G-Canada-Economic-Opportunity-Graph/adapters/indigenous"
 	"github.com/Hardonian/CEO-G-Canada-Economic-Opportunity-Graph/adapters/nrcan_major_projects"
 	"github.com/Hardonian/CEO-G-Canada-Economic-Opportunity-Graph/adapters/official"
 	"github.com/Hardonian/CEO-G-Canada-Economic-Opportunity-Graph/internal/database"
@@ -22,6 +24,10 @@ func main() {
 	adapterList := []adapters.Adapter{
 		nrcan_major_projects.NewNRCanAdapter("data/fixtures/nrcan_mpi_2025.json"),
 		official.NewAdapter(""),
+		gazette.NewGazetteAdapter("ON", "data/fixtures/gazette_on.json"),
+		gazette.NewGazetteAdapter("QC", "data/fixtures/gazette_qc.json"),
+		gazette.NewGazetteAdapter("BC", "data/fixtures/gazette_bc.json"),
+		indigenous.NewIndigenousAdapter("data/fixtures/isc_indigenous_business_directory.json"),
 	}
 
 	pipeline := ingestion.NewPipeline(store, adapterList)
