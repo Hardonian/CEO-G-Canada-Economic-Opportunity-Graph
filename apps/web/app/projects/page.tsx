@@ -68,7 +68,7 @@ export default function ProjectsPage() {
       </div>
 
       {/* Filters Bar */}
-      <div className="bg-card p-4 rounded border border-border space-y-3">
+      <div className="glass-panel p-4 rounded-xl border border-border/80 space-y-3 shadow-lg">
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
           {/* Search Input */}
           <div className="relative">
@@ -78,7 +78,7 @@ export default function ProjectsPage() {
               placeholder="Search projects, proponents, minerals..."
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              className="w-full pl-9 pr-3 py-1.5 rounded bg-surface border border-border text-xs text-text-main placeholder:text-text-subtle focus:outline-none focus:border-accent-cyan"
+              className="w-full pl-9 pr-3 py-1.5 rounded-lg bg-surface border border-border text-xs text-text-main placeholder:text-text-subtle focus:outline-none focus:border-aurora transition-colors"
             />
           </div>
 
@@ -87,7 +87,7 @@ export default function ProjectsPage() {
             <select
               value={selectedSector}
               onChange={(e) => setSelectedSector(e.target.value)}
-              className="w-full px-3 py-1.5 rounded bg-surface border border-border text-xs text-text-main focus:outline-none focus:border-accent-cyan"
+              className="w-full px-3 py-1.5 rounded-lg bg-surface border border-border text-xs text-text-main focus:outline-none focus:border-aurora transition-colors"
             >
               {sectors.map((s) => (
                 <option key={s} value={s}>
@@ -102,7 +102,7 @@ export default function ProjectsPage() {
             <select
               value={selectedProvince}
               onChange={(e) => setSelectedProvince(e.target.value)}
-              className="w-full px-3 py-1.5 rounded bg-surface border border-border text-xs text-text-main focus:outline-none focus:border-accent-cyan"
+              className="w-full px-3 py-1.5 rounded-lg bg-surface border border-border text-xs text-text-main focus:outline-none focus:border-aurora transition-colors"
             >
               {provinces.map((pr) => (
                 <option key={pr} value={pr}>
@@ -115,10 +115,10 @@ export default function ProjectsPage() {
       </div>
 
       {/* Results Table */}
-      <div className="bg-card rounded border border-border overflow-hidden">
+      <div className="glass-card rounded-xl border border-border/80 overflow-hidden shadow-xl">
         <div className="overflow-x-auto">
           <table className="w-full text-left text-xs">
-            <thead className="bg-[#0B1224] text-text-subtle font-mono uppercase text-[10px] border-b border-border">
+            <thead className="bg-[#08130E] text-text-muted font-mono uppercase text-[10px] border-b border-border/80">
               <tr>
                 <th className="px-4 py-3">Project & Location</th>
                 <th className="px-3 py-3">Sector</th>
@@ -134,25 +134,25 @@ export default function ProjectsPage() {
                 const bScore = p.scores?.buildability || 0;
                 const iScore = p.scores?.investability || 0;
                 return (
-                  <tr key={p.id} className="hover:bg-cardHover transition-colors group">
+                  <tr key={p.id} className="hover:bg-cardHover/70 transition-colors group">
                     <td className="px-4 py-3.5">
-                      <Link href={`/projects/${p.slug}`} className="font-semibold text-text-main group-hover:text-accent-cyan text-sm block">
+                      <Link href={`/projects/${p.slug}`} className="font-semibold text-text-main group-hover:text-aurora text-sm block transition-colors">
                         {p.name}
                       </Link>
                       <div className="text-[11px] text-text-subtle flex items-center gap-1.5 mt-0.5">
-                        <MapPin className="h-3 w-3" />
+                        <MapPin className="h-3 w-3 text-aurora" />
                         <span>{p.location_name} ({p.province})</span>
                         <span>•</span>
                         <span className="text-text-muted">{p.subsector}</span>
                       </div>
                     </td>
                     <td className="px-3 py-3.5">
-                      <span className="inline-block px-2 py-0.5 rounded bg-surface border border-borderSubtle text-[11px] text-accent-cyan font-mono">
+                      <span className="inline-block px-2.5 py-0.5 rounded-full bg-primary/10 border border-primary/30 text-[11px] text-aurora font-mono">
                         {p.sector}
                       </span>
                     </td>
                     <td className="px-3 py-3.5">
-                      <span className="inline-block px-2 py-0.5 rounded bg-primary/10 border border-primary/30 text-[10px] text-primary font-mono font-semibold">
+                      <span className="inline-block px-2.5 py-0.5 rounded-full bg-gold/10 border border-gold/30 text-[10px] text-gold font-mono font-semibold">
                         {p.current_stage}
                       </span>
                     </td>
@@ -160,13 +160,13 @@ export default function ProjectsPage() {
                       ${(p.capex_cad / 1e9).toFixed(2)}B
                     </td>
                     <td className="px-3 py-3.5 text-right">
-                      <span className="font-bold font-tabular text-accent-green text-xs">
+                      <span className="font-bold font-tabular text-aurora text-xs">
                         {bScore.toFixed(1)}
                       </span>
                       <span className="text-text-subtle text-[10px]">/100</span>
                     </td>
                     <td className="px-3 py-3.5 text-right">
-                      <span className="font-bold font-tabular text-accent-cyan text-xs">
+                      <span className="font-bold font-tabular text-gold text-xs">
                         {iScore.toFixed(1)}
                       </span>
                       <span className="text-text-subtle text-[10px]">/100</span>
@@ -174,7 +174,7 @@ export default function ProjectsPage() {
                     <td className="px-3 py-3.5 text-right">
                       <Link
                         href={`/projects/${p.slug}`}
-                        className="inline-flex items-center gap-1 px-2.5 py-1 rounded bg-surface border border-border hover:border-accent-cyan text-accent-cyan text-[11px] transition-colors"
+                        className="inline-flex items-center gap-1 px-3 py-1 rounded-lg bg-surface border border-border hover:border-aurora text-aurora text-[11px] transition-colors font-medium shadow-sm"
                       >
                         Profile <ChevronRight className="h-3 w-3" />
                       </Link>

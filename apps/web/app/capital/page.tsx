@@ -103,24 +103,24 @@ export default function CapitalStackPage() {
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
       {/* Header */}
-      <div className="border-b border-border pb-6">
-        <div className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded bg-card border border-border text-[11px] font-mono text-accent-cyan mb-2">
-          <Layers className="h-3 w-3" />
+      <div className="border-b border-border/80 pb-6">
+        <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-card border border-primary/40 text-[11px] font-mono text-aurora mb-3 shadow-sm">
+          <Layers className="h-3.5 w-3.5 text-aurora" />
           CANADIAN CAPITAL STACK & PROGRAM INTELLIGENCE
         </div>
-        <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-text-main">
-          Capital Stack & Tax Incentive Simulator
+        <h1 className="text-2xl sm:text-4xl font-black tracking-tight text-text-main">
+          Capital Stack & <span className="text-gold">Incentive Simulator</span>
         </h1>
-        <p className="text-xs sm:text-sm text-text-muted mt-1 max-w-4xl leading-relaxed">
+        <p className="text-xs sm:text-sm text-text-muted mt-2 max-w-4xl leading-relaxed">
           Model interactions between federal clean economy Investment Tax Credits (Clean Tech ITC, Clean Electricity, CMITC), 
           the Canada Infrastructure Bank (CIB), the Strategic Innovation Fund (SIF), and Indigenous loan guarantees.
         </p>
       </div>
 
       {/* Interactive Simulator Bar */}
-      <div className="bg-card p-5 rounded border border-border space-y-4">
+      <div className="glass-panel p-5 rounded-xl border border-border/80 space-y-4 shadow-xl">
         <div className="flex items-center gap-2 text-xs font-bold text-text-main">
-          <Calculator className="h-4 w-4 text-accent-cyan" />
+          <Calculator className="h-4 w-4 text-aurora" />
           <span>Simulate Project Capital Stack Parameters</span>
         </div>
 
@@ -133,7 +133,7 @@ export default function CapitalStackPage() {
                 type="number"
                 value={capexInput}
                 onChange={(e) => setCapexInput(e.target.value)}
-                className="w-full pl-7 pr-3 py-1.5 rounded bg-surface border border-border text-xs text-text-main font-mono focus:outline-none focus:border-accent-cyan"
+                className="w-full pl-7 pr-3 py-1.5 rounded-lg bg-surface border border-border text-xs text-text-main font-mono focus:outline-none focus:border-aurora transition-colors"
               />
             </div>
           </div>
@@ -143,7 +143,7 @@ export default function CapitalStackPage() {
             <select
               value={selectedSector}
               onChange={(e) => setSelectedSector(e.target.value)}
-              className="w-full px-3 py-1.5 rounded bg-surface border border-border text-xs text-text-main font-mono focus:outline-none focus:border-accent-cyan"
+              className="w-full px-3 py-1.5 rounded-lg bg-surface border border-border text-xs text-text-main font-mono focus:outline-none focus:border-aurora transition-colors"
             >
               <option value="Nuclear & Clean Power">Nuclear & Clean Power</option>
               <option value="Critical Minerals">Critical Minerals</option>
@@ -157,7 +157,7 @@ export default function CapitalStackPage() {
             <label className="block text-[11px] font-mono text-text-subtle uppercase mb-1">Indigenous Equity Partnership</label>
             <button
               onClick={() => setIsIndigenousPartner(!isIndigenousPartner)}
-              className={`w-full py-1.5 px-3 rounded border text-xs font-mono text-left transition-colors ${
+              className={`w-full py-1.5 px-3 rounded-lg border text-xs font-mono text-left transition-colors ${
                 isIndigenousPartner
                   ? "bg-accent-green/10 border-accent-green/40 text-accent-green font-semibold"
                   : "bg-surface border-border text-text-muted"

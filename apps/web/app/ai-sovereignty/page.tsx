@@ -57,15 +57,15 @@ export default function AISovereigntyPage() {
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
       {/* Header */}
-      <div className="border-b border-border pb-6">
-        <div className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded bg-card border border-border text-[11px] font-mono text-accent-cyan mb-2">
-          <Cpu className="h-3 w-3" />
+      <div className="border-b border-border/80 pb-6">
+        <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-card border border-primary/40 text-[11px] font-mono text-aurora mb-3 shadow-sm">
+          <Cpu className="h-3.5 w-3.5 text-aurora" />
           CANADIAN AI SOVEREIGNTY INDEX — METHODOLOGY V1.0
         </div>
-        <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-text-main">
-          Canadian AI Sovereignty Index
+        <h1 className="text-2xl sm:text-4xl font-black tracking-tight text-text-main">
+          Canadian <span className="text-aurora">AI Sovereignty Index</span>
         </h1>
-        <p className="text-xs sm:text-sm text-text-muted mt-1 max-w-4xl leading-relaxed">
+        <p className="text-xs sm:text-sm text-text-muted mt-2 max-w-4xl leading-relaxed">
           A transparent, deterministic scoring framework evaluating artificial intelligence infrastructure and compute services 
           on data residency, compute residency, domestic ownership, foreign extraterritorial legal exposure (US CLOUD Act), 
           linguistic bilingual parity, and Quebec Law 25 privacy posture.
@@ -75,24 +75,24 @@ export default function AISovereigntyPage() {
       {/* Benchmark Scorecards */}
       <div className="space-y-6">
         {benchmarks.map((b) => (
-          <div key={b.name} className="bg-card p-6 rounded border border-border space-y-4">
+          <div key={b.name} className="glass-card p-6 rounded-xl border border-border/80 space-y-4 shadow-xl">
             <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-3 border-b border-borderSubtle pb-4">
               <div>
                 <div className="flex items-center gap-2 flex-wrap">
                   <h2 className="text-base font-bold text-text-main">{b.name}</h2>
-                  <span className="text-[10px] font-mono px-2 py-0.2 rounded bg-surface border border-borderSubtle text-accent-cyan">
+                  <span className="text-[10px] font-mono px-2.5 py-0.5 rounded-full bg-primary/10 border border-primary/30 text-aurora font-medium">
                     {b.type}
                   </span>
-                  <span className="text-[10px] font-mono px-2 py-0.2 rounded bg-surface border border-borderSubtle text-text-muted">
+                  <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-surface border border-borderSubtle text-text-muted">
                     {b.location}
                   </span>
                 </div>
-                <p className="text-xs text-text-subtle mt-1">{b.summary}</p>
+                <p className="text-xs text-text-subtle mt-1.5">{b.summary}</p>
               </div>
 
               <div className="text-right shrink-0">
                 <div className="text-[10px] font-mono text-text-subtle uppercase">Sovereignty Score</div>
-                <div className="text-2xl font-extrabold font-tabular text-accent-cyan">
+                <div className="text-3xl font-black font-tabular text-aurora">
                   {b.overallScore.toFixed(1)}<span className="text-xs font-normal text-text-subtle">/100</span>
                 </div>
               </div>
