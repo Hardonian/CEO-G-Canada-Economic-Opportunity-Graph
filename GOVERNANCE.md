@@ -26,16 +26,20 @@ CanadaOpportunityGraph operates a **dual-layer governance model** that strictly 
 ## 2. Roles & Responsibilities
 
 ### Maintainers
+
 Maintainers have write and release access across the repository. They are responsible for:
+
 - Reviewing and approving RFCs for CEGS.
 - Reviewing pull requests and ensuring strict test coverage and anti-hallucination standards.
 - Managing security advisories and dependency updates.
 - Tagging semantic releases (`v0.1.0`, `v0.2.0`, `v1.0.0`).
 
 ### Domain Reviewers
+
 Domain specialists in Canadian infrastructure finance, regulatory law (IAAC, CER), Indigenous economic development, and defence procurement provide domain validation on schema fields and scoring methodologies.
 
 ### Contributors
+
 Anyone who submits issues, adapter code, documentation improvements, or RFC proposals.
 
 ---

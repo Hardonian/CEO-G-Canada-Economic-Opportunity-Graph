@@ -27,15 +27,15 @@ body {
 /* Glassmorphism utilities */
 .glass-panel {
   background: rgba(11, 21, 17, 0.85);
-  backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(12px);
   border: 1px solid rgba(29, 56, 45, 0.8);
 }
 
 .glass-card {
   background: rgba(16, 31, 25, 0.75);
-  backdrop-filter: blur(8px);
   -webkit-backdrop-filter: blur(8px);
+  backdrop-filter: blur(8px);
   border: 1px solid rgba(29, 56, 45, 0.7);
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
@@ -51,12 +51,14 @@ body {
 .text-aurora {
   background: linear-gradient(135deg, #00F5A0 0%, #10B981 50%, #38BDF8 100%);
   -webkit-background-clip: text;
+  background-clip: text;
   -webkit-text-fill-color: transparent;
 }
 
 .text-gold-gradient {
   background: linear-gradient(135deg, #FBBF24 0%, #F59E0B 50%, #D97706 100%);
   -webkit-background-clip: text;
+  background-clip: text;
   -webkit-text-fill-color: transparent;
 }
 

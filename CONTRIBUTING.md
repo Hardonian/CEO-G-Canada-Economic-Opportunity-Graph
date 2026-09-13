@@ -19,11 +19,13 @@ We welcome contributions from software engineers, data engineers, researchers, p
 ## 2. Development Workflow
 
 ### Prerequisites
+
 - **Go**: 1.22+ (tested with Go 1.26)
 - **Node.js**: 20+ & **pnpm**: 9+
 - **Git**
 
 ### Initial Setup
+
 ```bash
 # Clone the repository
 git clone https://github.com/Hardonian/CEO-G-Canada-Economic-Opportunity-Graph.git
@@ -43,6 +45,7 @@ cd ../..
 ```
 
 ### Automation Helper (`scripts/task.ps1` or `Makefile`)
+
 - Windows PowerShell:
   - `.\scripts\task.ps1 test` — Run all Go tests
   - `.\scripts\task.ps1 cegs-validate` — Validate CEGS examples and datasets
@@ -58,6 +61,7 @@ cd ../..
 ## 3. Contributing a Data Adapter
 
 Adapters live in `adapters/<source_name>/` and implement the `adapters.SourceAdapter` interface:
+
 ```go
 type SourceAdapter interface {
     Name() string
@@ -68,6 +72,7 @@ type SourceAdapter interface {
 ```
 
 Requirements for new adapters:
+
 - **Statutory Authority**: Source must be a Tier 1 government registry or statutory public disclosure (e.g. IAAC, CER, CanadaBuys, NRCan, SEDAR+, provincial gazettes).
 - **Cryptographic Hashing**: All raw records must be hashed using SHA-256 (`adapters.HashDocument`) to prevent duplicate writes.
 - **Epistemic State**: Facts must be tagged as `VERIFIED` (statutory registry) or `SUPPORTED` (official proponent publication).
