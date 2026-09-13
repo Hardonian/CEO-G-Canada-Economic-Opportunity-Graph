@@ -1,0 +1,29 @@
+{
+  "cegs": "0.1",
+  "id": "cegs:source:ca:open-government-catalog",
+  "type": "source",
+  "canonical_name": "Government of Canada Open Government catalogue",
+  "jurisdiction": "CA",
+  "created_at": "2026-09-13T00:00:00Z",
+  "updated_at": "2026-09-13T00:00:00Z",
+  "provenance": [],
+  "extensions": {
+    "ca.opengraph.source_of_sources": true
+  },
+  "source_kind": "CATALOG",
+  "publisher": "cegs:org:ca:treasury-board-secretariat",
+  "canonical_url": "https://open.canada.ca/data/en/api/3/action/package_search",
+  "source_family": "CKAN",
+  "access_method": "REST_API",
+  "content_type": "application/json",
+  "authority_tier": 1,
+  "subject_tags": ["open-data", "economic-development", "infrastructure"],
+  "sector_tags": [],
+  "languages": ["en-CA", "fr-CA"],
+  "update_frequency": "CONTINUAL",
+  "lifecycle": "TESTED",
+  "health": "UNKNOWN",
+  "license": "Open Government Licence - Canada",
+  "incremental_capabilities": ["RECENTLY_CHANGED", "PAGINATION"],
+  "coverage_class": "HIGH"
+}

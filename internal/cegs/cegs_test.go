@@ -177,6 +177,7 @@ func TestSpecExamples(t *testing.T) {
 		"../../spec/cegs/examples/relationship.json",
 		"../../spec/cegs/examples/evidence.json",
 		"../../spec/cegs/examples/dataset.json",
+		"../../spec/cegs/examples/source.json",
 	}
 
 	for _, file := range exampleFiles {

@@ -3,6 +3,7 @@ package cegs
 import (
 	"encoding/json"
 	"fmt"
+	"net/url"
 	"regexp"
 	"strings"
 	"time"
@@ -84,6 +85,8 @@ func Validate(data []byte) (*ValidationReport, error) {
 		validateEvidence(raw, report)
 	case "manifest":
 		validateManifest(raw, report)
+	case "source":
+		validateSource(raw, report)
 	}
 
 	// 3. Determine Conformance Level
@@ -95,6 +98,44 @@ func Validate(data []byte) (*ValidationReport, error) {
 	}
 
 	return report, nil
+}
+
+func validateSource(raw map[string]interface{}, rep *ValidationReport) {
+	kind, _ := raw["source_kind"].(string)
+	if !oneOf(kind, "CATALOG", "DATASET", "RESOURCE", "API", "FEED", "DOCUMENT_REPOSITORY", "DOCUMENT", "WEB_PAGE") {
+		rep.Errors = append(rep.Errors, "Source has an invalid or missing 'source_kind'")
+	}
+	canonicalURL, _ := raw["canonical_url"].(string)
+	parsed, err := url.Parse(canonicalURL)
+	if err != nil || parsed.Host == "" || (parsed.Scheme != "http" && parsed.Scheme != "https") {
+		rep.Errors = append(rep.Errors, "Source 'canonical_url' must be an absolute HTTP(S) URL")
+	}
+	for _, field := range []string{"source_family", "access_method"} {
+		if value, _ := raw[field].(string); strings.TrimSpace(value) == "" {
+			rep.Errors = append(rep.Errors, fmt.Sprintf("Source missing '%s'", field))
+		}
+	}
+	authority, ok := raw["authority_tier"].(float64)
+	if !ok || authority < 1 || authority > 5 || authority != float64(int(authority)) {
+		rep.Errors = append(rep.Errors, "Source 'authority_tier' must be an integer between 1 and 5")
+	}
+	lifecycle, _ := raw["lifecycle"].(string)
+	if !oneOf(lifecycle, "DISCOVERED", "CLASSIFIED", "TESTED", "APPROVED", "ACTIVE", "REJECTED", "BLOCKED", "RETIRED") {
+		rep.Errors = append(rep.Errors, "Source has an invalid or missing 'lifecycle'")
+	}
+	health, _ := raw["health"].(string)
+	if !oneOf(health, "UNKNOWN", "HEALTHY", "STALE", "DEGRADED", "BROKEN", "DISABLED") {
+		rep.Errors = append(rep.Errors, "Source has an invalid or missing 'health'")
+	}
+}
+
+func oneOf(value string, allowed ...string) bool {
+	for _, candidate := range allowed {
+		if value == candidate {
+			return true
+		}
+	}
+	return false
 }
 
 func validateProject(raw map[string]interface{}, rep *ValidationReport) {

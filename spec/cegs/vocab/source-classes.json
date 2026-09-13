@@ -25,6 +25,12 @@
       "name": "Secondary Industry Research",
       "description": "Trade association newsletters, consultancy reports, academic working papers.",
       "examples": ["Mining Association of Canada bulletins", "Consulting whitepapers"]
+    },
+    {
+      "tier": 5,
+      "name": "Community / Unverified Lead",
+      "description": "Discovery-only leads that may identify a primary source but cannot establish canonical truth or CEGS Evidence without corroboration.",
+      "examples": ["Community source suggestion", "Unverified directory entry"]
     }
   ]
 }

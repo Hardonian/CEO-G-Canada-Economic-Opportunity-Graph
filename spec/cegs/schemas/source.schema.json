@@ -1,0 +1,84 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schema.canadaopportunitygraph.ca/cegs/0.1/source.schema.json",
+  "title": "CEGS Public Source Resource",
+  "description": "Implementation-neutral metadata for a publisher catalog, dataset, resource, API, feed, repository, document, or public web source.",
+  "type": "object",
+  "required": [
+    "cegs",
+    "id",
+    "type",
+    "canonical_name",
+    "jurisdiction",
+    "created_at",
+    "updated_at",
+    "source_kind",
+    "canonical_url",
+    "source_family",
+    "access_method",
+    "authority_tier",
+    "lifecycle",
+    "health"
+  ],
+  "properties": {
+    "cegs": { "type": "string", "const": "0.1" },
+    "id": { "type": "string", "pattern": "^cegs:source:[a-z0-9_-]+(:[a-z0-9_-]+)*$" },
+    "type": { "type": "string", "const": "source" },
+    "canonical_name": { "type": "string", "minLength": 1 },
+    "jurisdiction": { "type": "string", "minLength": 2 },
+    "created_at": { "type": "string", "format": "date-time" },
+    "updated_at": { "type": "string", "format": "date-time" },
+    "provenance": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": { "type": "string" }
+    },
+    "extensions": { "type": "object" },
+    "source_kind": {
+      "type": "string",
+      "enum": ["CATALOG", "DATASET", "RESOURCE", "API", "FEED", "DOCUMENT_REPOSITORY", "DOCUMENT", "WEB_PAGE"]
+    },
+    "publisher": { "type": "string" },
+    "parent_source": { "type": "string" },
+    "canonical_url": { "type": "string", "format": "uri", "pattern": "^https?://" },
+    "source_family": { "type": "string", "minLength": 1 },
+    "access_method": { "type": "string", "minLength": 1 },
+    "content_type": { "type": "string" },
+    "authority_tier": { "type": "integer", "minimum": 1, "maximum": 5 },
+    "subject_tags": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": { "type": "string" }
+    },
+    "sector_tags": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": { "type": "string" }
+    },
+    "languages": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": { "type": "string" }
+    },
+    "update_frequency": { "type": "string" },
+    "lifecycle": {
+      "type": "string",
+      "enum": ["DISCOVERED", "CLASSIFIED", "TESTED", "APPROVED", "ACTIVE", "REJECTED", "BLOCKED", "RETIRED"]
+    },
+    "health": {
+      "type": "string",
+      "enum": ["UNKNOWN", "HEALTHY", "STALE", "DEGRADED", "BROKEN", "DISABLED"]
+    },
+    "license": { "type": "string" },
+    "incremental_capabilities": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": { "type": "string" }
+    },
+    "coverage_class": {
+      "type": "string",
+      "enum": ["UNKNOWN", "LOW", "MEDIUM", "HIGH"]
+    }
+  },
+  "additionalProperties": false
+}

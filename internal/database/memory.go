@@ -30,6 +30,26 @@ type MemoryStore struct {
 	evidence       map[string]*domain.Evidence
 	slugIndex      map[string]string                 // slug -> project ID
 	entityNameIndex map[string]string               // normalized name -> entity ID
+	publishers                map[string]*domain.Publisher
+	publisherPolicies         map[string]*domain.PublisherPolicy
+	sources                   map[string]*domain.Source
+	sourceURLIndex            map[string]string
+	sourcePrivateConfigs      map[string]*domain.SourcePrivateConfig
+	sourceCandidates          map[string]*domain.SourceCandidate
+	sourceRelationships       map[string]*domain.SourceRelationship
+	sourceRelationshipIndex   map[string]string
+	sourceVersions            map[string]*domain.SourceVersion
+	sourceVersionHashIndex    map[string]string
+	sourceChanges             map[string]*domain.SourceChange
+	sourceChangeIndex         map[string]string
+	sourceHealthChecks        map[string]*domain.SourceHealthCheck
+	sourceCheckpoints         map[string]*domain.SourceCheckpoint
+	mappingVersions           map[string]*domain.MappingVersion
+	mappingVersionIndex       map[string]string
+	ingestionJobs             map[string]*domain.IngestionJob
+	ingestionJobDedupeIndex   map[string]string
+	outboxEvents              map[string]*domain.OutboxEvent
+	outboxHashIndex           map[string]string
 }
 
 // NewMemoryStore initializes an empty in-memory repository.
@@ -45,6 +65,26 @@ func NewMemoryStore() *MemoryStore {
 		signals:        make(map[string]*domain.Signal),
 		opportunities:  make(map[string]*domain.Opportunity),
 		evidence:       make(map[string]*domain.Evidence),
+		publishers:              make(map[string]*domain.Publisher),
+		publisherPolicies:       make(map[string]*domain.PublisherPolicy),
+		sources:                 make(map[string]*domain.Source),
+		sourceURLIndex:          make(map[string]string),
+		sourcePrivateConfigs:    make(map[string]*domain.SourcePrivateConfig),
+		sourceCandidates:        make(map[string]*domain.SourceCandidate),
+		sourceRelationships:     make(map[string]*domain.SourceRelationship),
+		sourceRelationshipIndex: make(map[string]string),
+		sourceVersions:          make(map[string]*domain.SourceVersion),
+		sourceVersionHashIndex:  make(map[string]string),
+		sourceChanges:           make(map[string]*domain.SourceChange),
+		sourceChangeIndex:       make(map[string]string),
+		sourceHealthChecks:      make(map[string]*domain.SourceHealthCheck),
+		sourceCheckpoints:       make(map[string]*domain.SourceCheckpoint),
+		mappingVersions:         make(map[string]*domain.MappingVersion),
+		mappingVersionIndex:     make(map[string]string),
+		ingestionJobs:           make(map[string]*domain.IngestionJob),
+		ingestionJobDedupeIndex: make(map[string]string),
+		outboxEvents:            make(map[string]*domain.OutboxEvent),
+		outboxHashIndex:         make(map[string]string),
 	}
 }
 

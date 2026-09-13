@@ -2,8 +2,6 @@ package middleware
 
 import (
 	"context"
-	"crypto/sha256"
-	"encoding/hex"
 	"sync"
 	"time"
 
@@ -37,7 +35,9 @@ type cacheEntry struct {
 	fetchedAt time.Time
 }
 
-// Cache is a bounded LRU cache keyed by adapter name + SHA-256(document).
+// Cache is a bounded TTL cache keyed by stable adapter identity. A cache hit
+// is decided before calling the upstream adapter, so it actually avoids a
+// source request during the configured freshness window.
 func Cache(config CacheConfig) AdapterMiddleware {
 	if config.MaxEntries <= 0 {
 		config.MaxEntries = 64
@@ -54,49 +54,50 @@ func Cache(config CacheConfig) AdapterMiddleware {
 	}
 }
 
-func (c *cacheAdapter) Name() string { return c.next.Name() }
-func (c *cacheAdapter) Tier() adapters.SourceTier { return c.next.Tier() }
+func (c *cacheAdapter) Name() string                   { return c.next.Name() }
+func (c *cacheAdapter) Tier() adapters.SourceTier      { return c.next.Tier() }
 func (c *cacheAdapter) Health() *adapters.SourceHealth { return c.next.Health() }
 
 func (c *cacheAdapter) Fetch(ctx context.Context) ([]byte, error) {
-	data, err := c.next.Fetch(ctx)
-	if err != nil {
-		return nil, err
-	}
-	key := c.key(data)
 	c.mu.Lock()
 	defer c.mu.Unlock()
+	key := c.next.Name()
 	now := time.Now().UTC()
 	if ent, ok := c.entries[key]; ok {
 		if now.Sub(ent.fetchedAt) < c.cfg.TTL {
 			c.touch(key)
-			return ent.data, nil
+			return append([]byte(nil), ent.data...), nil
 		}
 		delete(c.entries, key)
+		c.removeFromOrder(key)
 	}
-	c.trimLocked()
-	c.entries[key] = cacheEntry{data: data, fetchedAt: now}
+
+	data, err := c.next.Fetch(ctx)
+	if err != nil {
+		return nil, err
+	}
+	c.entries[key] = cacheEntry{data: append([]byte(nil), data...), fetchedAt: now}
 	c.order = append(c.order, key)
-	return data, nil
+	c.trimLocked()
+	return append([]byte(nil), data...), nil
 }
 
 func (c *cacheAdapter) Parse(data []byte) (*adapters.IngestionResult, error) {
 	return c.next.Parse(data)
 }
 
-func (c *cacheAdapter) key(data []byte) string {
-	sum := sha256.Sum256(data)
-	return c.next.Name() + ":" + hex.EncodeToString(sum[:])
+func (c *cacheAdapter) touch(key string) {
+	c.removeFromOrder(key)
+	c.order = append(c.order, key)
 }
 
-func (c *cacheAdapter) touch(key string) {
+func (c *cacheAdapter) removeFromOrder(key string) {
 	for i, k := range c.order {
 		if k == key {
 			c.order = append(c.order[:i], c.order[i+1:]...)
-			break
+			return
 		}
 	}
-	c.order = append(c.order, key)
 }
 
 func (c *cacheAdapter) trimLocked() {

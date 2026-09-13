@@ -125,3 +125,103 @@ export interface Signal {
   confidence: number;
   description: string;
 }
+
+export type SourceLifecycle =
+  | "DISCOVERED"
+  | "CLASSIFIED"
+  | "TESTED"
+  | "APPROVED"
+  | "ACTIVE"
+  | "REJECTED"
+  | "BLOCKED"
+  | "RETIRED";
+
+export type SourceHealthStatus =
+  | "CURRENT"
+  | "HEALTHY"
+  | "DELAYED"
+  | "STALE"
+  | "DEGRADED"
+  | "BROKEN"
+  | "UNAVAILABLE"
+  | "DISABLED"
+  | "UNKNOWN"
+  | "NOT_YET_CHECKED";
+
+export interface SourceQuality {
+  structuredness?: number;
+  freshness?: number;
+  completeness?: number;
+  stability?: number;
+  authority?: number;
+  historical_depth?: number;
+}
+
+export interface PublicSource {
+  id: string;
+  name: string;
+  publisher_id: string;
+  publisher_name: string;
+  canonical_url: string;
+  jurisdiction: string;
+  geography: string[];
+  source_family: string;
+  access_method: string;
+  content_type: string;
+  authority_tier: number;
+  subject_tags: string[];
+  sector_tags: string[];
+  languages: string[];
+  update_frequency: string;
+  lifecycle: SourceLifecycle;
+  health: SourceHealthStatus;
+  last_checked_at?: string;
+  last_success_at?: string;
+  last_change_at?: string;
+  license: string;
+  quality: SourceQuality;
+  coverage_class: string;
+  description: string;
+}
+
+export interface SourceListResponse {
+  sources: PublicSource[];
+  total: number;
+  limit: number;
+  offset: number;
+}
+
+export interface MeasuredRatio {
+  status: string;
+  value?: number;
+}
+
+export interface SignalLatencySummary {
+  status: string;
+  p50_ms?: number;
+  p95_ms?: number;
+  sample_count?: number;
+}
+
+export interface DeadLetterSummary {
+  status: string;
+  count?: number;
+}
+
+export interface SourceCoverageReport {
+  generated_at: string;
+  lifecycle_counts: {
+    discovered: number;
+    registered: number;
+    tested: number;
+    active: number;
+    broken: number;
+  };
+  by_jurisdiction: Record<string, number>;
+  by_sector: Record<string, number>;
+  by_family: Record<string, number>;
+  primary_source_ratio: MeasuredRatio;
+  signal_latency: SignalLatencySummary;
+  dead_letters: DeadLetterSummary;
+  blind_spots: string[];
+}

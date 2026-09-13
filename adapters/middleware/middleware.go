@@ -38,8 +38,8 @@ type instrumented struct {
 	total time.Duration
 }
 
-func (i *instrumented) Name() string { return i.next.Name() }
-func (i *instrumented) Tier() adapters.SourceTier { return i.next.Tier() }
+func (i *instrumented) Name() string                   { return i.next.Name() }
+func (i *instrumented) Tier() adapters.SourceTier      { return i.next.Tier() }
 func (i *instrumented) Health() *adapters.SourceHealth { return i.next.Health() }
 
 func (i *instrumented) Fetch(ctx context.Context) ([]byte, error) {

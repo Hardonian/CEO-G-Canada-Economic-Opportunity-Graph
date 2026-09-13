@@ -101,19 +101,44 @@ type Relationship struct {
 
 // Evidence holds cryptographic provenance.
 type Evidence struct {
-	CEGS               string     `json:"cegs"`
-	ID                 string     `json:"id"`
-	Type               string     `json:"type"` // "evidence"
-	SourceURL          string     `json:"source_url"`
-	Publisher          string     `json:"publisher"`
-	SourceTier         int        `json:"source_tier"`
-	ContentHash        string     `json:"content_hash"`
-	RetrievalTimestamp time.Time  `json:"retrieval_timestamp"`
-	PublicationDate    *time.Time `json:"publication_date,omitempty"`
-	EffectiveDate      *time.Time `json:"effective_date,omitempty"`
-	Confidence         string     `json:"confidence"`
-	ExtractionMethod   string     `json:"extraction_method"`
-	RawSnippet         string     `json:"raw_snippet,omitempty"`
+	CEGS               string                 `json:"cegs"`
+	ID                 string                 `json:"id"`
+	Type               string                 `json:"type"` // "evidence"
+	SourceURL          string                 `json:"source_url"`
+	Publisher          string                 `json:"publisher"`
+	SourceTier         int                    `json:"source_tier"`
+	ContentHash        string                 `json:"content_hash"`
+	RetrievalTimestamp time.Time              `json:"retrieval_timestamp"`
+	PublicationDate    *time.Time             `json:"publication_date,omitempty"`
+	EffectiveDate      *time.Time             `json:"effective_date,omitempty"`
+	Confidence         string                 `json:"confidence"`
+	ExtractionMethod   string                 `json:"extraction_method"`
+	RawSnippet         string                 `json:"raw_snippet,omitempty"`
+	Extensions         map[string]interface{} `json:"extensions,omitempty"`
+}
+
+// Source represents implementation-neutral public-source metadata. Runtime
+// credentials, headers, private checkpoints, and object-store locations are
+// intentionally excluded from the CEGS resource.
+type Source struct {
+	Envelope
+	SourceKind              string   `json:"source_kind"`
+	Publisher               string   `json:"publisher,omitempty"`
+	ParentSource            string   `json:"parent_source,omitempty"`
+	CanonicalURL            string   `json:"canonical_url"`
+	SourceFamily            string   `json:"source_family"`
+	AccessMethod            string   `json:"access_method"`
+	ContentType             string   `json:"content_type,omitempty"`
+	AuthorityTier           int      `json:"authority_tier"`
+	SubjectTags             []string `json:"subject_tags,omitempty"`
+	SectorTags              []string `json:"sector_tags,omitempty"`
+	Languages               []string `json:"languages,omitempty"`
+	UpdateFrequency         string   `json:"update_frequency,omitempty"`
+	Lifecycle               string   `json:"lifecycle"`
+	Health                  string   `json:"health"`
+	License                 string   `json:"license,omitempty"`
+	IncrementalCapabilities []string `json:"incremental_capabilities,omitempty"`
+	CoverageClass           string   `json:"coverage_class,omitempty"`
 }
 
 // FormatID generates standard CEGS URIs.

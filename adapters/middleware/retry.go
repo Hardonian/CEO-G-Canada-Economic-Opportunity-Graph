@@ -45,8 +45,8 @@ type retryAdapter struct {
 	config RetryConfig
 }
 
-func (r retryAdapter) Name() string { return r.next.Name() }
-func (r retryAdapter) Tier() adapters.SourceTier { return r.next.Tier() }
+func (r retryAdapter) Name() string                   { return r.next.Name() }
+func (r retryAdapter) Tier() adapters.SourceTier      { return r.next.Tier() }
 func (r retryAdapter) Health() *adapters.SourceHealth { return r.next.Health() }
 
 func (r retryAdapter) Fetch(ctx context.Context) ([]byte, error) {

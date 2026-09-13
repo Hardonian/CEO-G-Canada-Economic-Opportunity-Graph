@@ -2,6 +2,7 @@ package middleware
 
 import (
 	"context"
+	"sync"
 
 	"github.com/Hardonian/CEO-G-Canada-Economic-Opportunity-Graph/adapters"
 )
@@ -11,6 +12,7 @@ import (
 // suppression so the next distinct payload passes through.
 type dedupAdapter struct {
 	next     adapters.Adapter
+	mu       sync.RWMutex
 	lastHash string
 }
 
@@ -21,8 +23,8 @@ func Dedup() AdapterMiddleware {
 	}
 }
 
-func (d *dedupAdapter) Name() string { return d.next.Name() }
-func (d *dedupAdapter) Tier() adapters.SourceTier { return d.next.Tier() }
+func (d *dedupAdapter) Name() string                   { return d.next.Name() }
+func (d *dedupAdapter) Tier() adapters.SourceTier      { return d.next.Tier() }
 func (d *dedupAdapter) Health() *adapters.SourceHealth { return d.next.Health() }
 
 func (d *dedupAdapter) Fetch(ctx context.Context) ([]byte, error) {
@@ -31,6 +33,8 @@ func (d *dedupAdapter) Fetch(ctx context.Context) ([]byte, error) {
 		return nil, err
 	}
 	hash := adapters.HashDocument(data)
+	d.mu.Lock()
+	defer d.mu.Unlock()
 	if d.lastHash == hash {
 		return data, nil
 	}
@@ -44,5 +48,7 @@ func (d *dedupAdapter) Parse(data []byte) (*adapters.IngestionResult, error) {
 
 // LastHash returns the last payload hash observed by this middleware.
 func (d *dedupAdapter) LastHash() string {
+	d.mu.RLock()
+	defer d.mu.RUnlock()
 	return d.lastHash
 }

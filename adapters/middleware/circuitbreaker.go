@@ -53,8 +53,8 @@ func CircuitBreaker(config CircuitBreakerConfig) AdapterMiddleware {
 	}
 }
 
-func (c *circuitBreakerAdapter) Name() string { return c.next.Name() }
-func (c *circuitBreakerAdapter) Tier() adapters.SourceTier { return c.next.Tier() }
+func (c *circuitBreakerAdapter) Name() string                   { return c.next.Name() }
+func (c *circuitBreakerAdapter) Tier() adapters.SourceTier      { return c.next.Tier() }
 func (c *circuitBreakerAdapter) Health() *adapters.SourceHealth { return c.next.Health() }
 
 func (c *circuitBreakerAdapter) Fetch(ctx context.Context) ([]byte, error) {
@@ -67,14 +67,10 @@ func (c *circuitBreakerAdapter) Fetch(ctx context.Context) ([]byte, error) {
 		}
 		c.state = stateHalfOpen
 	case stateHalfOpen:
-		// Only one probe may run at a time. A second caller waits for the
-		// first probe to finish rather than bypassing the half-open gate.
+		// Exactly one recovery probe is allowed. Other callers fail fast
+		// instead of recursively calling Fetch and risking an unbounded spin.
 		c.mu.Unlock()
-		data, err := c.Fetch(ctx)
-		if err == nil {
-			return data, nil
-		}
-		return nil, err
+		return nil, &CircuitOpenError{adapter: c.next.Name()}
 	default:
 	}
 	c.mu.Unlock()
