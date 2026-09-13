@@ -110,6 +110,16 @@ const (
 	SourceKindWebPage            SourceKind = "WEB_PAGE"
 )
 
+func (k SourceKind) Valid() bool {
+	switch k {
+	case SourceKindCatalog, SourceKindDataset, SourceKindResource, SourceKindAPI, SourceKindFeed,
+		SourceKindDocumentRepository, SourceKindDocument, SourceKindWebPage:
+		return true
+	default:
+		return false
+	}
+}
+
 type SourceFamily string
 
 const (
@@ -151,6 +161,22 @@ const (
 	SourceFamilyOther              SourceFamily = "OTHER"
 )
 
+func (f SourceFamily) Valid() bool {
+	switch f {
+	case SourceFamilyREST, SourceFamilyGraphQL, SourceFamilyOpenAPI, SourceFamilyCKAN,
+		SourceFamilySocrata, SourceFamilyArcGIS, SourceFamilyArcGISFeature, SourceFamilyArcGISMap,
+		SourceFamilyGeoJSON, SourceFamilyWFS, SourceFamilyWMS, SourceFamilyWMTS, SourceFamilySDMX,
+		SourceFamilyCSV, SourceFamilyTSV, SourceFamilySpreadsheet, SourceFamilyJSON, SourceFamilyJSONL,
+		SourceFamilyXML, SourceFamilyRSS, SourceFamilyAtom, SourceFamilyDCAT, SourceFamilyJSONLD,
+		SourceFamilyRDF, SourceFamilySPARQL, SourceFamilySitemap, SourceFamilyHTML, SourceFamilyPDF,
+		SourceFamilyDocumentRepository, SourceFamilySearchPortal, SourceFamilyBulkZIP, SourceFamilyGit,
+		SourceFamilyCloudObject, SourceFamilyWebhook, SourceFamilyEmailFeed, SourceFamilyOther:
+		return true
+	default:
+		return false
+	}
+}
+
 type AccessPolicyStatus string
 
 const (
@@ -160,6 +186,16 @@ const (
 	AccessPolicyBlocked       AccessPolicyStatus = "BLOCKED"
 	AccessPolicyNotApplicable AccessPolicyStatus = "NOT_APPLICABLE"
 )
+
+func (s AccessPolicyStatus) Valid() bool {
+	switch s {
+	case AccessPolicyUnknown, AccessPolicyAllowed, AccessPolicyRestricted,
+		AccessPolicyBlocked, AccessPolicyNotApplicable:
+		return true
+	default:
+		return false
+	}
+}
 
 // Publisher is the public-source publisher identity. EntityID optionally links
 // the publisher to the canonical economic graph without duplicating that graph.
@@ -361,6 +397,19 @@ const (
 	SourceChangeOrganization     SourceChangeType = "ORGANIZATION_CHANGED"
 )
 
+func (t SourceChangeType) Valid() bool {
+	switch t {
+	case SourceChangeDiscovered, SourceChangeChanged, SourceChangeMoved, SourceChangeBroken,
+		SourceChangeRestored, SourceChangeRetired, SourceChangeFormatChanged,
+		SourceChangeLicenseChanged, SourceChangeSchemaDrift, SourceChangeProjectStage,
+		SourceChangeCAPEX, SourceChangeDate, SourceChangeFinancing, SourceChangePermitStatus,
+		SourceChangeProcurement, SourceChangeOrganization:
+		return true
+	default:
+		return false
+	}
+}
+
 type Materiality string
 
 const (
@@ -369,6 +418,15 @@ const (
 	MaterialityMaterial Materiality = "MATERIAL"
 	MaterialityMajor    Materiality = "MAJOR"
 )
+
+func (m Materiality) Valid() bool {
+	switch m {
+	case MaterialityTrivial, MaterialityMinor, MaterialityMaterial, MaterialityMajor:
+		return true
+	default:
+		return false
+	}
+}
 
 type FieldChange struct {
 	Code     string      `json:"code"`
@@ -464,6 +522,15 @@ const (
 	IngestionModeReplay    IngestionMode = "REPLAY"
 )
 
+func (m IngestionMode) Valid() bool {
+	switch m {
+	case IngestionModeDiscovery, IngestionModeLive, IngestionModeBackfill, IngestionModeReplay:
+		return true
+	default:
+		return false
+	}
+}
+
 type IngestionQueue string
 
 const (
@@ -474,6 +541,16 @@ const (
 	IngestionQueueNormalization      IngestionQueue = "NORMALIZATION"
 	IngestionQueueReconciliation     IngestionQueue = "RECONCILIATION"
 )
+
+func (q IngestionQueue) Valid() bool {
+	switch q {
+	case IngestionQueueDiscovery, IngestionQueueLive, IngestionQueueBackfill,
+		IngestionQueueDocumentExtraction, IngestionQueueNormalization, IngestionQueueReconciliation:
+		return true
+	default:
+		return false
+	}
+}
 
 const (
 	IngestionPriorityP0 = 0
@@ -528,6 +605,15 @@ const (
 	OutboxPublished OutboxStatus = "PUBLISHED"
 	OutboxFailed    OutboxStatus = "FAILED"
 )
+
+func (s OutboxStatus) Valid() bool {
+	switch s {
+	case OutboxPending, OutboxPublishing, OutboxPublished, OutboxFailed:
+		return true
+	default:
+		return false
+	}
+}
 
 // OutboxEvent is the durable internal event shape. It is not itself a CEGS
 // economic event; consumers may project appropriate source changes into CEGS.

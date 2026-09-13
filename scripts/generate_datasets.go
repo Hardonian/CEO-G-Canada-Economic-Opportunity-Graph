@@ -23,7 +23,7 @@ import (
 )
 
 const (
-	datasetVersion = "2026-09-13.1"
+	datasetVersion = "2026-09-13-1"
 	datasetTime    = "2026-09-13T00:00:00Z"
 )
 

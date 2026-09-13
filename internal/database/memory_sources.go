@@ -1,11 +1,8 @@
 package database
 
 import (
-	"bytes"
 	"context"
-	"encoding/json"
 	"fmt"
-	"net/url"
 	"reflect"
 	"sort"
 	"strings"
@@ -1181,4 +1178,145 @@ func (m *MemoryStore) FailOutboxEvent(ctx context.Context, request FailOutboxReq
 	}
 	event.UpdatedAt = request.At.UTC()
 	return cloneOutboxEvent(event), nil
+}
+
+func (m *MemoryStore) CommitSourceObservation(ctx context.Context, commit SourceObservationCommit) error {
+	if err := contextError(ctx); err != nil {
+		return err
+	}
+	if commit.JobID == "" || commit.WorkerID == "" || commit.CompletedAt.IsZero() {
+		return fmt.Errorf("job id, worker id, and completion time are required")
+	}
+	m.mu.Lock()
+	defer m.mu.Unlock()
+
+	if commit.Version != nil {
+		if err := m.saveSourceVersionLocked(commit.Version); err != nil {
+			return fmt.Errorf("save source version: %w", err)
+		}
+	}
+	for _, change := range commit.Changes {
+		if err := m.saveSourceChangeLocked(change); err != nil {
+			return fmt.Errorf("save source change: %w", err)
+		}
+	}
+	if commit.Health != nil {
+		if err := m.saveSourceHealthCheckLocked(commit.Health); err != nil {
+			return fmt.Errorf("save source health check: %w", err)
+		}
+	}
+	if commit.Checkpoint != nil {
+		if err := m.saveSourceCheckpointLocked(commit.Checkpoint); err != nil {
+			return fmt.Errorf("save source checkpoint: %w", err)
+		}
+	}
+	for _, event := range commit.Outbox {
+		if err := m.saveOutboxEventLocked(event); err != nil {
+			return fmt.Errorf("save outbox event: %w", err)
+		}
+	}
+	return nil
+}
+
+func (m *MemoryStore) GetSourceCoverage(ctx context.Context, asOf time.Time) (*domain.SourceCoverage, error) {
+	if err := contextError(ctx); err != nil {
+		return nil, err
+	}
+	m.mu.RLock()
+	defer m.mu.RUnlock()
+
+	coverage := &domain.SourceCoverage{
+		GeneratedAt: asOf,
+	}
+
+	lifeCounts := make(map[domain.SourceLifecycleStatus]int)
+	healthCounts := make(map[domain.SourceHealthStatus]int)
+	jurisdictionCounts := make(map[string]*domain.SourceCoverageCount)
+	sectorCounts := make(map[string]*domain.SourceCoverageCount)
+	familyCounts := make(map[string]*domain.SourceCoverageCount)
+
+	for _, source := range m.sources {
+		coverage.TotalSources++
+		lifeCounts[source.LifecycleStatus]++
+		healthCounts[source.HealthStatus]++
+
+		// Jurisdiction
+		jur := source.Jurisdiction
+		if jur == "" {
+			jur = "UNKNOWN"
+		}
+		if _, ok := jurisdictionCounts[jur]; !ok {
+			jurisdictionCounts[jur] = &domain.SourceCoverageCount{Key: jur}
+		}
+		jurisdictionCounts[jur].Registered++
+		if source.LifecycleStatus == domain.SourceLifecycleActive {
+			jurisdictionCounts[jur].Active++
+		}
+		if source.HealthStatus == domain.SourceHealthBroken {
+			jurisdictionCounts[jur].Broken++
+		}
+
+		// Sectors
+		for _, sector := range source.SectorTags {
+			if _, ok := sectorCounts[sector]; !ok {
+				sectorCounts[sector] = &domain.SourceCoverageCount{Key: sector}
+			}
+			sectorCounts[sector].Registered++
+			if source.LifecycleStatus == domain.SourceLifecycleActive {
+				sectorCounts[sector].Active++
+			}
+			if source.HealthStatus == domain.SourceHealthBroken {
+				sectorCounts[sector].Broken++
+			}
+		}
+
+		// Family
+		fam := string(source.Family)
+		if fam == "" {
+			fam = "UNKNOWN"
+		}
+		if _, ok := familyCounts[fam]; !ok {
+			familyCounts[fam] = &domain.SourceCoverageCount{Key: fam}
+		}
+		familyCounts[fam].Registered++
+		if source.LifecycleStatus == domain.SourceLifecycleActive {
+			familyCounts[fam].Active++
+		}
+		if source.HealthStatus == domain.SourceHealthBroken {
+			familyCounts[fam].Broken++
+		}
+	}
+
+	coverage.Discovered = lifeCounts[domain.SourceLifecycleDiscovered]
+	coverage.Classified = lifeCounts[domain.SourceLifecycleClassified]
+	coverage.Tested = lifeCounts[domain.SourceLifecycleTested]
+	coverage.Approved = lifeCounts[domain.SourceLifecycleApproved]
+	coverage.Active = lifeCounts[domain.SourceLifecycleActive]
+	coverage.Rejected = lifeCounts[domain.SourceLifecycleRejected]
+	coverage.Blocked = lifeCounts[domain.SourceLifecycleBlocked]
+	coverage.Retired = lifeCounts[domain.SourceLifecycleRetired]
+
+	coverage.Healthy = healthCounts[domain.SourceHealthHealthy]
+	coverage.Stale = healthCounts[domain.SourceHealthStale]
+	coverage.Degraded = healthCounts[domain.SourceHealthDegraded]
+	coverage.Broken = healthCounts[domain.SourceHealthBroken]
+	coverage.Disabled = healthCounts[domain.SourceHealthDisabled]
+	coverage.UnknownHealth = healthCounts[domain.SourceHealthUnknown]
+
+	for _, v := range jurisdictionCounts {
+		coverage.ByJurisdiction = append(coverage.ByJurisdiction, *v)
+	}
+	for _, v := range sectorCounts {
+		coverage.BySector = append(coverage.BySector, *v)
+	}
+	for _, v := range familyCounts {
+		coverage.ByFamily = append(coverage.ByFamily, *v)
+	}
+
+	if coverage.TotalSources > 0 {
+		ratio := float64(coverage.Active) / float64(coverage.TotalSources)
+		coverage.PrimarySourceRatio = &ratio
+	}
+
+	return coverage, nil
 }
