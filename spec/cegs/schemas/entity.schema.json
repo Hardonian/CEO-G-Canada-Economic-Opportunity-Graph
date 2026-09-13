@@ -1,0 +1,45 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schema.canadaopportunitygraph.ca/cegs/0.1/entity.schema.json",
+  "title": "CEGS Generic Entity Envelope",
+  "type": "object",
+  "required": ["cegs", "id", "type", "canonical_name", "jurisdiction", "created_at", "updated_at"],
+  "properties": {
+    "cegs": {
+      "type": "string",
+      "const": "0.1"
+    },
+    "id": {
+      "type": "string",
+      "pattern": "^cegs:[a-z0-9_-]+:[a-z0-9_-]+(:[a-z0-9_-]+)*$"
+    },
+    "type": {
+      "type": "string"
+    },
+    "canonical_name": {
+      "type": "string",
+      "minLength": 1
+    },
+    "jurisdiction": {
+      "type": "string",
+      "pattern": "^(CA|CA:[A-Z]{2})$"
+    },
+    "created_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "updated_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "provenance": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "extensions": {
+      "type": "object"
+    }
+  }
+}

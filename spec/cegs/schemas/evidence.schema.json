@@ -1,0 +1,25 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schema.canadaopportunitygraph.ca/cegs/0.1/evidence.schema.json",
+  "title": "CEGS Evidence Resource",
+  "type": "object",
+  "required": ["cegs", "id", "type", "source_url", "publisher", "source_tier", "content_hash", "retrieval_timestamp", "confidence"],
+  "properties": {
+    "cegs": { "type": "string", "const": "0.1" },
+    "id": { "type": "string", "pattern": "^cegs:evidence:[a-z0-9_-]+(:[a-z0-9_-]+)*$" },
+    "type": { "type": "string", "const": "evidence" },
+    "source_url": { "type": "string", "format": "uri" },
+    "publisher": { "type": "string", "minLength": 1 },
+    "source_tier": { "type": "integer", "minimum": 1, "maximum": 4 },
+    "content_hash": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+    "retrieval_timestamp": { "type": "string", "format": "date-time" },
+    "publication_date": { "type": "string", "format": "date-time" },
+    "effective_date": { "type": "string", "format": "date-time" },
+    "confidence": {
+      "type": "string",
+      "enum": ["VERIFIED", "SUPPORTED", "REPORTED", "INFERRED", "CONFLICTED", "UNKNOWN", "STALE", "RETRACTED"]
+    },
+    "extraction_method": { "type": "string" },
+    "raw_snippet": { "type": "string" }
+  }
+}

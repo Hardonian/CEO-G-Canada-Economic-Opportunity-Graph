@@ -1,0 +1,27 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schema.canadaopportunitygraph.ca/cegs/0.1/score.schema.json",
+  "title": "CEGS Derived Score Resource",
+  "type": "object",
+  "required": ["cegs", "id", "type", "subject", "score_type", "value", "scale", "methodology", "calculated_at"],
+  "properties": {
+    "cegs": { "type": "string", "const": "0.1" },
+    "id": { "type": "string", "pattern": "^cegs:score:[a-z0-9_-]+(:[a-z0-9_-]+)*$" },
+    "type": { "type": "string", "const": "score" },
+    "subject": { "type": "string" },
+    "score_type": { "type": "string" },
+    "value": { "type": "number" },
+    "scale": {
+      "type": "object",
+      "required": ["min", "max"],
+      "properties": {
+        "min": { "type": "number" },
+        "max": { "type": "number" }
+      }
+    },
+    "methodology": { "type": "string" },
+    "factors": { "type": "object" },
+    "explanation": { "type": "string" },
+    "calculated_at": { "type": "string", "format": "date-time" }
+  }
+}

@@ -1,0 +1,20 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schema.canadaopportunitygraph.ca/cegs/0.1/signal.schema.json",
+  "title": "CEGS Economic Signal Resource",
+  "type": "object",
+  "required": ["cegs", "id", "type", "subject", "signal_type", "magnitude", "confidence", "timestamp"],
+  "properties": {
+    "cegs": { "type": "string", "const": "0.1" },
+    "id": { "type": "string", "pattern": "^cegs:signal:[a-z0-9_-]+(:[a-z0-9_-]+)*$" },
+    "type": { "type": "string", "const": "signal" },
+    "subject": { "type": "string" },
+    "signal_type": { "type": "string" },
+    "magnitude": { "type": "number", "minimum": 0, "maximum": 1 },
+    "confidence": { "type": "number", "minimum": 0, "maximum": 1 },
+    "previous_state": { "type": "string" },
+    "new_state": { "type": "string" },
+    "description": { "type": "string" },
+    "timestamp": { "type": "string", "format": "date-time" }
+  }
+}

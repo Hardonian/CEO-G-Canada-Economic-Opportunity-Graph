@@ -1,0 +1,30 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schema.canadaopportunitygraph.ca/cegs/0.1/opportunity.schema.json",
+  "title": "CEGS Opportunity Resource",
+  "type": "object",
+  "required": ["cegs", "id", "type", "project_id", "title", "sector", "requirement_class", "category", "created_at"],
+  "properties": {
+    "cegs": { "type": "string", "const": "0.1" },
+    "id": { "type": "string", "pattern": "^cegs:opp:[a-z0-9_-]+(:[a-z0-9_-]+)*$" },
+    "type": { "type": "string", "const": "opportunity" },
+    "project_id": { "type": "string" },
+    "title": { "type": "string" },
+    "sector": { "type": "string" },
+    "requirement_class": {
+      "type": "string",
+      "enum": ["CONFIRMED", "DERIVED", "SPECULATIVE"]
+    },
+    "category": { "type": "string" },
+    "estimated_value": {
+      "type": "object",
+      "properties": {
+        "amount": { "type": "integer" },
+        "currency": { "type": "string", "const": "CAD" }
+      }
+    },
+    "description": { "type": "string" },
+    "trigger_milestone": { "type": "string" },
+    "created_at": { "type": "string", "format": "date-time" }
+  }
+}

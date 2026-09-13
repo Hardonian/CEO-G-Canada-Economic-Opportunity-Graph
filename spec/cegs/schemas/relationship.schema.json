@@ -1,0 +1,31 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schema.canadaopportunitygraph.ca/cegs/0.1/relationship.schema.json",
+  "title": "CEGS Relationship Resource",
+  "type": "object",
+  "required": ["cegs", "id", "type", "relationship_type", "from", "to", "status", "created_at"],
+  "properties": {
+    "cegs": { "type": "string", "const": "0.1" },
+    "id": { "type": "string", "pattern": "^cegs:rel:[a-z0-9_-]+(:[a-z0-9_-]+)*$" },
+    "type": { "type": "string", "const": "relationship" },
+    "relationship_type": {
+      "type": "string",
+      "enum": [
+        "owns", "operates", "develops", "proposes", "finances", "invests_in",
+        "guarantees", "regulates", "approves", "supplies", "contracts_with",
+        "located_in", "depends_on", "enables", "offtakes_from", "partners_with",
+        "indigenous_partner", "procurement_for", "related_to"
+      ]
+    },
+    "from": { "type": "string" },
+    "to": { "type": "string" },
+    "status": {
+      "type": "string",
+      "enum": ["VERIFIED", "SUPPORTED", "REPORTED", "INFERRED", "CONFLICTED", "UNKNOWN", "STALE", "RETRACTED"]
+    },
+    "valid_from": { "type": "string", "format": "date-time" },
+    "valid_to": { "type": ["string", "null"], "format": "date-time" },
+    "evidence": { "type": "array", "items": { "type": "string" } },
+    "created_at": { "type": "string", "format": "date-time" }
+  }
+}

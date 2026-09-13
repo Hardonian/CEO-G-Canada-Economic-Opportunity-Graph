@@ -1,0 +1,34 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schema.canadaopportunitygraph.ca/cegs/0.1/procurement.schema.json",
+  "title": "CEGS Procurement Resource",
+  "type": "object",
+  "required": ["cegs", "id", "type", "tender_id", "title", "stage", "buyer", "source_url", "requirement_class", "created_at"],
+  "properties": {
+    "cegs": { "type": "string", "const": "0.1" },
+    "id": { "type": "string", "pattern": "^cegs:proc:[a-z0-9_-]+(:[a-z0-9_-]+)*$" },
+    "type": { "type": "string", "const": "procurement" },
+    "tender_id": { "type": "string" },
+    "project_id": { "type": ["string", "null"] },
+    "title": { "type": "string" },
+    "stage": { "type": "string" },
+    "closing_date": { "type": ["string", "null"], "format": "date-time" },
+    "estimated_value": {
+      "type": "object",
+      "properties": {
+        "amount": { "type": "integer" },
+        "currency": { "type": "string", "const": "CAD" }
+      }
+    },
+    "buyer": { "type": "string" },
+    "buyer_type": { "type": "string" },
+    "source_url": { "type": "string", "format": "uri" },
+    "categories": { "type": "array", "items": { "type": "string" } },
+    "requirement_class": {
+      "type": "string",
+      "enum": ["CONFIRMED", "DERIVED"]
+    },
+    "provenance": { "type": "array", "items": { "type": "string" } },
+    "created_at": { "type": "string", "format": "date-time" }
+  }
+}

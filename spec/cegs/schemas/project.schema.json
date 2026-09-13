@@ -1,0 +1,125 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schema.canadaopportunitygraph.ca/cegs/0.1/project.schema.json",
+  "title": "CEGS Project Resource",
+  "type": "object",
+  "required": ["cegs", "id", "type", "canonical_name", "jurisdiction", "sector", "stage", "capex", "created_at", "updated_at"],
+  "properties": {
+    "cegs": {
+      "type": "string",
+      "const": "0.1"
+    },
+    "id": {
+      "type": "string",
+      "pattern": "^cegs:project:ca(:[a-z0-9_-]+)*$"
+    },
+    "type": {
+      "type": "string",
+      "const": "project"
+    },
+    "canonical_name": {
+      "type": "string",
+      "minLength": 1
+    },
+    "aliases": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "description": {
+      "type": "string"
+    },
+    "jurisdiction": {
+      "type": "string",
+      "pattern": "^(CA|CA:[A-Z]{2})$"
+    },
+    "sector": {
+      "type": "string",
+      "enum": [
+        "Critical Minerals",
+        "Nuclear & Clean Power",
+        "Clean Energy & Grid",
+        "AI Compute & Data Centres",
+        "Defence & Arctic",
+        "Transportation & Ports",
+        "Industrial & Manufacturing",
+        "Housing-Enabling Infrastructure"
+      ]
+    },
+    "subsector": {
+      "type": "string"
+    },
+    "stage": {
+      "type": "string",
+      "enum": [
+        "DISCOVERED",
+        "ANNOUNCED",
+        "REFERRED",
+        "EARLY_DEVELOPMENT",
+        "FEASIBILITY",
+        "FINANCING",
+        "ENVIRONMENTAL_REVIEW",
+        "PERMITTING",
+        "PROCUREMENT",
+        "FID_LIKELY",
+        "FID",
+        "CONSTRUCTION",
+        "COMMISSIONING",
+        "OPERATING",
+        "DELAYED",
+        "PAUSED",
+        "CANCELLED"
+      ]
+    },
+    "capex": {
+      "type": "object",
+      "required": ["currency", "amount_type"],
+      "properties": {
+        "amount": { "type": "integer" },
+        "currency": { "type": "string", "const": "CAD" },
+        "amount_type": {
+          "type": "string",
+          "enum": ["reported", "estimated", "range", "unknown"]
+        },
+        "range": {
+          "type": "object",
+          "properties": {
+            "min": { "type": "integer" },
+            "max": { "type": "integer" }
+          }
+        }
+      }
+    },
+    "proponents": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "location": {
+      "type": "object",
+      "properties": {
+        "name": { "type": "string" },
+        "province": { "type": "string" },
+        "latitude": { "type": "number" },
+        "longitude": { "type": "number" }
+      }
+    },
+    "source_status": {
+      "type": "string",
+      "enum": ["VERIFIED", "SUPPORTED", "REPORTED", "INFERRED", "CONFLICTED", "UNKNOWN", "STALE", "RETRACTED"]
+    },
+    "created_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "updated_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "provenance": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "extensions": {
+      "type": "object"
+    }
+  }
+}

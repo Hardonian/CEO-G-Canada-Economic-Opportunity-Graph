@@ -1,0 +1,25 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schema.canadaopportunitygraph.ca/cegs/0.1/event.schema.json",
+  "title": "CEGS Event Resource",
+  "type": "object",
+  "required": ["cegs", "id", "type", "event_type", "subject", "occurred_at", "evidence", "created_at"],
+  "properties": {
+    "cegs": { "type": "string", "const": "0.1" },
+    "id": { "type": "string", "pattern": "^cegs:event:[a-z0-9_-]+(:[a-z0-9_-]+)*$" },
+    "type": { "type": "string", "const": "event" },
+    "event_type": { "type": "string" },
+    "subject": { "type": "string" },
+    "occurred_at": { "type": "string", "format": "date-time" },
+    "observed_at": { "type": "string", "format": "date-time" },
+    "title": { "type": "string" },
+    "description": { "type": "string" },
+    "evidence": {
+      "type": "array",
+      "minItems": 1,
+      "items": { "type": "string" }
+    },
+    "attributes": { "type": "object" },
+    "created_at": { "type": "string", "format": "date-time" }
+  }
+}
