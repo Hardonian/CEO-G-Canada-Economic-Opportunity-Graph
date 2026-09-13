@@ -10,11 +10,7 @@ import (
 	"time"
 
 	"github.com/Hardonian/CEO-G-Canada-Economic-Opportunity-Graph/adapters"
-	"github.com/Hardonian/CEO-G-Canada-Economic-Opportunity-Graph/adapters/canadabuys"
-	"github.com/Hardonian/CEO-G-Canada-Economic-Opportunity-Graph/adapters/cer"
-	"github.com/Hardonian/CEO-G-Canada-Economic-Opportunity-Graph/adapters/iaac"
-	"github.com/Hardonian/CEO-G-Canada-Economic-Opportunity-Graph/adapters/ideas_defence"
-	"github.com/Hardonian/CEO-G-Canada-Economic-Opportunity-Graph/adapters/nrcan_major_projects"
+	"github.com/Hardonian/CEO-G-Canada-Economic-Opportunity-Graph/adapters/official"
 	"github.com/Hardonian/CEO-G-Canada-Economic-Opportunity-Graph/internal/cegs"
 	"github.com/Hardonian/CEO-G-Canada-Economic-Opportunity-Graph/internal/database"
 	"github.com/Hardonian/CEO-G-Canada-Economic-Opportunity-Graph/internal/export"
@@ -69,14 +65,12 @@ func printUsage() {
 func getSeededStore() database.Store {
 	store := database.NewMemoryStore()
 	adapterList := []adapters.Adapter{
-		iaac.NewIAACAdapter(""),
-		canadabuys.NewCanadaBuysAdapter(""),
-		nrcan_major_projects.NewNRCanAdapter(""),
-		ideas_defence.NewIDEaSAdapter(""),
-		cer.NewCERAdapter(""),
+		official.NewAdapter(""),
 	}
 	p := ingestion.NewPipeline(store, adapterList)
-	_, _ = p.Run(context.Background())
+	if _, err := p.Run(context.Background()); err != nil {
+		fmt.Fprintf(os.Stderr, "failed to load reviewed snapshot: %v\n", err)
+	}
 	return store
 }
 

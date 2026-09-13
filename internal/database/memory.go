@@ -25,7 +25,7 @@ type MemoryStore struct {
 	scores        map[string][]*domain.ProjectScore // projectID -> list of scores
 	procurements  map[string]*domain.Procurement
 	capitalItems  map[string]*domain.CapitalItem
-	signals       []*domain.Signal
+	signals       map[string]*domain.Signal
 	opportunities map[string]*domain.Opportunity
 	evidence      map[string]*domain.Evidence
 }
@@ -40,7 +40,7 @@ func NewMemoryStore() *MemoryStore {
 		scores:        make(map[string][]*domain.ProjectScore),
 		procurements:  make(map[string]*domain.Procurement),
 		capitalItems:  make(map[string]*domain.CapitalItem),
-		signals:       make([]*domain.Signal, 0),
+		signals:       make(map[string]*domain.Signal),
 		opportunities: make(map[string]*domain.Opportunity),
 		evidence:      make(map[string]*domain.Evidence),
 	}
@@ -49,6 +49,12 @@ func NewMemoryStore() *MemoryStore {
 func (m *MemoryStore) SaveProject(ctx context.Context, p *domain.Project) error {
 	m.mu.Lock()
 	defer m.mu.Unlock()
+	if existing, ok := m.projects[p.ID]; ok {
+		if !existing.CreatedAt.IsZero() && (p.CreatedAt.IsZero() || existing.CreatedAt.Before(p.CreatedAt)) {
+			p.CreatedAt = existing.CreatedAt
+		}
+		p.EvidenceIDs = mergeStrings(existing.EvidenceIDs, p.EvidenceIDs)
+	}
 	m.projects[p.ID] = p
 	return nil
 }
@@ -277,6 +283,26 @@ func (m *MemoryStore) ListRelationshipsByProject(ctx context.Context, projectID 
 func (m *MemoryStore) SaveScore(ctx context.Context, s *domain.ProjectScore) error {
 	m.mu.Lock()
 	defer m.mu.Unlock()
+	for _, existing := range m.scores[s.ProjectID] {
+		if existing.ScoreType == s.ScoreType && existing.ScoreVersion == s.ScoreVersion && existing.InputHash == s.InputHash {
+			return nil
+		}
+	}
+	var previous *domain.ProjectScore
+	for _, candidate := range m.scores[s.ProjectID] {
+		if candidate.ScoreType == s.ScoreType && (previous == nil || candidate.CalculatedAt.After(previous.CalculatedAt)) {
+			previous = candidate
+		}
+	}
+	if previous != nil {
+		previousValue := previous.ScoreValue
+		movement := s.ScoreValue - previous.ScoreValue
+		s.PreviousValue = &previousValue
+		s.Movement = &movement
+		if movement != 0 {
+			s.MovementReasons = append(s.MovementReasons, "Persisted scoring inputs changed; compare input hashes and factor decomposition.")
+		}
+	}
 	m.scores[s.ProjectID] = append(m.scores[s.ProjectID], s)
 
 	// Also update the project's fast-lookup map
@@ -287,6 +313,19 @@ func (m *MemoryStore) SaveScore(ctx context.Context, s *domain.ProjectScore) err
 		p.Scores[s.ScoreType] = s.ScoreValue
 	}
 	return nil
+}
+
+func (m *MemoryStore) ListScoreHistory(ctx context.Context, projectID, scoreType string) ([]*domain.ProjectScore, error) {
+	m.mu.RLock()
+	defer m.mu.RUnlock()
+	var result []*domain.ProjectScore
+	for _, score := range m.scores[projectID] {
+		if scoreType == "" || score.ScoreType == scoreType {
+			result = append(result, score)
+		}
+	}
+	sort.Slice(result, func(i, j int) bool { return result[i].CalculatedAt.Before(result[j].CalculatedAt) })
+	return result, nil
 }
 
 func (m *MemoryStore) GetLatestScores(ctx context.Context, projectID string) (map[string]*domain.ProjectScore, error) {
@@ -360,6 +399,19 @@ func (m *MemoryStore) ListProcurements(ctx context.Context, limit, offset int) (
 	return list[offset:end], nil
 }
 
+func (m *MemoryStore) ListProcurementsByProject(ctx context.Context, projectID string) ([]*domain.Procurement, error) {
+	m.mu.RLock()
+	defer m.mu.RUnlock()
+	var list []*domain.Procurement
+	for _, procurement := range m.procurements {
+		if procurement.ProjectID == projectID {
+			list = append(list, procurement)
+		}
+	}
+	sort.Slice(list, func(i, j int) bool { return list[i].CreatedAt.After(list[j].CreatedAt) })
+	return list, nil
+}
+
 func (m *MemoryStore) SaveCapitalItem(ctx context.Context, c *domain.CapitalItem) error {
 	m.mu.Lock()
 	defer m.mu.Unlock()
@@ -392,7 +444,7 @@ func (m *MemoryStore) ListAllCapitalItems(ctx context.Context) ([]*domain.Capita
 func (m *MemoryStore) SaveSignal(ctx context.Context, s *domain.Signal) error {
 	m.mu.Lock()
 	defer m.mu.Unlock()
-	m.signals = append(m.signals, s)
+	m.signals[s.ID] = s
 	return nil
 }
 
@@ -469,32 +521,60 @@ func (m *MemoryStore) GetRadarStats(ctx context.Context) (*RadarStats, error) {
 		TotalProjects:     len(m.projects),
 		SectorBreakdown:   make(map[string]int64),
 		ProvinceBreakdown: make(map[string]int64),
+		DataStatus:        domain.StatusHealthy,
+		GeneratedAt:       time.Now().UTC(),
 	}
 
 	weekAgo := time.Now().Add(-7 * 24 * time.Hour)
 	for _, p := range m.projects {
-		stats.TotalCapexCAD += p.CapexCAD
-		stats.SectorBreakdown[string(p.Sector)] += p.CapexCAD
-		stats.ProvinceBreakdown[p.Province] += p.CapexCAD
-
-		if p.Scores != nil {
-			if b, ok := p.Scores["buildability"]; ok && b >= 75.0 {
-				stats.AcceleratingProjectsCount++
-			} else if b, ok := p.Scores["buildability"]; ok && b < 40.0 {
-				stats.StalledProjectsCount++
-			}
+		if p.CapexStatus == domain.ConfidenceVerified || p.CapexStatus == domain.ConfidenceSupported || p.CapexStatus == domain.ConfidenceReported {
+			stats.TotalCapexCAD += p.CapexCAD
+			stats.SectorBreakdown[string(p.Sector)] += p.CapexCAD
+			stats.ProvinceBreakdown[p.Province] += p.CapexCAD
+		} else {
+			stats.UnknownCapexProjects++
 		}
 	}
 
-	for _, ev := range m.events {
-		if ev.EventDate.After(weekAgo) {
-			if p, ok := m.projects[ev.ProjectID]; ok {
-				// Estimate active capital motion proportionally
-				stats.CapitalMovingWeekCAD += p.CapexCAD / 10
-			}
+	accelerating := make(map[string]bool)
+	stalled := make(map[string]bool)
+	for _, signal := range m.signals {
+		if !signal.Timestamp.After(weekAgo) { continue }
+		switch signal.Type {
+		case domain.SignalTimelineSlip, domain.SignalProjectDelay, domain.SignalPoliticalSupportLoss:
+			stalled[signal.ProjectID] = true
+		default:
+			accelerating[signal.ProjectID] = true
 		}
 	}
+	stats.AcceleratingProjectsCount = len(accelerating)
+	stats.StalledProjectsCount = len(stalled)
 
-	stats.ActiveProcurementsCount = len(m.procurements)
+	for _, item := range m.capitalItems {
+		if item.CreatedAt.After(weekAgo) && item.AmountType == "exact" && (item.Status == domain.CapitalCommitted || item.Status == domain.CapitalClosed || item.Status == domain.CapitalDisbursed) {
+			stats.CapitalMovingWeekCAD += item.AmountCAD
+		}
+	}
+	for _, procurement := range m.procurements {
+		stage := strings.ToUpper(procurement.Stage)
+		if stage != "AWARD" && stage != "CANCELLATION" && stage != "COMPLETE" {
+			stats.ActiveProcurementsCount++
+		}
+	}
+	if stats.UnknownCapexProjects > 0 { stats.DataStatus = domain.StatusPartial }
 	return stats, nil
+}
+
+func mergeStrings(left, right []string) []string {
+	seen := make(map[string]struct{}, len(left)+len(right))
+	result := make([]string, 0, len(left)+len(right))
+	for _, values := range [][]string{left, right} {
+		for _, value := range values {
+			if value == "" { continue }
+			if _, ok := seen[value]; ok { continue }
+			seen[value] = struct{}{}
+			result = append(result, value)
+		}
+	}
+	return result
 }

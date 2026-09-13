@@ -31,6 +31,9 @@ type RadarStats struct {
 	ActiveProcurementsCount   int              `json:"active_procurements_count"`
 	SectorBreakdown           map[string]int64 `json:"sector_breakdown"`
 	ProvinceBreakdown         map[string]int64 `json:"province_breakdown"`
+	UnknownCapexProjects      int              `json:"unknown_capex_projects"`
+	DataStatus                domain.IntelligenceStatus `json:"data_status"`
+	GeneratedAt               time.Time        `json:"generated_at"`
 }
 
 // Store defines persistence operations for CanadaOpportunityGraph.
@@ -54,10 +57,12 @@ type Store interface {
 
 	SaveScore(ctx context.Context, s *domain.ProjectScore) error
 	GetLatestScores(ctx context.Context, projectID string) (map[string]*domain.ProjectScore, error)
+	ListScoreHistory(ctx context.Context, projectID, scoreType string) ([]*domain.ProjectScore, error)
 	ListRankings(ctx context.Context, scoreType string, limit int) ([]*domain.Project, error)
 
 	SaveProcurement(ctx context.Context, p *domain.Procurement) error
 	ListProcurements(ctx context.Context, limit, offset int) ([]*domain.Procurement, error)
+	ListProcurementsByProject(ctx context.Context, projectID string) ([]*domain.Procurement, error)
 
 	SaveCapitalItem(ctx context.Context, c *domain.CapitalItem) error
 	ListCapitalItemsByProject(ctx context.Context, projectID string) ([]*domain.CapitalItem, error)

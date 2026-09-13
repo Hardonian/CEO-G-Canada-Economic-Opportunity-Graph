@@ -8,11 +8,7 @@ import (
 	"os"
 
 	"github.com/Hardonian/CEO-G-Canada-Economic-Opportunity-Graph/adapters"
-	"github.com/Hardonian/CEO-G-Canada-Economic-Opportunity-Graph/adapters/canadabuys"
-	"github.com/Hardonian/CEO-G-Canada-Economic-Opportunity-Graph/adapters/cer"
-	"github.com/Hardonian/CEO-G-Canada-Economic-Opportunity-Graph/adapters/iaac"
-	"github.com/Hardonian/CEO-G-Canada-Economic-Opportunity-Graph/adapters/ideas_defence"
-	"github.com/Hardonian/CEO-G-Canada-Economic-Opportunity-Graph/adapters/nrcan_major_projects"
+	"github.com/Hardonian/CEO-G-Canada-Economic-Opportunity-Graph/adapters/official"
 	"github.com/Hardonian/CEO-G-Canada-Economic-Opportunity-Graph/internal/api"
 	"github.com/Hardonian/CEO-G-Canada-Economic-Opportunity-Graph/internal/config"
 	"github.com/Hardonian/CEO-G-Canada-Economic-Opportunity-Graph/internal/database"
@@ -25,11 +21,7 @@ func main() {
 
 	// Register authoritative adapters
 	adapterList := []adapters.Adapter{
-		iaac.NewIAACAdapter(""),
-		canadabuys.NewCanadaBuysAdapter(""),
-		nrcan_major_projects.NewNRCanAdapter(""),
-		ideas_defence.NewIDEaSAdapter(""),
-		cer.NewCERAdapter(""),
+		official.NewAdapter(""),
 	}
 
 	pipeline := ingestion.NewPipeline(store, adapterList)

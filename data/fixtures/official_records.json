@@ -1,0 +1,243 @@
+[
+  {
+    "external_id": "cnsc:darlington-new-nuclear-project",
+    "external_ids": {
+      "cnsc_facility": "darlington-new-nuclear-project"
+    },
+    "name": "Darlington New Nuclear Project — Unit 1",
+    "summary": "Ontario Power Generation is constructing one BWRX-300 reactor at the Darlington New Nuclear Project site in Clarington, Ontario.",
+    "sector": "Nuclear & Clean Power",
+    "subsector": "Small Modular Reactor",
+    "province": "ON",
+    "location_name": "Darlington site, Clarington",
+    "stage": "CONSTRUCTION",
+    "capex_cad": 7700000000,
+    "capex_status": "REPORTED",
+    "confidence": "SUPPORTED",
+    "proponent": {
+      "legal_name": "Ontario Power Generation Inc.",
+      "common_name": "Ontario Power Generation",
+      "aliases": ["OPG"],
+      "entity_type": "CrownCorp",
+      "jurisdiction": "CA:ON",
+      "identifiers": {}
+    },
+    "sources": [
+      {
+        "source_id": "cnsc-dnnp-rhp1-2026-03-30",
+        "publisher": "Canadian Nuclear Safety Commission",
+        "source_url": "https://www.cnsc-ccsn.gc.ca/eng/reactors/new-reactor-power-plant-projects/new-reactor-power-plant-facilities/darlington-new-nuclear-project/",
+        "publication_date": "2026-03-30T00:00:00Z",
+        "effective_date": "2026-03-30T00:00:00Z",
+        "retrieved_at": "2026-09-12T00:00:00Z",
+        "source_class": "federal_regulator",
+        "source_tier": 1,
+        "locator": "Status and regulatory hold points",
+        "excerpt": "The construction licence is active and the first regulatory hold point was removed on March 30, 2026.",
+        "confidence": "VERIFIED"
+      },
+      {
+        "source_id": "opg-2025-financial-results-dnnp",
+        "publisher": "Ontario Power Generation Inc.",
+        "source_url": "https://www.opg.com/wp-content/uploads/2026/03/2025-Q4-OPG-PR-MDA-FS-FINAL.pdf",
+        "publication_date": "2026-03-12T00:00:00Z",
+        "effective_date": "2026-03-12T00:00:00Z",
+        "retrieved_at": "2026-09-12T00:00:00Z",
+        "source_class": "corporate_issuer_filing",
+        "source_tier": 2,
+        "locator": "Management's Discussion & Analysis, pages 5 and 22",
+        "excerpt": "OPG reports a $7.7 billion approved budget for Unit 1 and shared infrastructure and describes active construction.",
+        "confidence": "REPORTED"
+      }
+    ],
+    "events": [
+      {
+        "external_id": "dnnp-rhp1-removed-2026-03-30",
+        "event_type": "regulatory.hold_point_removed",
+        "event_date": "2026-03-30T00:00:00Z",
+        "previous_stage": "PERMITTING",
+        "new_stage": "CONSTRUCTION",
+        "title": "First construction hold point removed",
+        "description": "CNSC states that the first regulatory hold point was removed, allowing the licensed construction sequence to progress.",
+        "source_id": "cnsc-dnnp-rhp1-2026-03-30"
+      }
+    ],
+    "capital_items": []
+  },
+  {
+    "external_id": "iaac:83857",
+    "external_ids": {
+      "iaac_registry": "83857"
+    },
+    "name": "Crawford Nickel Project",
+    "summary": "Canada Nickel Company proposes an open-pit nickel-cobalt mine and on-site metal mill approximately 42 kilometres north of Timmins, Ontario.",
+    "sector": "Critical Minerals",
+    "subsector": "Nickel-Cobalt Mine and Mill",
+    "province": "ON",
+    "location_name": "Approximately 42 km north of Timmins",
+    "stage": "PERMITTING",
+    "capex_status": "UNKNOWN",
+    "confidence": "VERIFIED",
+    "proponent": {
+      "legal_name": "Canada Nickel Company Inc.",
+      "common_name": "Canada Nickel Company",
+      "aliases": [],
+      "entity_type": "Corporation",
+      "jurisdiction": "CA:ON",
+      "identifiers": {}
+    },
+    "sources": [
+      {
+        "source_id": "iaac-83857-decision-2026-07-31",
+        "publisher": "Impact Assessment Agency of Canada",
+        "source_url": "https://iaac-aeic.gc.ca/050/evaluations/proj/83857",
+        "publication_date": "2026-07-31T00:00:00Z",
+        "effective_date": "2026-07-31T00:00:00Z",
+        "retrieved_at": "2026-09-12T00:00:00Z",
+        "source_class": "federal_regulatory_registry",
+        "source_tier": 1,
+        "locator": "Latest update and post-decision status",
+        "excerpt": "A federal impact assessment decision statement was issued July 31, 2026; additional authorizations and permits remain relevant.",
+        "confidence": "VERIFIED"
+      }
+    ],
+    "events": [
+      {
+        "external_id": "iaac-83857-decision-issued-2026-07-31",
+        "event_type": "regulatory.impact_assessment_decision_issued",
+        "event_date": "2026-07-31T00:00:00Z",
+        "previous_stage": "ENVIRONMENTAL_REVIEW",
+        "new_stage": "PERMITTING",
+        "title": "Federal impact assessment decision statement issued",
+        "description": "The federal impact assessment decision phase completed and the project entered post-decision follow-up, subject to permits and conditions.",
+        "source_id": "iaac-83857-decision-2026-07-31"
+      }
+    ],
+    "capital_items": []
+  },
+  {
+    "external_id": "iaac:80116",
+    "external_ids": {
+      "iaac_registry": "80116"
+    },
+    "name": "Contrecœur Port Terminal Expansion Project",
+    "summary": "The Montreal Port Authority proposes a container terminal in Contrecœur with a maximum annual capacity of 1.15 million twenty-foot-equivalent containers.",
+    "sector": "Transportation & Ports",
+    "subsector": "Container Port Terminal",
+    "province": "QC",
+    "location_name": "Contrecœur, approximately 40 km northeast of Montreal",
+    "stage": "UNKNOWN",
+    "capex_status": "UNKNOWN",
+    "confidence": "VERIFIED",
+    "proponent": {
+      "legal_name": "Montreal Port Authority",
+      "common_name": "Montreal Port Authority",
+      "aliases": ["Administration portuaire de Montréal"],
+      "entity_type": "PortAuthority",
+      "jurisdiction": "CA:QC",
+      "identifiers": {}
+    },
+    "sources": [
+      {
+        "source_id": "iaac-80116-consultation-2026-09-04",
+        "publisher": "Impact Assessment Agency of Canada",
+        "source_url": "https://iaac-aeic.gc.ca/050/evaluations/proj/80116?culture=en-CA",
+        "publication_date": "2026-09-04T00:00:00Z",
+        "effective_date": "2026-09-04T00:00:00Z",
+        "retrieved_at": "2026-09-12T00:00:00Z",
+        "source_class": "federal_regulatory_registry",
+        "source_tier": 1,
+        "locator": "Latest update and project overview",
+        "excerpt": "IAAC opened consultation on proposed Decision Statement amendments; the source does not establish a current construction stage.",
+        "confidence": "VERIFIED"
+      }
+    ],
+    "events": [
+      {
+        "external_id": "iaac-80116-amendment-consultation-2026-09-04",
+        "event_type": "regulatory.decision_statement_amendment_consultation",
+        "event_date": "2026-09-04T00:00:00Z",
+        "previous_stage": null,
+        "new_stage": null,
+        "title": "Consultation opened on proposed Decision Statement amendments",
+        "description": "IAAC invited review of a draft analysis and proposed amendments through September 24, 2026.",
+        "source_id": "iaac-80116-consultation-2026-09-04"
+      }
+    ],
+    "capital_items": []
+  },
+  {
+    "external_id": "oneida-energy-storage",
+    "external_ids": {},
+    "name": "Oneida Energy Storage Project",
+    "summary": "Oneida is a 250 MW / 1,000 MWh battery energy storage facility in Haldimand County, Ontario that entered commercial operations in 2025.",
+    "sector": "Clean Energy & Grid",
+    "subsector": "Battery Energy Storage",
+    "province": "ON",
+    "location_name": "Haldimand County",
+    "stage": "OPERATING",
+    "capex_status": "UNKNOWN",
+    "confidence": "SUPPORTED",
+    "proponent": {
+      "legal_name": "Oneida Energy Storage LP",
+      "common_name": "Oneida Energy Storage",
+      "aliases": [],
+      "entity_type": "LimitedPartnership",
+      "jurisdiction": "CA:ON",
+      "identifiers": {}
+    },
+    "sources": [
+      {
+        "source_id": "northland-oneida-commercial-operations-2025-05-07",
+        "publisher": "Northland Power Inc.",
+        "source_url": "https://northlandpower.com/northland-power-announces-commercial-operations-at-oneida-energy-storage-project-canadas-largest-battery-storage-facility-delivered-ahead-of-schedule-and-below-budget/",
+        "publication_date": "2025-05-07T00:00:00Z",
+        "effective_date": "2025-05-07T00:00:00Z",
+        "retrieved_at": "2026-09-12T00:00:00Z",
+        "source_class": "corporate_issuer_release",
+        "source_tier": 2,
+        "locator": "Announcement and project description",
+        "excerpt": "Northland Power announced commercial operations for the 250 MW / 1,000 MWh facility on May 7, 2025.",
+        "confidence": "REPORTED"
+      },
+      {
+        "source_id": "cib-oneida-investment-2021-05-19",
+        "publisher": "Canada Infrastructure Bank",
+        "source_url": "https://cib-bic.ca/en/medias/articles/canada-infrastructure-bank-to-invest-up-to-170-million-in-one-of-the-worlds-largest-clean-energy-storage-project/",
+        "publication_date": "2021-05-19T00:00:00Z",
+        "effective_date": "2021-05-19T00:00:00Z",
+        "retrieved_at": "2026-09-12T00:00:00Z",
+        "source_class": "crown_corporation_release",
+        "source_tier": 1,
+        "locator": "Investment announcement",
+        "excerpt": "CIB announced an investment of up to $170 million, subject at that time to final due diligence and approval.",
+        "confidence": "VERIFIED"
+      }
+    ],
+    "events": [
+      {
+        "external_id": "oneida-commercial-operations-2025-05-07",
+        "event_type": "project.commercial_operations_started",
+        "event_date": "2025-05-07T00:00:00Z",
+        "previous_stage": "COMMISSIONING",
+        "new_stage": "OPERATING",
+        "title": "Commercial operations announced",
+        "description": "Northland Power announced that Oneida had entered commercial operations.",
+        "source_id": "northland-oneida-commercial-operations-2025-05-07"
+      }
+    ],
+    "capital_items": [
+      {
+        "external_id": "cib-oneida-up-to-170m-2021",
+        "category": "cib",
+        "status": "conditionally_committed",
+        "amount_cad": 170000000,
+        "amount_type": "maximum",
+        "provider_name": "Canada Infrastructure Bank",
+        "notes": "Public announcement stated an upper bound and conditions; it is not treated as an exact disbursed amount.",
+        "event_date": "2021-05-19T00:00:00Z",
+        "source_id": "cib-oneida-investment-2021-05-19"
+      }
+    ]
+  }
+]

@@ -1,16 +1,1 @@
-[
-  {
-    "filing_id": "CER-2026-NE-09",
-    "facility_name": "Windsor-Detroit Clean Power Intertie",
-    "proponent_name": "Hydro One Networks Inc.",
-    "province": "ON",
-    "latitude": 42.3149,
-    "longitude": -83.0364,
-    "sector": "Clean Energy & Grid",
-    "subsector": "International Power Line (IPL)",
-    "stage": "PERMITTING",
-    "capex_cad": 620000000,
-    "filing_url": "https://apps.cer-rec.gc.ca/pplisapi/filing/CER-2026-NE-09",
-    "summary": "High-voltage direct current (HVDC) 500kV international transmission interconnection across the Detroit River supporting cross-border clean electricity export."
-  }
-]
+[]

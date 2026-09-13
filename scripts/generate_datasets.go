@@ -9,11 +9,7 @@ import (
 	"time"
 
 	"github.com/Hardonian/CEO-G-Canada-Economic-Opportunity-Graph/adapters"
-	"github.com/Hardonian/CEO-G-Canada-Economic-Opportunity-Graph/adapters/canadabuys"
-	"github.com/Hardonian/CEO-G-Canada-Economic-Opportunity-Graph/adapters/cer"
-	"github.com/Hardonian/CEO-G-Canada-Economic-Opportunity-Graph/adapters/iaac"
-	"github.com/Hardonian/CEO-G-Canada-Economic-Opportunity-Graph/adapters/ideas_defence"
-	"github.com/Hardonian/CEO-G-Canada-Economic-Opportunity-Graph/adapters/nrcan_major_projects"
+	"github.com/Hardonian/CEO-G-Canada-Economic-Opportunity-Graph/adapters/official"
 	"github.com/Hardonian/CEO-G-Canada-Economic-Opportunity-Graph/internal/cegs"
 	"github.com/Hardonian/CEO-G-Canada-Economic-Opportunity-Graph/internal/database"
 	"github.com/Hardonian/CEO-G-Canada-Economic-Opportunity-Graph/internal/ingestion"
@@ -24,11 +20,7 @@ func main() {
 	store := database.NewMemoryStore()
 
 	adapterList := []adapters.Adapter{
-		iaac.NewIAACAdapter("data/fixtures/iaac_projects.json"),
-		canadabuys.NewCanadaBuysAdapter("data/fixtures/canadabuys_tenders.json"),
-		nrcan_major_projects.NewNRCanAdapter("data/fixtures/nrcan_major_projects.json"),
-		ideas_defence.NewIDEaSAdapter("data/fixtures/ideas_defence.json"),
-		cer.NewCERAdapter("data/fixtures/cer_facilities.json"),
+		official.NewAdapter("data/fixtures/official_records.json"),
 	}
 
 	pipeline := ingestion.NewPipeline(store, adapterList)
