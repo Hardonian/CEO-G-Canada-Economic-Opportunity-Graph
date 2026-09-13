@@ -5,9 +5,11 @@ CanadaOpportunityGraph rejects opaque, non-deterministic LLM score generation. A
 ---
 
 ## 1. Buildability Score (`buildability-v1.0`)
+
 **Question Answered:** *How likely is this project to reach operational execution?*
 
-### Weighting Breakdown:
+### Buildability Weighting Breakdown
+
 1. **Stage Progression Maturity (15%)**: Numerical progression from `DISCOVERED` (10 pts) up to `FID` / `CONSTRUCTION` (95 pts) and `OPERATING` (100 pts).
 2. **Financing Readiness (15%)**: Ratio of closed/committed capital against reported CAPEX ($ CAD).
 3. **Indigenous Agreements (15%)**: Presence of formal First Nations/Inuit/Métis Impact Benefit Agreements (IBAs) or equity joint ventures.
@@ -20,9 +22,11 @@ CanadaOpportunityGraph rejects opaque, non-deterministic LLM score generation. A
 ---
 
 ## 2. Investability Score (`investability-v1.0`)
+
 **Question Answered:** *Is there an attractive, actionable capital opportunity around this asset?*
 
-### Weighting Breakdown:
+### Investability Weighting Breakdown
+
 - **Capital Scale & Gap (25%)**: Dollar magnitude of total CAPEX.
 - **Financing Velocity (25%)**: Rate of recent commitments and presence of Crown co-investment (CIB, CGF).
 - **Strategic Importance (25%)**: Critical minerals, baseload clean power, or Arctic sovereignty mandate.
@@ -31,9 +35,11 @@ CanadaOpportunityGraph rejects opaque, non-deterministic LLM score generation. A
 ---
 
 ## 3. Supplierability Score (`supplierability-v1.0`)
+
 **Question Answered:** *How strong is the opportunity for contractors, engineers, and suppliers?*
 
-### Weighting Breakdown:
+### Supplierability Weighting Breakdown
+
 - **Procurement Proximity (30%)**: Lifecycle proximity to active tendering.
 - **Tender Pipeline Volume (25%)**: Active notices published on CanadaBuys.
 - **Technical Intensity (25%)**: Nuclear, specialized mining, or high-voltage engineering density.
@@ -42,6 +48,7 @@ CanadaOpportunityGraph rejects opaque, non-deterministic LLM score generation. A
 ---
 
 ## 4. Canadian AI Sovereignty Index (`cai-sovereignty-v1.0`)
+
 - **Data Residency (15%)**: 100% data at rest stored within Canadian borders.
 - **Compute Residency (15%)**: GPUs physically operating in Canadian facilities.
 - **Canadian Ownership (15%)**: Domestic equity control and governance.

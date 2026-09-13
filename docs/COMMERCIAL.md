@@ -14,6 +14,7 @@ Commercial Value ◄── Deeper Historical Graph ◄── Better OpportunityG
 ```
 
 The standard itself is free public infrastructure. The commercial moat is built upon:
+
 1. **High-Frequency Ingestion**: Real-time polling of hundreds of municipal and regulatory gazettes.
 2. **Proprietary Historical Depth**: Longitudinal event ledgers and backtested delay patterns.
 3. **Automated Supplier Matching**: Deep capability profile matching against downstream opportunity graphs.
