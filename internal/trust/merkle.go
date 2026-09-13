@@ -157,7 +157,11 @@ func (m *MerkleTree) GenerateProof(evidenceID string) (*MerkleProof, error) {
 		}
 		
 		if siblingIndex >= 0 && siblingIndex < len(currentLevel) {
-			path = append(path, currentLevel[siblingIndex])
+			// Only store the sibling's hash in the proof path
+			path = append(path, MerkleNode{
+				Hash:    currentLevel[siblingIndex].Hash,
+				IsLeaf:  false,
+			})
 		}
 		currentIndex = currentIndex / 2
 	}
@@ -179,18 +183,19 @@ func VerifyProof(proof *MerkleProof) bool {
 	}
 	
 	currentHash := hashString(fmt.Sprintf("%s:%s:%d", proof.Leaf.EvidenceID, proof.Leaf.ContentHash, proof.Leaf.Index))
-	for _, node := range proof.Path {
-		if node.LeftHash != "" && node.RightHash != "" {
-			if node.LeftHash == currentHash {
-				currentHash = hashString(currentHash + node.RightHash)
-			} else if node.RightHash == currentHash {
-				currentHash = hashString(node.LeftHash + currentHash)
-			} else {
-				return false
-			}
-		} else if node.Hash != "" && node.Hash != currentHash {
-			currentHash = hashString(currentHash + node.Hash)
+	
+	// The path contains siblings in order from leaf to root
+	// We need to know if current node was left or right child at each level
+	index := proof.Leaf.Index
+	for _, sibling := range proof.Path {
+		if index%2 == 0 {
+			// Current was left child, sibling is right
+			currentHash = hashString(currentHash + sibling.Hash)
+		} else {
+			// Current was right child, sibling is left
+			currentHash = hashString(sibling.Hash + currentHash)
 		}
+		index = index / 2
 	}
 	
 	return currentHash == proof.RootHash
