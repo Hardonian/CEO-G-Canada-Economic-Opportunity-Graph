@@ -190,11 +190,11 @@ function normalizeProject(value: unknown): Project | null {
   }
 
   const scores = raw.scores && typeof raw.scores === "object"
-    ? Object.fromEntries(
+    ? (Object.fromEntries(
         Object.entries(raw.scores as Record<string, unknown>).filter(
           ([, score]) => typeof score === "number" && Number.isFinite(score) && score >= 0 && score <= 100,
         ),
-      )
+      ) as Record<string, number>)
     : undefined;
   const coordinate = (candidate: unknown, min: number, max: number) =>
     typeof candidate === "number" && Number.isFinite(candidate) && candidate >= min && candidate <= max

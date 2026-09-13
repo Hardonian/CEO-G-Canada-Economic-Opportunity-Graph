@@ -122,6 +122,7 @@ const REFERENCE_SCENARIOS: Scenario[] = [
 ];
 
 const STAGE_PROBABILITY: Record<LifecycleStage, number> = {
+  UNKNOWN: 0.1,
   DISCOVERED: 0.12,
   ANNOUNCED: 0.2,
   REFERRED: 0.28,
