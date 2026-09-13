@@ -2,7 +2,6 @@ package capitalstack
 
 import (
 	"fmt"
-	"strings"
 
 	"github.com/Hardonian/CEO-G-Canada-Economic-Opportunity-Graph/internal/domain"
 )
