@@ -22,6 +22,8 @@ func main() {
 	if err != nil {
 		log.Fatalf("[FATAL] Invalid runtime configuration: %v", err)
 	}
+	processContext, stopSignals := signal.NotifyContext(context.Background(), os.Interrupt, syscall.SIGTERM)
+	defer stopSignals()
 	store := database.NewMemoryStore()
 
 	// Register authoritative adapters
@@ -31,16 +33,20 @@ func main() {
 	}
 
 	pipeline := ingestion.NewPipeline(store, adapterList)
-	ingestContext, cancelIngest := context.WithTimeout(context.Background(), cfg.InitialIngestTimeout)
-	defer cancelIngest()
+	ingestContext, cancelIngest := context.WithTimeout(processContext, cfg.InitialIngestTimeout)
 
 	log.Println("[INFO] Bootstrapping initial ingestion from authoritative adapters...")
 	report, err := pipeline.Run(ingestContext)
+	cancelIngest()
 	if err != nil {
 		log.Printf("[WARN] Ingestion warning: %v\n", err)
 	} else {
 		log.Printf("[INFO] Ingestion complete: %d projects, %d entities, %d opportunities in %v\n",
 			report.ProjectsIngested, report.EntitiesResolved, report.OpportunitiesDerived, report.Duration)
+	}
+	if processContext.Err() != nil {
+		log.Println("[INFO] Shutdown signal received during initial ingestion")
+		return
 	}
 
 	server, err := api.NewServerWithOptions(store, api.Options{
@@ -71,8 +77,6 @@ func main() {
 	log.Printf("[INFO] CanadaOpportunityGraph API running on %s\n", cfg.ListenAddress())
 	log.Printf("[INFO] CEGS 0.1 Specification active at /api/v1/cegs/export\n")
 
-	shutdownSignal, stopSignals := signal.NotifyContext(context.Background(), os.Interrupt, syscall.SIGTERM)
-	defer stopSignals()
 	serverErrors := make(chan error, 1)
 	go func() {
 		serverErrors <- httpServer.ListenAndServe()
@@ -84,7 +88,7 @@ func main() {
 			log.Fatalf("[FATAL] HTTP server error: %v", serveErr)
 		}
 		return
-	case <-shutdownSignal.Done():
+	case <-processContext.Done():
 		log.Println("[INFO] Shutdown signal received; draining API requests...")
 	}
 

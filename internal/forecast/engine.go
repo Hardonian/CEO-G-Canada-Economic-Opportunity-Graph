@@ -7,6 +7,7 @@ import (
 	"errors"
 	"fmt"
 	"math"
+	"net/url"
 	"regexp"
 	"sort"
 	"strings"
@@ -222,6 +223,12 @@ func normalizeContext(ctx Context, asOf time.Time) (normalizedContext, error) {
 	if strings.TrimSpace(ctx.Project.ID) == "" {
 		return normalizedContext{}, fmt.Errorf("%w: project id is required", ErrInvalidInput)
 	}
+	if len(ctx.Project.ID) > 256 || len(ctx.Project.Name) > 1_000 {
+		return normalizedContext{}, fmt.Errorf("%w: project identity fields exceed safe length limits", ErrInvalidInput)
+	}
+	if !validLifecycleStage(ctx.Project.CurrentStage) {
+		return normalizedContext{}, fmt.Errorf("%w: unsupported lifecycle stage %q", ErrInvalidInput, ctx.Project.CurrentStage)
+	}
 	if ctx.Project.CapexCAD < 0 {
 		return normalizedContext{}, fmt.Errorf("%w: project capex cannot be negative", ErrInvalidInput)
 	}
@@ -264,6 +271,13 @@ func normalizeContext(ctx Context, asOf time.Time) (normalizedContext, error) {
 		if err := checkID("event", event.ID); err != nil {
 			return normalizedContext{}, err
 		}
+		if !event.CreatedAt.IsZero() && event.CreatedAt.After(asOf) {
+			warn("future_event_ignored")
+			if event.Evidence != nil {
+				allEvidence = append(allEvidence, event.Evidence)
+			}
+			continue
+		}
 		if event.EventDate.IsZero() {
 			warn("event_missing_event_date")
 		} else if event.EventDate.After(asOf) {
@@ -272,6 +286,9 @@ func normalizeContext(ctx Context, asOf time.Time) (normalizedContext, error) {
 				allEvidence = append(allEvidence, event.Evidence)
 			}
 			continue
+		}
+		if event.CreatedAt.IsZero() {
+			warn("event_missing_observation_time")
 		}
 		if err := validateEvidenceLink(event.EvidenceID, event.Evidence); err != nil {
 			return normalizedContext{}, err
@@ -329,6 +346,9 @@ func normalizeContext(ctx Context, asOf time.Time) (normalizedContext, error) {
 			}
 			continue
 		}
+		if relationship.CreatedAt.IsZero() {
+			warn("relationship_missing_observation_time")
+		}
 		if relationship.ValidFrom != nil && relationship.ValidFrom.After(asOf) {
 			warn("future_relationship_ignored")
 			continue
@@ -364,6 +384,9 @@ func normalizeContext(ctx Context, asOf time.Time) (normalizedContext, error) {
 			}
 			continue
 		}
+		if procurement.CreatedAt.IsZero() {
+			warn("procurement_missing_observation_time")
+		}
 		if err := validateEvidenceLink(procurement.EvidenceID, procurement.Evidence); err != nil {
 			return normalizedContext{}, err
 		}
@@ -388,6 +411,9 @@ func normalizeContext(ctx Context, asOf time.Time) (normalizedContext, error) {
 		if !opportunity.CreatedAt.IsZero() && opportunity.CreatedAt.After(asOf) {
 			warn("future_opportunity_ignored")
 			continue
+		}
+		if opportunity.CreatedAt.IsZero() {
+			warn("opportunity_missing_observation_time")
 		}
 		n.opportunities = append(n.opportunities, opportunity)
 	}
@@ -422,6 +448,9 @@ func normalizeContext(ctx Context, asOf time.Time) (normalizedContext, error) {
 		}
 		if strings.TrimSpace(evidence.ID) == "" {
 			return normalizedContext{}, fmt.Errorf("%w: evidence id is required", ErrInvalidInput)
+		}
+		if err := validateEvidenceBoundary(evidence); err != nil {
+			return normalizedContext{}, err
 		}
 		digest := evidenceDigest(evidence)
 		if existingDigest, exists := seenEvidenceDigests[evidence.ID]; exists {
@@ -486,8 +515,25 @@ func validateOwnedRecord(kind, id, projectID, expectedProjectID string) error {
 	if strings.TrimSpace(id) == "" {
 		return fmt.Errorf("%w: %s id is required", ErrInvalidInput, kind)
 	}
+	if len(id) > 256 || len(projectID) > 256 {
+		return fmt.Errorf("%w: %s identity fields exceed safe length limits", ErrInvalidInput, kind)
+	}
 	if projectID != expectedProjectID {
 		return fmt.Errorf("%w: %s %q belongs to project %q, expected %q", ErrInvalidInput, kind, id, projectID, expectedProjectID)
+	}
+	return nil
+}
+
+func validateEvidenceBoundary(evidence *domain.Evidence) error {
+	if len(evidence.ID) > 256 || len(evidence.Publisher) > 512 || len(evidence.SourceURL) > 4_096 || len(evidence.ContentHash) > 512 {
+		return fmt.Errorf("%w: evidence %q fields exceed safe length limits", ErrInvalidInput, evidence.ID)
+	}
+	if evidence.SourceURL == "" {
+		return nil
+	}
+	parsed, err := url.Parse(evidence.SourceURL)
+	if err != nil || parsed.Host == "" || (parsed.Scheme != "https" && parsed.Scheme != "http") || parsed.User != nil {
+		return fmt.Errorf("%w: evidence %q source_url must be an http(s) URL without credentials", ErrInvalidInput, evidence.ID)
 	}
 	return nil
 }
@@ -628,6 +674,9 @@ func evaluateDataQuality(ctx normalizedContext, asOf time.Time) DataQuality {
 	evidenceQuality = round1(evidenceQuality)
 	freshness = round1(freshness)
 	score := round1(coverage*0.55 + evidenceQuality*0.30 + freshness*0.15)
+	if conflicted > 0 {
+		score = round1(math.Max(0, score-math.Min(30, float64(conflicted)*15)))
+	}
 	confidence := confidenceForScore(score)
 	sort.Strings(gaps)
 	return DataQuality{
@@ -850,15 +899,7 @@ func forecastMilestone(current, target domain.LifecycleStage, req normalizedRequ
 		additional += scenario.ConstructionDelayMonths
 	}
 	baseMonths = math.Max(1, baseMonths+float64(additional))
-	factor := 1 + scenario.SupplyChainStress*0.30 - scenario.FinancingAvailabilityDelta*0.12 - scenario.PolicySupportDelta*0.08 - scenario.DemandDelta*0.05
-	factor *= 1 - obs.momentum*0.12
-	if current == domain.StageDelayed {
-		factor += 0.20
-	}
-	if current == domain.StagePaused {
-		factor += 0.35
-	}
-	factor = clamp(factor, 0.50, 2.50)
+	factor := scheduleFactor(current, scenario, obs.momentum)
 	baseMonths = math.Max(1, math.Round(baseMonths*factor))
 	earliestMonths := math.Max(1, math.Floor(baseMonths*(1-uncertainty)))
 	latestMonths := math.Max(baseMonths, math.Ceil(baseMonths*(1+uncertainty)))
@@ -881,7 +922,13 @@ func scenarioAssumptions(ctx normalizedContext, scenario Scenario, obs observati
 		textAssumption("current_stage", string(ctx.project.CurrentStage), AssumptionObserved, "Current project snapshot; no hidden stage is inferred.", nil),
 		numericAssumption("financed_share", round1(obs.financedRatio*100), "percent_of_reported_capex", AssumptionObserved, "Only exact committed, closed, or disbursed capital is counted.", obs.financingEvidence),
 		numericAssumption("momentum", round1(obs.momentum), "index_-1_to_1", AssumptionObserved, "Time-decayed supplied signals; no text sentiment inference is performed.", obs.momentumEvidence),
+		numericAssumption("stage_default_months_to_fid", defaultMonthsTo(ctx.project.CurrentStage, domain.StageFID), "months", AssumptionMethodology, "Generic stage-duration prior used only until a project-specific schedule is supplied.", nil),
+		numericAssumption("stage_default_months_to_construction", defaultMonthsTo(ctx.project.CurrentStage, domain.StageConstruction), "months", AssumptionMethodology, "Generic stage-duration prior used only until a project-specific schedule is supplied.", nil),
+		numericAssumption("stage_default_months_to_operation", defaultMonthsTo(ctx.project.CurrentStage, domain.StageOperating), "months", AssumptionMethodology, "Generic stage-duration prior used only until a project-specific schedule is supplied.", nil),
+		numericAssumption("schedule_multiplier", round1(scheduleFactor(ctx.project.CurrentStage, scenario, obs.momentum)), "multiplier", AssumptionMethodology, "Deterministic combination of momentum and the listed scenario stresses, bounded to 0.5..2.5.", nil),
 		numericAssumption("schedule_uncertainty", round1(uncertainty*100), "percent_each_side", AssumptionMethodology, "Interval width expands when evidence support or lifecycle specificity is low.", nil),
+		numericAssumption("capex_range_uncertainty", round1(capexUncertainty(ctx.project.CapexStatus)*100), "percent_each_side", AssumptionMethodology, "Range width is selected from the reported capex confidence classification.", nil),
+		numericAssumption("continuation_reference", 50, "planning_index_points", AssumptionMethodology, "Reference from which the lifecycle maturity driver is expressed.", nil),
 		numericAssumption("continuation_ceiling", ceiling, "planning_index_percent", AssumptionMethodology, "Stage baseline plus listed observed and scenario drivers; not an empirical probability.", nil),
 		numericAssumption("financing_availability_delta", scenario.FinancingAvailabilityDelta, "fraction", AssumptionScenario, "Caller-supplied scenario stress.", nil),
 		numericAssumption("regulatory_delay", float64(scenario.RegulatoryDelayMonths), "months", AssumptionScenario, "Caller-supplied schedule adjustment before FID.", nil),
@@ -986,7 +1033,7 @@ func calculateInputHash(ctx normalizedContext, req normalizedRequest) (string, e
 	}
 	type eventInput struct {
 		ID, Type, EvidenceID string
-		Date                 time.Time
+		Date, Created        time.Time
 		Previous, Next       string
 	}
 	type capitalInput struct {
@@ -1041,7 +1088,7 @@ func calculateInputHash(ctx normalizedContext, req normalizedRequest) (string, e
 		if item.NewStage != nil {
 			next = string(*item.NewStage)
 		}
-		value.Events = append(value.Events, eventInput{item.ID, item.EventType, item.EvidenceID, item.EventDate.UTC(), previous, next})
+		value.Events = append(value.Events, eventInput{item.ID, item.EventType, item.EvidenceID, item.EventDate.UTC(), item.CreatedAt.UTC(), previous, next})
 	}
 	for _, item := range ctx.capital {
 		value.Capital = append(value.Capital, capitalInput{item.ID, string(item.Category), string(item.Status), item.AmountType, item.EvidenceID, item.AmountCAD, item.CreatedAt.UTC()})
@@ -1129,6 +1176,18 @@ func stageCeiling(stage domain.LifecycleStage) float64 {
 	}
 }
 
+func validLifecycleStage(stage domain.LifecycleStage) bool {
+	if stage == "" {
+		return true
+	}
+	for _, candidate := range domain.ValidLifecycleStages() {
+		if stage == candidate {
+			return true
+		}
+	}
+	return false
+}
+
 func hasReached(current, target domain.LifecycleStage) bool {
 	order := map[domain.LifecycleStage]int{domain.StageUnknown: 0, domain.StageDiscovered: 1, domain.StageAnnounced: 2, domain.StageReferred: 3,
 		domain.StageEarlyDevelopment: 4, domain.StageFeasibility: 5, domain.StageEnvironmentalReview: 6, domain.StageFinancing: 6,
@@ -1145,6 +1204,18 @@ func scheduleUncertainty(confidence ConfidenceRating, stage domain.LifecycleStag
 		value += 0.10
 	}
 	return clamp(value, 0.15, 0.75)
+}
+
+func scheduleFactor(stage domain.LifecycleStage, scenario Scenario, momentum float64) float64 {
+	factor := 1 + scenario.SupplyChainStress*0.30 - scenario.FinancingAvailabilityDelta*0.12 - scenario.PolicySupportDelta*0.08 - scenario.DemandDelta*0.05
+	factor *= 1 - momentum*0.12
+	if stage == domain.StageDelayed {
+		factor += 0.20
+	}
+	if stage == domain.StagePaused {
+		factor += 0.35
+	}
+	return clamp(factor, 0.50, 2.50)
 }
 
 func capexUncertainty(confidence domain.ConfidenceLevel) float64 {

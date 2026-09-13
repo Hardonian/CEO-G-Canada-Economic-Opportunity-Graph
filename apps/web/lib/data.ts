@@ -1,5 +1,51 @@
 import { Procurement, Project, RadarStats, Signal } from "./types";
 
+const SECTORS = new Set<Project["sector"]>([
+  "Critical Minerals",
+  "Nuclear & Clean Power",
+  "Clean Energy & Grid",
+  "AI Compute & Data Centres",
+  "Defence & Arctic",
+  "Transportation & Ports",
+  "Industrial & Manufacturing",
+  "Housing-Enabling Infrastructure",
+  "Mining & Metals",
+  "Energy & Fuels",
+  "Forestry & Bioeconomy",
+]);
+
+const STAGES = new Set<Project["current_stage"]>([
+  "UNKNOWN",
+  "DISCOVERED",
+  "ANNOUNCED",
+  "REFERRED",
+  "EARLY_DEVELOPMENT",
+  "FEASIBILITY",
+  "FINANCING",
+  "ENVIRONMENTAL_REVIEW",
+  "PERMITTING",
+  "PROCUREMENT",
+  "FID_LIKELY",
+  "FID",
+  "CONSTRUCTION",
+  "COMMISSIONING",
+  "OPERATING",
+  "DELAYED",
+  "PAUSED",
+  "CANCELLED",
+]);
+
+const CONFIDENCE = new Set<Project["confidence"]>([
+  "VERIFIED",
+  "SUPPORTED",
+  "REPORTED",
+  "INFERRED",
+  "CONFLICTED",
+  "UNKNOWN",
+  "STALE",
+  "RETRACTED",
+]);
+
 const API_BASE =
   process.env.COG_API_BASE ||
   process.env.NEXT_PUBLIC_API_BASE ||
@@ -118,6 +164,67 @@ async function fetchAPI(path: string): Promise<Response | null> {
   }
 }
 
+function normalizeProject(value: unknown): Project | null {
+  if (!value || typeof value !== "object") return null;
+  const raw = value as Record<string, unknown>;
+  if (
+    typeof raw.id !== "string" ||
+    typeof raw.slug !== "string" ||
+    typeof raw.name !== "string" ||
+    typeof raw.summary !== "string" ||
+    typeof raw.subsector !== "string" ||
+    typeof raw.province !== "string" ||
+    typeof raw.location_name !== "string" ||
+    typeof raw.last_meaningful_update !== "string" ||
+    typeof raw.sector !== "string" ||
+    !SECTORS.has(raw.sector as Project["sector"]) ||
+    typeof raw.current_stage !== "string" ||
+    !STAGES.has(raw.current_stage as Project["current_stage"]) ||
+    typeof raw.confidence !== "string" ||
+    !CONFIDENCE.has(raw.confidence as Project["confidence"]) ||
+    typeof raw.capex_cad !== "number" ||
+    !Number.isSafeInteger(raw.capex_cad) ||
+    raw.capex_cad < 0
+  ) {
+    return null;
+  }
+
+  const scores = raw.scores && typeof raw.scores === "object"
+    ? Object.fromEntries(
+        Object.entries(raw.scores as Record<string, unknown>).filter(
+          ([, score]) => typeof score === "number" && Number.isFinite(score) && score >= 0 && score <= 100,
+        ),
+      )
+    : undefined;
+  const coordinate = (candidate: unknown, min: number, max: number) =>
+    typeof candidate === "number" && Number.isFinite(candidate) && candidate >= min && candidate <= max
+      ? candidate
+      : null;
+  const capexStatus =
+    typeof raw.capex_status === "string" && CONFIDENCE.has(raw.capex_status as Project["confidence"])
+      ? (raw.capex_status as Project["confidence"])
+      : undefined;
+
+  return {
+    id: raw.id,
+    slug: raw.slug,
+    name: raw.name,
+    summary: raw.summary,
+    sector: raw.sector as Project["sector"],
+    subsector: raw.subsector,
+    province: raw.province,
+    location_name: raw.location_name,
+    latitude: coordinate(raw.latitude, 40, 84),
+    longitude: coordinate(raw.longitude, -142, -50),
+    current_stage: raw.current_stage as Project["current_stage"],
+    capex_cad: raw.capex_cad,
+    capex_status: capexStatus,
+    confidence: raw.confidence as Project["confidence"],
+    scores,
+    last_meaningful_update: raw.last_meaningful_update,
+  };
+}
+
 export async function getRadarData() {
   const response = await fetchAPI("/radar");
   if (response?.ok) {
@@ -137,7 +244,13 @@ export async function getProjects(): Promise<Project[]> {
   const response = await fetchAPI("/projects?limit=500");
   if (response?.ok) {
     const data = await response.json();
-    if (Array.isArray(data?.projects)) return data.projects;
+    if (Array.isArray(data?.projects)) {
+      const projects = data.projects.flatMap((project: unknown) => {
+        const normalized = normalizeProject(project);
+        return normalized ? [normalized] : [];
+      });
+      if (projects.length > 0) return projects;
+    }
   }
   return FALLBACK_PROJECTS;
 }
@@ -147,7 +260,8 @@ export async function getProjectBySlug(slug: string): Promise<Project | null> {
   const response = await fetchAPI(`/projects/${safeSlug}`);
   if (response?.ok) {
     const data = await response.json();
-    if (data?.project) return data.project;
+    const project = normalizeProject(data?.project);
+    if (project) return project;
   }
   return (
     FALLBACK_PROJECTS.find(

@@ -9,47 +9,47 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        background: "#050B08",     // Deep Boreal Obsidian (Not generic dark blue)
-        surface: "#0B1511",        // Rich Forest Surface
-        card: "#101F19",           // Boreal Obsidian Card
-        cardHover: "#162C23",      // Interactive Hover Card
-        border: "#1D382D",         // Emerald-tinted Slate Border
-        borderSubtle: "#12251D",   // Subdued Border
+        background: "#050B08",     // Deep Boreal Obsidian
+        surface: "#0C1812",        // High-contrast forest surface
+        card: "#12231B",           // Institutional Boreal panel
+        cardHover: "#193126",      // Clear interactive hover state
+        border: "#5C7D6D",         // 3:1+ control boundary on supported panels
+        borderSubtle: "#314B40",   // Decorative divider, not a sole status cue
         primary: {
-          DEFAULT: "#10B981",      // Radiant Aurora Emerald
-          hover: "#059669",
-          light: "#34D399",
+          DEFAULT: "#22D39A",      // Radiant Aurora Emerald
+          hover: "#35E8AE",
+          light: "#6EF1C5",
         },
         aurora: {
           DEFAULT: "#00F5A0",      // Electric Aurora Green
-          glow: "#10B981",
-          emerald: "#059669",
-          teal: "#14B8A6",
-          mint: "#6EE7B7",
+          glow: "#22D39A",
+          emerald: "#18BF8A",
+          teal: "#35D8C1",
+          mint: "#6EF1C5",
         },
         accent: {
           cyan: "#00F5A0",         // Upgraded to Electric Aurora
-          gold: "#F59E0B",         // Canadian Mineral Gold
-          green: "#10B981",        // Pure Aurora Green
-          purple: "#A855F7",       // Northern Light Violet
-          copper: "#D97706",       // Canadian Copper
-          crimson: "#E11D48",      // Sovereign Maple Crimson
+          gold: "#F6C453",         // Canadian Mineral Gold
+          green: "#22D39A",        // Pure Aurora Green
+          purple: "#C5A3FF",       // Northern Light Violet
+          copper: "#E8A24B",       // Canadian Copper
+          crimson: "#FF5D73",      // Sovereign Maple Crimson
         },
         gold: {
-          DEFAULT: "#F59E0B",      // Canadian Mineral Gold
-          light: "#FBBF24",
-          dark: "#D97706",
-          copper: "#B45309",
+          DEFAULT: "#F6C453",      // Canadian Mineral Gold
+          light: "#FFE08A",
+          dark: "#E9A43B",
+          copper: "#E8A24B",
         },
         crimson: {
-          DEFAULT: "#E11D48",      // Canadian Maple Sovereign Crimson
-          light: "#FB7185",
-          dark: "#BE123C",
+          DEFAULT: "#FF5D73",      // Canadian Maple accent; use sparingly
+          light: "#FF91A0",
+          dark: "#D9435A",
         },
         text: {
-          main: "#F2F6F4",         // Quartz White
-          muted: "#9CB3A8",        // Boreal Muted
-          subtle: "#5F786C",       // Subdued Sage
+          main: "#F7FAF8",         // Quartz White
+          muted: "#BBCBC3",        // 8:1+ across supported panels
+          subtle: "#91AA9E",       // 5.5:1+ across supported panels
         }
       },
       fontFamily: {
@@ -57,9 +57,9 @@ const config: Config = {
         mono: ["JetBrains Mono", "SFMono-Regular", "Menlo", "monospace"],
       },
       backgroundImage: {
-        "aurora-mesh": "radial-gradient(ellipse 80% 50% at 50% -20%, rgba(0, 245, 160, 0.15), rgba(5, 11, 8, 0))",
-        "gold-glow": "radial-gradient(ellipse 60% 40% at 50% 120%, rgba(245, 158, 11, 0.12), rgba(5, 11, 8, 0))",
-        "radial-highlight": "radial-gradient(circle at 50% 0%, rgba(16, 185, 129, 0.2) 0%, transparent 70%)",
+        "aurora-mesh": "radial-gradient(ellipse 80% 50% at 50% -20%, rgba(0, 245, 160, 0.14), rgba(5, 11, 8, 0))",
+        "gold-glow": "radial-gradient(ellipse 60% 40% at 50% 120%, rgba(246, 196, 83, 0.1), rgba(5, 11, 8, 0))",
+        "radial-highlight": "radial-gradient(circle at 50% 0%, rgba(34, 211, 154, 0.18) 0%, transparent 70%)",
       },
       animation: {
         "pulse-slow": "pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite",

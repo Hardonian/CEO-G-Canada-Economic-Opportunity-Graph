@@ -97,7 +97,7 @@ export default async function ProjectProfilePage({ params }: Props) {
             {project.current_stage}
           </span>
           <span className="px-2.5 py-0.5 rounded-full bg-primary/10 border border-primary/30 text-aurora flex items-center gap-1 font-semibold">
-            <ShieldCheck className="h-3.5 w-3.5" /> VERIFIED EVIDENCE
+            <ShieldCheck className="h-3.5 w-3.5" /> {project.confidence} EVIDENCE
           </span>
         </div>
 
@@ -107,7 +107,12 @@ export default async function ProjectProfilePage({ params }: Props) {
           </h1>
           <div className="flex items-center gap-2 text-xs text-text-subtle pt-1">
             <MapPin className="h-3.5 w-3.5 text-aurora" />
-            <span>{project.location_name} (Lat: {project.latitude.toFixed(4)}°, Long: {project.longitude.toFixed(4)}°)</span>
+            <span>
+              {project.location_name}
+              {project.latitude != null && project.longitude != null
+                ? ` (Lat: ${project.latitude.toFixed(4)}°, Long: ${project.longitude.toFixed(4)}°)`
+                : " (coordinates not published)"}
+            </span>
             <span>•</span>
             <span className="text-text-muted">Subsector: {project.subsector}</span>
           </div>
@@ -121,7 +126,7 @@ export default async function ProjectProfilePage({ params }: Props) {
           <div>
             <div className="text-[10px] font-mono text-text-subtle uppercase">Reported CAPEX</div>
             <div className="text-xl font-black font-tabular text-aurora mt-0.5">
-              ${(project.capex_cad / 1e9).toFixed(2)}B CAD
+              {project.capex_cad > 0 ? `$${(project.capex_cad / 1e9).toFixed(2)}B CAD` : "UNKNOWN"}
             </div>
           </div>
           <div>

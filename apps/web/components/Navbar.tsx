@@ -3,20 +3,19 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
-import { 
-  Radar, 
-  FolderGit2, 
-  MapPin, 
-  Layers, 
-  Cpu, 
-  ShieldCheck, 
-  FileCode2, 
-  BookOpen, 
-  Search,
-  Languages,
+import {
   Activity,
+  Cpu,
+  FileCode2,
+  FolderGit2,
   Landmark,
-  Target
+  Languages,
+  Layers,
+  MapPin,
+  Radar,
+  Search,
+  ShieldCheck,
+  Target,
 } from "lucide-react";
 
 export default function Navbar() {
@@ -24,104 +23,131 @@ export default function Navbar() {
   const [lang, setLang] = useState<"en" | "fr">("en");
 
   const navItems = [
-    { href: "/briefing", label: lang === "en" ? "PM Briefing" : "Mémo PM", icon: Landmark, badge: "CABINET" },
+    { href: "/briefing", label: lang === "en" ? "Executive Brief" : "Note exécutive", icon: Landmark, badge: lang === "en" ? "ANALYSIS" : "ANALYSE" },
     { href: "/", label: lang === "en" ? "Capital Radar" : "Radar du capital", icon: Radar },
     { href: "/planning", label: lang === "en" ? "Planning" : "Planification", icon: Target },
     { href: "/projects", label: lang === "en" ? "Projects" : "Projets", icon: FolderGit2 },
     { href: "/map", label: lang === "en" ? "Geospatial Map" : "Carte géospatiale", icon: MapPin },
-    { href: "/capital", label: lang === "en" ? "Capital Stack" : "Plafond de capital", icon: Layers },
+    { href: "/capital", label: lang === "en" ? "Capital Stack" : "Structure du capital", icon: Layers },
     { href: "/procurement", label: lang === "en" ? "Procurement" : "Approvisionnement", icon: Activity },
     { href: "/ai-sovereignty", label: lang === "en" ? "AI Sovereignty" : "Souveraineté IA", icon: Cpu },
-    { href: "/cegs", label: "CEGS Standard", icon: FileCode2, badge: "0.1" },
+    { href: "/cegs", label: lang === "en" ? "CEGS Standard" : "Norme CEGS", icon: FileCode2, badge: "0.1" },
   ];
 
+  const nextLanguage = lang === "en" ? "French" : "English";
+
   return (
-    <header className="sticky top-0 z-50 border-b border-border/80 bg-[#050B08]/90 backdrop-blur-md">
-      {/* Top Banner: Status & National Intelligence Ticker */}
-      <div className="bg-[#08130E] px-4 py-1 text-xs border-b border-borderSubtle flex items-center justify-between text-text-muted">
-        <div className="flex items-center gap-3">
-          <span className="inline-flex items-center gap-1.5 text-aurora font-medium tracking-wide">
-            <span className="h-2 w-2 rounded-full bg-aurora shadow-[0_0_8px_#00F5A0] animate-pulse"></span>
-            NATIONAL CAPITAL COMMAND
-          </span>
-          <span className="hidden sm:inline text-border">|</span>
-          <span className="hidden sm:inline text-text-muted">Tracking $16.32B CAD Across 10 Strategic Assets & Downstream Supply Chains</span>
-        </div>
-        <div className="flex items-center gap-3">
-          <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded bg-card text-aurora-mint border border-primary/30 text-[10px] font-mono shadow-sm">
-            CEGS 0.1 SPEC COMPLIANT
-          </span>
-          <button 
-            onClick={() => setLang(lang === "en" ? "fr" : "en")}
-            className="flex items-center gap-1 text-text-muted hover:text-text-main hover:text-aurora transition-colors text-[11px] font-mono"
-            title="Toggle Language / Basculer la langue"
-          >
-            <Languages className="h-3 w-3" />
-            <span className="font-semibold">{lang.toUpperCase()}</span>
-          </button>
+    <header
+      data-site-header="true"
+      className="sticky top-0 z-50 border-b border-border bg-background/95 shadow-[0_10px_32px_-24px_rgba(0,0,0,0.95)] backdrop-blur-xl"
+    >
+      <div data-print-hide="true" className="border-b border-borderSubtle bg-[#08130e]">
+        <div className="mx-auto flex min-h-9 max-w-7xl items-center justify-between gap-3 px-4 text-[10px] font-mono uppercase tracking-[0.12em] text-text-muted sm:px-6 lg:px-8">
+          <div className="flex min-w-0 items-center gap-2.5">
+            <span className="inline-flex shrink-0 items-center gap-1.5 rounded border border-crimson/60 bg-crimson/10 px-2 py-1 font-bold text-crimson-light">
+              <span aria-hidden="true" className="h-1.5 w-1.5 rounded-full bg-crimson" />
+              Independent
+            </span>
+            <span className="hidden truncate sm:inline">Public-interest Canadian capital intelligence</span>
+          </div>
+
+          <div className="flex shrink-0 items-center gap-2 sm:gap-3">
+            <span className="hidden text-text-subtle xl:inline">Open-source research · Not a government service</span>
+            <span className="inline-flex items-center gap-1 rounded border border-primary/40 bg-primary/10 px-2 py-1 font-semibold text-aurora">
+              <ShieldCheck aria-hidden="true" className="h-3 w-3" />
+              CEGS 0.1
+            </span>
+            <button
+              type="button"
+              onClick={() => setLang(lang === "en" ? "fr" : "en")}
+              className="inline-flex min-h-7 items-center gap-1.5 rounded px-1.5 text-text-muted transition-colors hover:bg-surface hover:text-text-main"
+              aria-label={`Switch navigation to ${nextLanguage}`}
+              title={`Switch navigation to ${nextLanguage}`}
+            >
+              <Languages aria-hidden="true" className="h-3.5 w-3.5" />
+              <span className={lang === "en" ? "font-black text-text-main" : undefined}>EN</span>
+              <span aria-hidden="true" className="text-text-subtle">/</span>
+              <span className={lang === "fr" ? "font-black text-text-main" : undefined}>FR</span>
+            </button>
+          </div>
         </div>
       </div>
 
-      {/* Main Navigation Bar */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-14">
-          {/* Brand Logo */}
-          <Link href="/" className="flex items-center gap-2.5 group">
-            <div className="h-9 w-9 rounded-lg bg-card border border-primary/40 flex items-center justify-center text-primary group-hover:border-aurora group-hover:shadow-[0_0_12px_rgba(0,245,160,0.3)] transition-all">
-              <span className="font-bold text-base">🍁</span>
-            </div>
-            <div>
-              <div className="font-bold text-sm tracking-tight text-text-main group-hover:text-aurora flex items-center gap-1.5 transition-colors">
+      <div className="mx-auto flex h-16 max-w-7xl items-center justify-between gap-4 px-4 sm:px-6 lg:px-8">
+        <Link
+          href="/"
+          className="group flex min-w-0 items-center gap-3 rounded-lg"
+          aria-label="CanadaOpportunityGraph home"
+        >
+          <span className="relative flex h-10 w-10 shrink-0 items-center justify-center overflow-hidden rounded-lg border border-border bg-card font-mono text-sm font-black tracking-tight text-text-main shadow-inner transition-colors group-hover:border-primary">
+            <span aria-hidden="true" className="absolute inset-x-0 top-0 h-1 bg-crimson" />
+            CA
+          </span>
+          <span className="min-w-0">
+            <span className="flex items-center gap-2">
+              <span className="truncate text-sm font-black tracking-tight text-text-main transition-colors group-hover:text-aurora sm:text-base">
                 CanadaOpportunityGraph
-                <span className="text-[10px] px-1.5 py-0.5 rounded bg-surface border border-border text-gold font-mono font-medium">CEGS v0.1</span>
-              </div>
-              <div className="text-[10px] text-text-muted tracking-wider uppercase font-mono">
-                Economic Graph & Capital Radar
-              </div>
-            </div>
-          </Link>
+              </span>
+              <span className="hidden rounded border border-gold/50 bg-gold/10 px-1.5 py-0.5 font-mono text-[9px] font-bold text-gold sm:inline">
+                CEGS v0.1
+              </span>
+            </span>
+            <span className="block truncate font-mono text-[9px] uppercase tracking-[0.14em] text-text-subtle sm:text-[10px]">
+              Independent economic intelligence
+            </span>
+          </span>
+        </Link>
 
-          {/* Nav Links */}
-          <nav className="hidden md:flex items-center space-x-1 lg:space-x-1.5">
+        <div data-print-hide="true" className="flex shrink-0 items-center gap-2">
+          <Link
+            href="/projects"
+            className="inline-flex min-h-10 items-center gap-2 rounded-lg border border-border bg-surface px-3 text-xs font-semibold text-text-muted shadow-inner transition-colors hover:border-primary hover:bg-card hover:text-text-main"
+            aria-label={lang === "en" ? "Search projects" : "Rechercher des projets"}
+          >
+            <Search aria-hidden="true" className="h-4 w-4 text-aurora" />
+            <span className="hidden sm:inline">{lang === "en" ? "Search projects" : "Rechercher"}</span>
+            <kbd className="hidden rounded border border-borderSubtle bg-background px-1.5 py-0.5 font-mono text-[10px] text-text-muted lg:inline">
+              /
+            </kbd>
+          </Link>
+        </div>
+      </div>
+
+      <div data-print-hide="true" className="border-t border-borderSubtle bg-[#07110d]">
+        <nav
+          lang={lang === "fr" ? "fr-CA" : "en-CA"}
+          aria-label={lang === "en" ? "Primary navigation" : "Navigation principale"}
+          className="mx-auto max-w-7xl overflow-x-auto px-3 sm:px-5 lg:px-7"
+        >
+          <ul className="flex min-w-max list-none items-center gap-1 py-1.5" role="list">
             {navItems.map((item) => {
               const Icon = item.icon;
               const isActive = pathname === item.href || (item.href !== "/" && pathname.startsWith(item.href));
+
               return (
-                <Link
-                  key={item.href}
-                  href={item.href}
-                  className={`flex items-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-medium transition-all ${
-                    isActive
-                      ? "bg-card text-aurora border border-primary/50 shadow-[0_0_12px_rgba(0,245,160,0.15)]"
-                      : "text-text-muted hover:text-text-main hover:bg-surface/80"
-                  }`}
-                >
-                  <Icon className={`h-3.5 w-3.5 ${isActive ? "text-aurora" : "text-text-subtle"}`} />
-                  <span>{item.label}</span>
-                  {item.badge && (
-                    <span className="ml-1 text-[9px] font-mono px-1.5 py-0.5 rounded bg-gold/20 text-gold border border-gold/30">
-                      {item.badge}
-                    </span>
-                  )}
-                </Link>
+                <li key={item.href}>
+                  <Link
+                    href={item.href}
+                    aria-current={isActive ? "page" : undefined}
+                    className={`inline-flex min-h-9 items-center gap-1.5 whitespace-nowrap rounded-md border px-2.5 py-1.5 text-[11px] font-semibold transition-colors sm:px-3 sm:text-xs ${
+                      isActive
+                        ? "border-primary/70 bg-card text-aurora shadow-[inset_0_-2px_0_rgba(0,245,160,0.8)]"
+                        : "border-transparent text-text-muted hover:border-borderSubtle hover:bg-surface hover:text-text-main"
+                    }`}
+                  >
+                    <Icon aria-hidden="true" className={`h-3.5 w-3.5 ${isActive ? "text-aurora" : "text-text-subtle"}`} />
+                    <span>{item.label}</span>
+                    {item.badge && (
+                      <span className="ml-0.5 rounded border border-gold/40 bg-gold/10 px-1.5 py-0.5 font-mono text-[8px] font-bold text-gold">
+                        {item.badge}
+                      </span>
+                    )}
+                  </Link>
+                </li>
               );
             })}
-          </nav>
-
-          {/* Right Action: Global Search & Terminal */}
-          <div className="flex items-center gap-2">
-            <Link
-              href="/projects"
-              className="flex items-center gap-2 px-3 py-1.5 rounded-lg border border-border bg-surface text-text-muted text-xs hover:border-aurora/50 hover:text-text-main transition-all shadow-inner"
-            >
-              <Search className="h-3.5 w-3.5 text-text-subtle" />
-              <span className="hidden sm:inline">Search projects...</span>
-              <kbd className="hidden lg:inline text-[10px] font-mono bg-card px-1.5 py-0.5 rounded border border-borderSubtle text-aurora">
-                /
-              </kbd>
-            </Link>
-          </div>
-        </div>
+          </ul>
+        </nav>
       </div>
     </header>
   );

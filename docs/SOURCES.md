@@ -1,46 +1,40 @@
-# Sources & Adapter Ingestion Details
+# Sources & Adapter Engineering
 
-This document provides engineering details on how external government APIs and document sources are ingested and parsed.
+## Implemented production path
 
----
+The default API, CLI, worker and dataset generator ingest two local, reproducible inputs:
 
-## 1. Adapter Implementation Matrix
+1. `data/fixtures/nrcan_mpi_2025.json` — a pinned copy of the official NRCan Major Projects Inventory point layer, including source URL, dataset vintage, retrieval time, licence and 295 features.
+2. `data/fixtures/official_records.json` — a narrow human-reviewed record set with assertion-level evidence for selected regulatory, construction and capital milestones.
 
-### IAAC Adapter (`adapters/iaac/`)
+The curated records run after NRCan. When stable project slugs match, the store preserves complementary coordinates, CAPEX lineage, external identifiers and evidence instead of erasing a known value when a later source is silent.
 
-- **Upstream Registry**: Impact Assessment Agency of Canada API & open data catalog.
-- **Entity Extracted**: Major physical projects subject to federal impact assessment.
-- **Key Fields**: Project name, registry ID, province, stage (Planning, Impact Statement, Decision), proponent name, environmental coordinates.
-- **Cryptographic Hash**: Computed over raw JSON registry dump or HTML decision summary.
+## NRCan normalization
 
-### CanadaBuys Adapter (`adapters/canadabuys/`)
+`adapters/nrcan_major_projects/` currently provides the national data path:
 
-- **Upstream Registry**: CanadaBuys API (PSPC / Buyandsell Open Data).
-- **Entity Extracted**: Active procurement tenders, solicitations, GSIN / UNSPSC classifications.
-- **Key Fields**: Solicitation number, closing date, procuring organization, value estimate, buyer contact, status.
+- stable UUIDs derived from source ID and namespace;
+- record-scoped SHA-256 evidence hashes;
+- full province/territory normalization;
+- exact CAPEX conversion from reported millions, with unparseable/range-only values left `UNKNOWN`;
+- explicit source-sector preservation plus CEGS sector classification;
+- deterministic lifecycle mapping;
+- readable French-character slug folding;
+- an allowlisted live transport with HTTPS, redirect, response-size, record-count and schema constraints.
 
-### NRCan Major Projects Adapter (`adapters/nrcan_major_projects/`)
+The source inventory is broad but is not a complete census. Its values are `REPORTED`, not promoted to `VERIFIED` merely because the publisher is authoritative.
 
-- **Upstream Registry**: Natural Resources Canada Major Projects Inventory (Open Government Portal).
-- **Entity Extracted**: Energy, mining, clean tech, and infrastructure projects over $50M CAD.
-- **Key Fields**: Project name, commodity, estimated capital ($M CAD), construction start/end year, jobs created.
+## Scaffolded adapters
 
-### IDEaS Defence Adapter (`adapters/ideas_defence/`)
+The IAAC, CER, CanadaBuys, IDEaS and legacy NRCan adapters demonstrate source-specific parsing contracts. Their checked-in fixtures are empty and they are not enabled by default. Claims of automated retry, dead-letter queues, or polling schedules should not be made until those operational controls exist and are tested.
 
-- **Upstream Registry**: Innovation for Defence Excellence and Security (Department of National Defence).
-- **Entity Extracted**: Defence procurement challenges, sandbox demonstrations, targeted defense innovation funding.
-- **Key Fields**: Challenge ID, challenge title, funding tier, defense requirement focus, closing date.
+## Release artifacts
 
-### Canada Energy Regulator Adapter (`adapters/cer/`)
+`scripts/generate_datasets.go` deterministically creates current and immutable versioned releases:
 
-- **Upstream Registry**: CER Facility & Pipeline Registry.
-- **Entity Extracted**: Interprovincial/international pipelines, electrical transmission facilities, offshore infrastructure.
-- **Key Fields**: Facility ID, regulatory status, commodity, capacity, route length, proponent name.
+- domain JSONL for projects, organizations, events, evidence and scores;
+- CEGS JSONL equivalents;
+- CSV and GeoJSON project exports;
+- a SHA-256 checksum manifest with dynamic jurisdiction and record counts.
 
----
-
-## 2. Ingestion Resilience & Error Handling
-
-- **Exponential Backoff**: Upstream rate limits or temporary downtime trigger exponential backoff with jitter (max 5 retries).
-- **Schema Drift Detection**: Raw records failing structural validation are sequestered into a dead-letter log with full error traceback.
-- **Local Hermetic Fixtures**: Offline deterministic fixtures under `data/fixtures/` allow 100% full-featured offline test execution without live internet dependencies.
+Historical release directories are create-only: the generator refuses to overwrite an existing version with different bytes.

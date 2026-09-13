@@ -24,7 +24,7 @@ type Config struct {
 	Env                  string
 	BindAddress          string
 	Port                 int
-	DatabaseURL          string
+	DatabaseURL          string `json:"-"`
 	LogLevel             string
 	CORSOrigin           string // Raw, backwards-compatible CORS setting.
 	CORSOrigins          []string
@@ -58,12 +58,13 @@ type RuntimeSummary struct {
 	RateLimitBurst     int      `json:"rate_limit_burst"`
 }
 
-// Load retains the original convenience API. New executables should use
-// LoadValidated so a malformed security setting fails closed at startup.
+// Load retains the original convenience API and fails closed on malformed
+// security settings. New executables should prefer LoadValidated so they can
+// report the error through their normal startup path.
 func Load() *Config {
 	cfg, err := LoadValidated()
 	if err != nil {
-		return defaults()
+		panic(fmt.Errorf("invalid runtime configuration: %w", err))
 	}
 	return cfg
 }
@@ -89,6 +90,9 @@ func LoadValidated() (*Config, error) {
 	cfg.Port, err = intEnv("PORT", cfg.Port, 1, 65535)
 	if err != nil {
 		return nil, err
+	}
+	if strings.TrimSpace(os.Getenv("PUBLIC_URL")) == "" {
+		cfg.PublicURL = fmt.Sprintf("http://localhost:%d", cfg.Port)
 	}
 	cfg.MaxHeaderBytes, err = intEnv("MAX_HEADER_BYTES", cfg.MaxHeaderBytes, 8<<10, 1<<20)
 	if err != nil {
@@ -154,10 +158,10 @@ func LoadValidated() (*Config, error) {
 		}
 	}
 
-	if cfg.Env == "" || strings.ContainsAny(cfg.Env, "\r\n\t") {
-		return nil, fmt.Errorf("ENV must be a non-empty environment name")
+	if !validName(cfg.Env) {
+		return nil, fmt.Errorf("ENV must contain only letters, digits, hyphens, or underscores")
 	}
-	if cfg.BindAddress == "" || strings.ContainsAny(cfg.BindAddress, "\r\n/\\") {
+	if !validBindAddress(cfg.BindAddress) {
 		return nil, fmt.Errorf("BIND_ADDRESS must be a host or IP address")
 	}
 	if !oneOf(cfg.LogLevel, "debug", "info", "warn", "error") {
@@ -275,6 +279,41 @@ func validateHTTPOrigin(raw string) error {
 		return fmt.Errorf("origin %q must not contain credentials, a path, query, or fragment", raw)
 	}
 	return nil
+}
+
+func validBindAddress(host string) bool {
+	if net.ParseIP(host) != nil {
+		return true
+	}
+	if host == "" || len(host) > 253 || strings.HasPrefix(host, ".") || strings.HasSuffix(host, ".") {
+		return false
+	}
+	for _, label := range strings.Split(host, ".") {
+		if label == "" || len(label) > 63 || label[0] == '-' || label[len(label)-1] == '-' {
+			return false
+		}
+		for _, char := range label {
+			if (char >= 'a' && char <= 'z') || (char >= 'A' && char <= 'Z') ||
+				(char >= '0' && char <= '9') || char == '-' {
+				continue
+			}
+			return false
+		}
+	}
+	return true
+}
+
+func validName(value string) bool {
+	if value == "" || len(value) > 32 {
+		return false
+	}
+	for _, char := range value {
+		if (char >= 'a' && char <= 'z') || (char >= '0' && char <= '9') || char == '-' || char == '_' {
+			continue
+		}
+		return false
+	}
+	return true
 }
 
 func intEnv(key string, defaultValue, min, max int) (int, error) {

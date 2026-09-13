@@ -1,48 +1,101 @@
-version: '3.8'
+name: canada-opportunity-graph
 
 services:
   postgres:
     image: postgres:16-alpine
-    container_name: cog-postgres
     restart: unless-stopped
     environment:
       POSTGRES_DB: canada_opportunity_graph
       POSTGRES_USER: cog
-      POSTGRES_PASSWORD: cog_secure_password
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?Set POSTGRES_PASSWORD in .env}
     ports:
-      - "5432:5432"
+      - "127.0.0.1:${POSTGRES_PORT:-5432}:5432"
     volumes:
       - pgdata:/var/lib/postgresql/data
-      - ./migrations/001_initial_schema.sql:/docker-entrypoint-initdb.d/001_initial_schema.sql
+      - ./migrations/001_initial_schema.sql:/docker-entrypoint-initdb.d/001_initial_schema.sql:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U cog -d canada_opportunity_graph"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks: [data]
 
   api:
     build:
       context: .
       dockerfile: Dockerfile
       target: runner
-    container_name: cog-api
     restart: unless-stopped
-    command: ["/app/bin/api"]
     environment:
       PORT: 8080
-      DATABASE_URL: postgres://cog:cog_secure_password@postgres:5432/canada_opportunity_graph?sslmode=disable
+      ENV: production
+      CORS_ORIGIN: ${CORS_ORIGIN:-http://localhost:3000}
+      DATABASE_URL: postgresql://cog:${POSTGRES_PASSWORD}@postgres:5432/canada_opportunity_graph?sslmode=disable
     ports:
-      - "8080:8080"
+      - "127.0.0.1:${API_PORT:-8080}:8080"
     depends_on:
-      - postgres
+      postgres:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "wget", "-q", "--spider", "http://127.0.0.1:8080/ready"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+    read_only: true
+    tmpfs:
+      - /tmp:size=16m,noexec,nosuid,nodev
+    cap_drop: [ALL]
+    security_opt: [no-new-privileges:true]
+    pids_limit: 128
+    networks: [data, app]
 
   worker:
     build:
       context: .
       dockerfile: Dockerfile
       target: runner
-    container_name: cog-worker
+    entrypoint: ["/app/bin/worker"]
     restart: unless-stopped
-    command: ["/app/bin/worker"]
     environment:
-      DATABASE_URL: postgres://cog:cog_secure_password@postgres:5432/canada_opportunity_graph?sslmode=disable
+      ENV: production
+      DATABASE_URL: postgresql://cog:${POSTGRES_PASSWORD}@postgres:5432/canada_opportunity_graph?sslmode=disable
     depends_on:
-      - postgres
+      postgres:
+        condition: service_healthy
+    read_only: true
+    tmpfs:
+      - /tmp:size=16m,noexec,nosuid,nodev
+    cap_drop: [ALL]
+    security_opt: [no-new-privileges:true]
+    pids_limit: 128
+    networks: [data]
+
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: web-runner
+    restart: unless-stopped
+    environment:
+      COG_API_BASE: http://api:8080/api/v1
+    ports:
+      - "127.0.0.1:${WEB_PORT:-3000}:3000"
+    depends_on:
+      api:
+        condition: service_healthy
+    read_only: true
+    tmpfs:
+      - /tmp:size=32m,noexec,nosuid,nodev
+    cap_drop: [ALL]
+    security_opt: [no-new-privileges:true]
+    pids_limit: 128
+    networks: [app]
+
+networks:
+  app:
+    internal: true
+  data:
+    internal: true
 
 volumes:
   pgdata:

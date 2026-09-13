@@ -3,77 +3,304 @@
 @tailwind utilities;
 
 :root {
-  --background: #050B08;
-  --foreground: #F2F6F4;
+  color-scheme: dark;
+  --background: #050b08;
+  --foreground: #f7faf8;
+  --surface: #0c1812;
+  --panel: #12231b;
+  --panel-hover: #193126;
+  --border-strong: #5c7d6d;
+  --border-subtle: #314b40;
+  --text-muted: #bbcbc3;
+  --text-subtle: #91aa9e;
+  --aurora: #00f5a0;
+  --gold: #f6c453;
+  --maple: #ff5d73;
+  --focus: #7df8ca;
+}
+
+html {
+  min-width: 320px;
+  scroll-behavior: smooth;
+  scroll-padding-top: 9rem;
 }
 
 body {
-  background-color: var(--background);
-  color: var(--foreground);
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  min-width: 320px;
   overflow-x: hidden;
-  background-image: 
-    radial-gradient(ellipse 90% 60% at 50% -15%, rgba(0, 245, 160, 0.08), transparent),
-    radial-gradient(ellipse 50% 40% at 90% 20%, rgba(245, 158, 11, 0.05), transparent),
-    radial-gradient(ellipse 60% 50% at 10% 80%, rgba(16, 185, 129, 0.06), transparent);
+  background-color: var(--background);
+  background-image:
+    linear-gradient(rgba(145, 170, 158, 0.018) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(145, 170, 158, 0.018) 1px, transparent 1px),
+    radial-gradient(ellipse 90% 58% at 50% -16%, rgba(0, 245, 160, 0.1), transparent 68%),
+    radial-gradient(ellipse 46% 38% at 96% 18%, rgba(246, 196, 83, 0.055), transparent 72%),
+    radial-gradient(ellipse 54% 46% at 4% 86%, rgba(255, 93, 115, 0.035), transparent 72%);
   background-attachment: fixed;
+  background-size: 56px 56px, 56px 56px, auto, auto, auto;
+  color: var(--foreground);
+  font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  font-synthesis: none;
+  line-height: 1.5;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
-/* Custom Bloomberg-style tabular figures */
+::selection {
+  background: #156f52;
+  color: #ffffff;
+  text-shadow: none;
+}
+
+/* The first tab stop remains off-canvas until a keyboard user reaches it. */
+.skip-link {
+  position: fixed;
+  inset-block-start: 0.75rem;
+  inset-inline-start: 0.75rem;
+  z-index: 100;
+  transform: translateY(-160%);
+  border: 2px solid var(--focus);
+  border-radius: 0.5rem;
+  background: #07110d;
+  color: #ffffff;
+  padding: 0.7rem 1rem;
+  font-size: 0.875rem;
+  font-weight: 800;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.45);
+  transition: transform 140ms ease;
+}
+
+.skip-link:focus {
+  transform: translateY(0);
+}
+
+/* A two-ring treatment stays legible on green, gold, dark, and image surfaces. */
+:where(a, button, input, select, textarea, summary, [tabindex]):focus-visible {
+  outline: 3px solid var(--focus);
+  outline-offset: 3px;
+  box-shadow: 0 0 0 5px var(--background);
+}
+
+:where(button, [role="button"], input, select, textarea) {
+  min-height: 2.25rem;
+}
+
+:where(button, [role="button"], select) {
+  cursor: pointer;
+}
+
+:where(input, select, textarea) {
+  accent-color: var(--aurora);
+  caret-color: var(--aurora);
+}
+
+::placeholder {
+  color: var(--text-subtle);
+  opacity: 1;
+}
+
+[id] {
+  scroll-margin-top: 9rem;
+}
+
+[aria-disabled="true"],
+:disabled {
+  cursor: not-allowed;
+}
+
+/* Bloomberg-style tabular figures, retained as a core Boreal data affordance. */
 .font-tabular {
-  font-variant-numeric: tabular-nums;
+  font-variant-numeric: tabular-nums slashed-zero;
 }
 
-/* Glassmorphism utilities */
+/* Opaque-enough panels preserve contrast over the national data-grid backdrop. */
 .glass-panel {
-  background: rgba(11, 21, 17, 0.85);
-  -webkit-backdrop-filter: blur(12px);
-  backdrop-filter: blur(12px);
-  border: 1px solid rgba(29, 56, 45, 0.8);
+  border: 1px solid rgba(92, 125, 109, 0.82);
+  background: rgba(10, 23, 17, 0.95);
+  box-shadow:
+    inset 0 1px 0 rgba(247, 250, 248, 0.035),
+    0 20px 48px -30px rgba(0, 0, 0, 0.9);
+  -webkit-backdrop-filter: blur(14px);
+  backdrop-filter: blur(14px);
 }
 
 .glass-card {
-  background: rgba(16, 31, 25, 0.75);
-  -webkit-backdrop-filter: blur(8px);
-  backdrop-filter: blur(8px);
-  border: 1px solid rgba(29, 56, 45, 0.7);
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  border: 1px solid rgba(92, 125, 109, 0.7);
+  background: rgba(18, 35, 27, 0.94);
+  box-shadow:
+    inset 0 1px 0 rgba(247, 250, 248, 0.035),
+    0 16px 34px -26px rgba(0, 0, 0, 0.95);
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
+  transition: background-color 180ms ease, border-color 180ms ease, box-shadow 180ms ease, transform 180ms ease;
 }
 
-.glass-card:hover {
-  background: rgba(22, 44, 35, 0.9);
-  border-color: rgba(0, 245, 160, 0.4);
-  box-shadow: 0 12px 30px -10px rgba(0, 245, 160, 0.15);
-  transform: translateY(-2px);
+@media (hover: hover) and (pointer: fine) {
+  .glass-card:hover {
+    border-color: rgba(0, 245, 160, 0.72);
+    background: rgba(25, 49, 38, 0.97);
+    box-shadow:
+      inset 0 1px 0 rgba(247, 250, 248, 0.05),
+      0 18px 36px -24px rgba(0, 245, 160, 0.3);
+    transform: translateY(-2px);
+  }
 }
 
-/* Aurora and Gold Text Gradients */
+/* Solid signal colours are crisper and more predictable than clipped text gradients. */
 .text-aurora {
-  background: linear-gradient(135deg, #00F5A0 0%, #10B981 50%, #38BDF8 100%);
-  -webkit-background-clip: text;
-  background-clip: text;
-  -webkit-text-fill-color: transparent;
+  color: #50f2bd;
 }
 
 .text-gold-gradient {
-  background: linear-gradient(135deg, #FBBF24 0%, #F59E0B 50%, #D97706 100%);
-  -webkit-background-clip: text;
-  background-clip: text;
-  -webkit-text-fill-color: transparent;
+  color: var(--gold);
 }
 
-/* Custom scrollbars */
+.legal-rule {
+  position: relative;
+}
+
+.legal-rule::before {
+  position: absolute;
+  inset-block: 0;
+  inset-inline-start: 0;
+  width: 3px;
+  background: var(--maple);
+  content: "";
+}
+
+* {
+  scrollbar-color: var(--border-strong) var(--background);
+  scrollbar-width: thin;
+}
+
 ::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
+  width: 10px;
+  height: 10px;
 }
+
 ::-webkit-scrollbar-track {
-  background: #050B08;
+  background: var(--background);
 }
+
 ::-webkit-scrollbar-thumb {
-  background: #1D382D;
-  border-radius: 3px;
+  border: 2px solid var(--background);
+  border-radius: 999px;
+  background: var(--border-strong);
 }
+
 ::-webkit-scrollbar-thumb:hover {
-  background: #10B981;
+  background: var(--aurora);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+
+  .glass-card:hover {
+    transform: none;
+  }
+}
+
+@media (forced-colors: active) {
+  .glass-card,
+  .glass-panel {
+    border: 1px solid CanvasText;
+    background: Canvas;
+    box-shadow: none;
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+  }
+
+  .text-aurora,
+  .text-gold-gradient {
+    background: none;
+    color: LinkText;
+    -webkit-text-fill-color: currentColor;
+  }
+
+  .legal-rule::before {
+    background: CanvasText;
+  }
+
+  :where(a, button, input, select, textarea, summary, [tabindex]):focus-visible {
+    outline: 3px solid Highlight;
+    box-shadow: none;
+  }
+}
+
+@media print {
+  @page {
+    margin: 14mm;
+  }
+
+  :root {
+    color-scheme: light;
+  }
+
+  html,
+  body {
+    background: #ffffff !important;
+    color: #111111 !important;
+  }
+
+  body {
+    font-size: 10pt;
+  }
+
+  body * {
+    color: #111111 !important;
+    box-shadow: none !important;
+    text-shadow: none !important;
+  }
+
+  [data-print-hide="true"],
+  .skip-link {
+    display: none !important;
+  }
+
+  [data-site-header="true"] {
+    position: static !important;
+    border-bottom: 2px solid #111111 !important;
+    background: #ffffff !important;
+  }
+
+  main [class*="bg-"],
+  footer [class*="bg-"],
+  .glass-card,
+  .glass-panel {
+    background: #ffffff !important;
+  }
+
+  .glass-card,
+  .glass-panel,
+  footer {
+    border-color: #767676 !important;
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+  }
+
+  .glass-card,
+  .glass-panel,
+  article,
+  section,
+  table,
+  footer {
+    break-inside: avoid;
+  }
+
+  a {
+    color: #111111 !important;
+    text-decoration: underline;
+    text-decoration-thickness: 1px;
+  }
 }

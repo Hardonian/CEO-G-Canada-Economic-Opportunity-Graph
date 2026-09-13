@@ -7,6 +7,7 @@ import (
 	"math"
 	"net"
 	"net/http"
+	"net/url"
 	"strconv"
 	"strings"
 	"sync"
@@ -113,8 +114,10 @@ func NewServerWithOptions(store database.Store, options Options) (*Server, error
 			s.allowAnyOrigin = true
 			continue
 		}
-		if origin == "" || len(origin) > 2048 || strings.ContainsAny(origin, "\r\n\t") {
-			return nil, fmt.Errorf("invalid CORS origin")
+		var err error
+		origin, err = normalizeAllowedOrigin(origin)
+		if err != nil {
+			return nil, err
 		}
 		s.allowedOrigins[origin] = struct{}{}
 	}
@@ -130,6 +133,18 @@ func NewServerWithOptions(store database.Store, options Options) (*Server, error
 	}
 	s.registerRoutes()
 	return s, nil
+}
+
+func normalizeAllowedOrigin(origin string) (string, error) {
+	if origin == "" || len(origin) > 2048 || strings.ContainsAny(origin, "\r\n\t") {
+		return "", fmt.Errorf("invalid CORS origin")
+	}
+	parsed, err := url.Parse(origin)
+	if err != nil || (parsed.Scheme != "http" && parsed.Scheme != "https") || parsed.Host == "" ||
+		parsed.User != nil || parsed.RawQuery != "" || parsed.Fragment != "" || (parsed.Path != "" && parsed.Path != "/") {
+		return "", fmt.Errorf("CORS origin %q must be an absolute HTTP(S) origin without credentials, path, query, or fragment", origin)
+	}
+	return strings.TrimSuffix(origin, "/"), nil
 }
 
 func (s *Server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
@@ -158,7 +173,8 @@ func (s *Server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		s.handlePreflight(w, r, originAllowed)
 		return
 	}
-	if s.limiter != nil && (r.Method == http.MethodGet || r.Method == http.MethodHead) && strings.HasPrefix(r.URL.Path, "/api/") {
+	if s.limiter != nil && (r.Method == http.MethodGet || r.Method == http.MethodHead) &&
+		(strings.HasPrefix(r.URL.Path, "/api/") || r.URL.Path == "/metrics") {
 		allowed, remaining, retryAfter := s.limiter.Allow(s.clientIdentity(r), time.Now())
 		w.Header().Set("RateLimit-Limit", strconv.Itoa(s.limiter.burst))
 		w.Header().Set("RateLimit-Remaining", strconv.Itoa(remaining))
@@ -203,12 +219,14 @@ func normalizedRequestID(raw string) string {
 func (s *Server) setSecurityHeaders(header http.Header) {
 	header.Set("Cache-Control", "no-store")
 	header.Set("Content-Security-Policy", "default-src 'none'; base-uri 'none'; form-action 'none'; frame-ancestors 'none'")
+	header.Set("Cross-Origin-Opener-Policy", "same-origin")
 	header.Set("Cross-Origin-Resource-Policy", "cross-origin")
 	header.Set("Permissions-Policy", "camera=(), geolocation=(), microphone=(), payment=(), usb=()")
 	header.Set("Referrer-Policy", "no-referrer")
 	header.Set("X-Content-Type-Options", "nosniff")
 	header.Set("X-Frame-Options", "DENY")
 	header.Set("X-Permitted-Cross-Domain-Policies", "none")
+	header.Set("X-XSS-Protection", "0")
 	if s.enableHSTS {
 		header.Set("Strict-Transport-Security", "max-age=31536000; includeSubDomains")
 	}

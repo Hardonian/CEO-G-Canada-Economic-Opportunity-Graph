@@ -1,37 +1,43 @@
 # Security Architecture & Threat Model
 
-CanadaOpportunityGraph ingests external public documents, parses structured feeds, and serves an open API. This document details the threat model and defenses.
+This is an implementation threat model, not a certification, Privacy Impact Assessment, Threat and Risk Assessment, or Authority to Operate.
 
----
+## Trust boundaries and implemented controls
 
-## 1. Threat Model & Mitigations
+### Source ingestion
 
-### A. SSRF (Server-Side Request Forgery) in Ingestion Adapters
+- Live NRCan retrieval is opt-in and restricted to HTTPS on the official `maps-cartes.services.geo.ca` service path.
+- Redirects, body size, record count and required schema fields are bounded before normalization.
+- Checked-in snapshots make default execution hermetic and reviewable.
+- Source text is untrusted data. Deterministic scoring and forecasting do not execute document instructions or send source content to a model provider.
 
-- **Risk**: Malicious source URLs could target internal cloud metadata services (`169.254.169.254`) or local loopback interfaces (`127.0.0.1`).
-- **Mitigation**: Adapters must strictly whitelist permitted statutory hostnames (`iaac-aeic.gc.ca`, `apps.cer-rec.gc.ca`, `canadabuys.canada.ca`, `natural-resources.canada.ca`). Private IP ranges (RFC 1918) and link-local ranges are blocked.
+### Public API
 
-### B. Prompt Injection from Ingested Documents
+- GET/HEAD/OPTIONS-only routes, strict method handling, bounded targets/query strings/bodies, allowlisted filters/sorts and resource identifier validation.
+- Configurable exact-origin CORS, with wildcard rejected for hardened production configuration.
+- Trusted-proxy-aware, bounded-memory token-bucket limiting; forwarded client addresses are ignored unless the connected peer is trusted.
+- Request deadlines, readiness deadlines, server read/header/write/idle timeouts and graceful shutdown.
+- UUID request IDs are generated when incoming values are malformed; panics are logged only with the request ID and return a redacted error.
+- `nosniff`, anti-framing CSP, referrer policy, permissions policy, optional HSTS and no-store API responses.
+- Readiness returns failure when its dependency check cannot complete; metrics do not silently convert dependency errors into healthy output.
 
-- **Risk**: External PDF, HTML, or filings containing adversarial prompt injection intended to subvert entity extraction or scoring.
-- **Mitigation**:
-  1. Authoritative scores are calculated strictly deterministically in Go (`internal/scoring`), completely bypassing LLMs.
-  2. Document text is treated as untrusted data input with bounded length limits and strict escaping before parsing.
+### Web and container runtime
 
-### C. Stored XSS & HTML Injection
+- Next.js emits a standalone image with CSP and browser security headers and hides framework identification.
+- API, worker and web containers run as non-root with dropped capabilities, `no-new-privileges`, bounded PIDs and read-only roots plus constrained temporary filesystems.
+- Docker Compose requires an operator-supplied database password and binds public development ports to loopback by default.
+- JavaScript dependency versions are locked; the current production audit reports no known vulnerabilities.
 
-- **Risk**: Malicious project summaries or tender descriptions containing `<script>` or event handlers.
-- **Mitigation**: Next.js automatically escapes React JSX outputs. API endpoints serve strict `Content-Type: application/json; charset=utf-8`.
+## AI and forecast safety
 
-### D. Resource Attribution & Rate Limiting
+The forecast engine is local, deterministic and versioned. It emits assumptions, input hash, data coverage, evidence references, sensitivity ranges, warnings and limitations. Likelihood values are planning indices—not calibrated probabilities, investment advice, cabinet advice, procurement authority, credit ratings or model-generated facts.
 
-- **Risk**: Denial-of-service via unbounded queries or scraping loops.
-- **Mitigation**: API endpoints enforce default pagination ceilings (`limit=50`, max 500), and requests are tracked via request IDs and Prometheus metrics.
+Any future generative layer must be downstream of this evidence contract, treat retrieved text as hostile, cite only allowlisted evidence IDs, never upgrade `INFERRED` output to observed fact, and be deployable with outbound network access disabled.
 
----
+## Residual risks
 
-## 2. Privacy & Personal Data Minimization
-
-- The platform exclusively tracks **projects, organizations, public programs, and official corporate positions**.
-- Personal dossiers on individuals are strictly prohibited.
-- Public officials and corporate officers are referenced solely in their professional, public-record capacities.
+- The shipped server currently uses the in-memory store; the PostgreSQL schema is not yet wired into the runtime. It is unsuitable for durable multi-instance production records until a transactional store, migrations, backup/restore and row-level authorization are implemented.
+- Rate limiting is process-local and must move to a shared sovereign service for horizontally scaled enforcement.
+- CSP permits inline scripts/styles required by the present Next.js build. A nonce-based policy is a future hardening item.
+- Source hashes are not publisher signatures. Independent verification and an externally witnessed transparency log remain roadmap items.
+- Government deployment still requires organizational security categorization, privacy review, control assessment and explicit authorization by the responsible authority.

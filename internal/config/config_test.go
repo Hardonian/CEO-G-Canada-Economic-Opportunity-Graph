@@ -116,6 +116,17 @@ func TestLoadValidatedAllowsExplicitRateLimitDisableAndHSTSOverride(t *testing.T
 	}
 }
 
+func TestLoadFailsClosedOnInvalidConfiguration(t *testing.T) {
+	clearConfigEnvironment(t)
+	t.Setenv("PORT", "not-a-port")
+	defer func() {
+		if recover() == nil {
+			t.Fatal("Load did not fail closed")
+		}
+	}()
+	_ = Load()
+}
+
 func clearConfigEnvironment(t *testing.T) {
 	t.Helper()
 	for _, key := range []string{

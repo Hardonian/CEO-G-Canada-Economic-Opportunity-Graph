@@ -332,7 +332,9 @@ func (m *MemoryStore) SaveScore(ctx context.Context, s *domain.ProjectScore) err
 				break
 			}
 		}
-		if !updated { p.ScoreDetails = append(p.ScoreDetails, s) }
+		if !updated {
+			p.ScoreDetails = append(p.ScoreDetails, s)
+		}
 	}
 	return nil
 }

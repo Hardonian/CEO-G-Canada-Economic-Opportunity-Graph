@@ -1,37 +1,44 @@
 # Authoritative Data Sources & Provenance Policy
 
-CanadaOpportunityGraph maintains an uncompromising **Anti-Theatre Provenance Policy**. All primary project data, capital figures, tenders, and regulatory milestones must originate from statutory, audit-grade public disclosures.
+CanadaOpportunityGraph treats provenance as a product boundary. Observed facts, source-reported values, deterministic derivations, and user-authored scenarios are kept distinct. A government publisher does not make every value independently audited, and a cryptographic hash proves content integrity—not factual truth or legal authenticity.
 
----
+## Active snapshot sources
 
-## 1. Primary Statutory Sources
+| Source | Coverage in the default build | Mode | Epistemic treatment |
+| :--- | :--- | :--- | :--- |
+| [NRCan Major Projects Inventory](https://open.canada.ca/data/en/dataset/f5f2db55-31e4-42fb-8c73-23e1c44de9b2) | 2025–2035 point layer; energy, mining, forestry and clean technology across provinces and territories | Pinned official ArcGIS snapshot; refresh script included | `REPORTED` at record and CAPEX level |
+| Canadian Nuclear Safety Commission | Darlington construction milestone | Human-reviewed primary-source snapshot | `VERIFIED` source event; project-level support remains explicit |
+| Impact Assessment Agency of Canada | Crawford and Contrecœur regulatory milestones | Human-reviewed primary-source snapshot | `VERIFIED` source events |
+| Canada Infrastructure Bank and project issuer releases | Oneida capital and operating milestone | Human-reviewed primary/issuer snapshot | `VERIFIED` or `REPORTED` per assertion |
 
-| Source Registry | Agency / Authority | Jurisdiction | Data Coverage | Ingestion Frequency |
-| :--- | :--- | :--- | :--- | :--- |
-| **Canadian Impact Assessment Registry (CIAR)** | Impact Assessment Agency of Canada (IAAC) | Federal (All Provinces/Territories) | Major project environmental assessments, public comments, project descriptions, regulatory decisions | Daily batch |
-| **CanadaBuys (Ariba / Buyandsell)** | Public Services and Procurement Canada (PSPC) | Federal | Active tenders, RFP notices, standing offers, awarded contracts | Real-time & 6h polling |
-| **Canada Energy Regulator (CER)** | CER / Régie de l'énergie du Canada | Federal / Interprovincial | Pipelines, power lines, offshore energy, import/export permits | Weekly update |
-| **NRCan Major Projects Inventory** | Natural Resources Canada (NRCan) | Federal / National | Resource & clean energy projects >$50M CAPEX | Quarterly release reconciliation |
-| **IDEaS Defence Innovation** | Department of National Defence (DND) / CAF | Federal | Defence procurement challenges, sandbox calls, competitive project awards | Bi-weekly check |
-| **SEDAR+ Regulatory Filings** | Canadian Securities Administrators (CSA) | National Capital Markets | Technical reports (NI 43-101, NI 51-101), prospectus disclosures, material changes | On-demand / Material events |
+The adapters for CanadaBuys, CER, IAAC, IDEaS and legacy NRCan fixture formats remain implementation scaffolds. Their empty fixtures are not represented as live polling, complete coverage, or confirmed tender feeds.
 
----
+## Refresh and reproduce
 
-## 2. Epistemic Verification States
+```powershell
+# Download only from the fixed Government of Canada ArcGIS host, validate the
+# response shape/count, and replace the pinned NRCan snapshot.
+.\scripts\snapshot_nrcan_mpi.ps1
 
-Every factual claim in CanadaOpportunityGraph is assigned an explicit verification confidence tier:
+# Regenerate checksummed CEGS, JSONL, CSV and GeoJSON releases.
+go run .\scripts\generate_datasets.go
+```
 
-* **`VERIFIED`**: Certified directly against a primary statutory government registry or regulatory filing (e.g. IAAC decision, CanadaBuys tender notice).
-* **`SUPPORTED`**: Confirmed by formal proponent publication (investor presentation, audited financial report, official press release).
-* **`INFERRED`**: Derived mathematically or logically through deterministic domain ontology rules (e.g., downstream electrical substation requirement derived from a 300MW data centre build).
-* **`CONFLICTED`**: Multiple authoritative sources report contradictory figures (e.g., competing CAPEX estimates between provincial regulator and proponent).
-* **`UNKNOWN`**: Data is unavailable in public registries. Missing data is never synthetically generated or hallucinated.
-* **`STALE`**: No official filing or status change detected within the last 180 days.
+The runtime uses the pinned snapshot by default. `NewLiveNRCanAdapter` is opt-in, HTTPS-only, host/path allowlisted, redirect bounded, response-size bounded, and covered by tests.
 
----
+## Epistemic states
 
-## 3. Cryptographic Immutability
+- **`VERIFIED`**: the cited primary record was reviewed and directly supports the scoped assertion. It does not mean certified, complete, current forever, or endorsed by the publisher.
+- **`SUPPORTED`**: supported by a formal proponent or institutional publication.
+- **`REPORTED`**: faithfully normalized from a source inventory but not independently audited record-by-record.
+- **`INFERRED`**: deterministically derived from disclosed rules or ontology.
+- **`CONFLICTED`**: credible sources disagree and no silent winner was selected.
+- **`UNKNOWN`**: the source does not establish the value. Zero is never substituted for an unknown monetary fact in analytical totals.
+- **`STALE`**: the evidence has crossed the methodology freshness threshold.
+- **`RETRACTED`**: a formerly published assertion has been withdrawn and must not drive current decisions.
 
-1. Every ingested document is hashed using SHA-256 upon initial retrieval.
-2. The hash, retrieval timestamp, canonical source URI, and HTTP payload headers are recorded in `domain.Evidence`.
-3. If an upstream record changes, a new discrete immutable `domain.Event` is appended. Historic records are never overwritten.
+## Integrity and licensing
+
+Each normalized source record receives a SHA-256 content hash, stable source identifier, retrieval/effective timestamps, publisher, locator and parser version. Release manifests contain checksums for generated artifacts. These controls detect change and support reproducibility; they are not digital signatures from source agencies.
+
+Upstream records retain their source terms, including the [Open Government Licence – Canada](https://open.canada.ca/en/open-government-licence-canada). Consult each release manifest and source record before redistribution. No government agency endorses this independent platform.

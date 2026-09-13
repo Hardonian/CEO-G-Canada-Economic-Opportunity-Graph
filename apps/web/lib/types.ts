@@ -12,6 +12,7 @@ export type Sector =
   | "Forestry & Bioeconomy";
 
 export type LifecycleStage =
+  | "UNKNOWN"
   | "DISCOVERED"
   | "ANNOUNCED"
   | "REFERRED"

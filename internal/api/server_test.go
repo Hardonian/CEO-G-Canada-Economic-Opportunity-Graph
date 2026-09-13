@@ -41,6 +41,7 @@ func TestSecurityHeadersAndRequestIDs(t *testing.T) {
 	expectedHeaders := map[string]string{
 		"Cache-Control":                     "no-store",
 		"Content-Security-Policy":           "default-src 'none'; base-uri 'none'; form-action 'none'; frame-ancestors 'none'",
+		"Cross-Origin-Opener-Policy":        "same-origin",
 		"Cross-Origin-Resource-Policy":      "cross-origin",
 		"Permissions-Policy":                "camera=(), geolocation=(), microphone=(), payment=(), usb=()",
 		"Referrer-Policy":                   "no-referrer",
@@ -48,6 +49,7 @@ func TestSecurityHeadersAndRequestIDs(t *testing.T) {
 		"X-Content-Type-Options":            "nosniff",
 		"X-Frame-Options":                   "DENY",
 		"X-Permitted-Cross-Domain-Policies": "none",
+		"X-XSS-Protection":                  "0",
 	}
 	for name, expected := range expectedHeaders {
 		if actual := response.Header().Get(name); actual != expected {
@@ -250,6 +252,32 @@ func TestTrustedProxyIdentityWalksForwardedChainFromRight(t *testing.T) {
 	untrustedRequest.Header.Set("X-Forwarded-For", "203.0.113.9")
 	if actual := server.clientIdentity(untrustedRequest); actual != "198.51.100.7" {
 		t.Fatalf("untrusted peer identity = %q", actual)
+	}
+}
+
+func TestNewServerRejectsUnsafeOptions(t *testing.T) {
+	tests := map[string]func(*Options){
+		"non HTTP CORS origin": func(options *Options) {
+			options.AllowedOrigins = []string{"javascript:alert(1)"}
+		},
+		"mixed wildcard origin": func(options *Options) {
+			options.AllowedOrigins = []string{"*", "https://planner.gc.ca"}
+		},
+		"invalid proxy CIDR": func(options *Options) {
+			options.TrustedProxyCIDRs = []string{"10.0.0.1"}
+		},
+		"missing timeout": func(options *Options) {
+			options.RequestTimeout = 0
+		},
+	}
+	for name, mutate := range tests {
+		t.Run(name, func(t *testing.T) {
+			options := testOptions()
+			mutate(&options)
+			if _, err := NewServerWithOptions(database.NewMemoryStore(), options); err == nil {
+				t.Fatal("NewServerWithOptions accepted unsafe options")
+			}
+		})
 	}
 }
 

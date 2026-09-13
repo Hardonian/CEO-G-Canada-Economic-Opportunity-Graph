@@ -19,6 +19,7 @@ const (
 	DefaultMaxHorizonMonths = 240
 	DefaultMaxScenarios     = 16
 	DefaultMaxRecords       = 10_000
+	DefaultMaxProjects      = 1_000
 )
 
 // ConfidenceRating describes support for a forecast, not project quality.
@@ -266,4 +267,69 @@ type SovereignAssurance struct {
 	RawEvidenceEmitted      bool   `json:"raw_evidence_emitted"`
 	Deterministic           bool   `json:"deterministic"`
 	Statement               string `json:"statement"`
+}
+
+// PortfolioReport aggregates project reports without hiding their individual
+// confidence, provenance, or limitations.
+type PortfolioReport struct {
+	ID                 string                    `json:"id"`
+	MethodologyVersion string                    `json:"methodology_version"`
+	AsOf               time.Time                 `json:"as_of"`
+	CalculatedAt       time.Time                 `json:"calculated_at"`
+	Status             domain.IntelligenceStatus `json:"status"`
+	Confidence         ConfidenceRating          `json:"confidence"`
+	InputHash          string                    `json:"input_hash"`
+	ProjectCount       int                       `json:"project_count"`
+	DataQuality        PortfolioDataQuality      `json:"data_quality"`
+	ScenarioAggregates []PortfolioScenario       `json:"scenario_aggregates"`
+	Concentrations     []Concentration           `json:"concentrations"`
+	ProjectForecasts   []*Report                 `json:"project_forecasts"`
+	WatchItems         []WatchItem               `json:"watch_items,omitempty"`
+	Warnings           []string                  `json:"warnings,omitempty"`
+	Limitations        []string                  `json:"limitations"`
+	Assurance          SovereignAssurance        `json:"sovereign_assurance"`
+}
+
+type PortfolioDataQuality struct {
+	AverageScore         float64 `json:"average_score"`
+	HighProjects         int     `json:"high_projects"`
+	ModerateProjects     int     `json:"moderate_projects"`
+	LowProjects          int     `json:"low_projects"`
+	InsufficientProjects int     `json:"insufficient_projects"`
+	UnknownCapexProjects int     `json:"unknown_capex_projects"`
+	StaleProjects        int     `json:"stale_projects"`
+}
+
+type PortfolioScenario struct {
+	ScenarioID                string                      `json:"scenario_id"`
+	ScenarioName              string                      `json:"scenario_name"`
+	ScenarioAdjustedCapexCAD  MoneyRange                  `json:"scenario_adjusted_capex_cad"`
+	EvidencedCommittedCAD     int64                       `json:"evidenced_committed_cad"`
+	ConditionallyCommittedCAD int64                       `json:"conditionally_committed_cad"`
+	IndicativeFundingGapCAD   MoneyRange                  `json:"indicative_funding_gap_cad"`
+	ConfirmedProcurementCAD   int64                       `json:"confirmed_procurement_cad"`
+	ConfirmedOpportunityCAD   int64                       `json:"confirmed_opportunity_cad"`
+	DerivedOpportunityCAD     int64                       `json:"derived_opportunity_cad"`
+	MilestoneSummaries        []PortfolioMilestoneSummary `json:"milestone_summaries"`
+}
+
+// PortfolioMilestoneSummary aggregates planning indices. The 50-point count is
+// a screening threshold, not a count of projects guaranteed to complete.
+type PortfolioMilestoneSummary struct {
+	Stage                      domain.LifecycleStage `json:"stage"`
+	HorizonMonths              int                   `json:"horizon_months"`
+	HorizonDate                time.Time             `json:"horizon_date"`
+	ProjectsAtOrAbove50Index   int                   `json:"projects_at_or_above_50_index"`
+	MeanBaseLikelihoodIndexPct float64               `json:"mean_base_likelihood_index_pct"`
+	CapexWeightedBaseIndexPct  *float64              `json:"capex_weighted_base_index_pct,omitempty"`
+}
+
+// Concentration reports shares of known reported capex. Unknown capex is
+// excluded from the denominator and reported separately in DataQuality.
+type Concentration struct {
+	Dimension          string  `json:"dimension"` // province or sector
+	Value              string  `json:"value"`
+	ProjectCount       int     `json:"project_count"`
+	ReportedCapexCAD   int64   `json:"reported_capex_cad"`
+	KnownCapexSharePct float64 `json:"known_capex_share_pct"`
 }

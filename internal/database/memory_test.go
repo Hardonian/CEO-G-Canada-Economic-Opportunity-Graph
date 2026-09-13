@@ -16,7 +16,7 @@ func TestSaveProjectMergesComplementarySourceFacts(t *testing.T) {
 		CapexCAD: 500_000_000, CapexStatus: domain.ConfidenceReported,
 		EvidenceIDs: []string{"evidence-inventory"},
 		ExternalIDs: map[string]string{"nrcan_mpi": "1234"},
-		Metadata: map[string]interface{}{"dataset_vintage": "2025-2035"},
+		Metadata:    map[string]interface{}{"dataset_vintage": "2025-2035"},
 	}
 	if err := store.SaveProject(ctx, first); err != nil {
 		t.Fatal(err)
@@ -26,7 +26,7 @@ func TestSaveProjectMergesComplementarySourceFacts(t *testing.T) {
 		CapexStatus: domain.ConfidenceUnknown,
 		EvidenceIDs: []string{"evidence-curated"},
 		ExternalIDs: map[string]string{"iaac_registry": "9876"},
-		Metadata: map[string]interface{}{"review_status": "reviewed"},
+		Metadata:    map[string]interface{}{"review_status": "reviewed"},
 	}
 	if err := store.SaveProject(ctx, curated); err != nil {
 		t.Fatal(err)
