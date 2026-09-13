@@ -163,7 +163,7 @@ func (a *Adapter) Parse(data []byte) (*adapters.IngestionResult, error) {
 				SourceTier: domain.SourceTier1, RetrievalTimestamp: retrieved,
 				PublicationDate: &publication, EffectiveDate: &effective,
 				Confidence: src.Confidence, ExtractionMethod: "human_reviewed_primary_source_snapshot",
-				ContentHash: hash, SourceClass: src.SourceClass, SourceRecordID: src.SourceID,
+				ContentHash: hash, HashScope: "normalized_source_record", SourceClass: src.SourceClass, SourceRecordID: src.SourceID,
 				Locator: src.Locator, PipelineVersion: pipelineVersion, ParserVersion: parserVersion,
 				RawSnippet: src.Excerpt,
 			}

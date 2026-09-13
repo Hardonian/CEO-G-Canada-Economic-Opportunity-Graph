@@ -16,6 +16,7 @@ type Evidence struct {
 	Confidence         ConfidenceLevel `json:"confidence"`
 	ExtractionMethod   string          `json:"extraction_method"` // e.g., "deterministic_adapter", "official_api"
 	ContentHash        string          `json:"content_hash"`      // SHA-256
+	HashScope          string          `json:"hash_scope,omitempty"` // raw_document or normalized_source_record
 	SourceClass        string          `json:"source_class,omitempty"`
 	SourceRecordID     string          `json:"source_record_id,omitempty"`
 	Locator            string          `json:"locator,omitempty"`
