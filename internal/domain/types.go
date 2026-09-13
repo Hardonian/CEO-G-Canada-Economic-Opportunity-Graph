@@ -4,6 +4,7 @@ package domain
 type LifecycleStage string
 
 const (
+	StageUnknown             LifecycleStage = "UNKNOWN"
 	StageDiscovered          LifecycleStage = "DISCOVERED"
 	StageAnnounced           LifecycleStage = "ANNOUNCED"
 	StageReferred            LifecycleStage = "REFERRED"
@@ -26,6 +27,7 @@ const (
 // ValidLifecycleStages returns all supported stages in chronological expectation.
 func ValidLifecycleStages() []LifecycleStage {
 	return []LifecycleStage{
+		StageUnknown,
 		StageDiscovered,
 		StageAnnounced,
 		StageReferred,
@@ -52,10 +54,24 @@ type ConfidenceLevel string
 const (
 	ConfidenceVerified   ConfidenceLevel = "VERIFIED"
 	ConfidenceSupported  ConfidenceLevel = "SUPPORTED"
+	ConfidenceReported   ConfidenceLevel = "REPORTED"
 	ConfidenceInferred   ConfidenceLevel = "INFERRED"
 	ConfidenceConflicted ConfidenceLevel = "CONFLICTED"
 	ConfidenceUnknown    ConfidenceLevel = "UNKNOWN"
 	ConfidenceStale      ConfidenceLevel = "STALE"
+	ConfidenceRetracted  ConfidenceLevel = "RETRACTED"
+)
+
+// IntelligenceStatus makes degraded and partial results explicit at API and
+// product boundaries.
+type IntelligenceStatus string
+
+const (
+	StatusHealthy     IntelligenceStatus = "HEALTHY"
+	StatusStale       IntelligenceStatus = "STALE"
+	StatusPartial     IntelligenceStatus = "PARTIAL"
+	StatusDegraded    IntelligenceStatus = "DEGRADED"
+	StatusUnavailable IntelligenceStatus = "UNAVAILABLE"
 )
 
 // SourceTier classifies publisher reliability.

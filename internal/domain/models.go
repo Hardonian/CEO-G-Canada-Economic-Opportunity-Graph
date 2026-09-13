@@ -16,6 +16,11 @@ type Evidence struct {
 	Confidence         ConfidenceLevel `json:"confidence"`
 	ExtractionMethod   string          `json:"extraction_method"` // e.g., "deterministic_adapter", "official_api"
 	ContentHash        string          `json:"content_hash"`      // SHA-256
+	SourceClass        string          `json:"source_class,omitempty"`
+	SourceRecordID     string          `json:"source_record_id,omitempty"`
+	Locator            string          `json:"locator,omitempty"`
+	PipelineVersion    string          `json:"pipeline_version,omitempty"`
+	ParserVersion      string          `json:"parser_version,omitempty"`
 	RawSnippet         string          `json:"raw_snippet,omitempty"`
 }
 
@@ -52,9 +57,12 @@ type Project struct {
 	Longitude            float64                `json:"longitude"`
 	CurrentStage         LifecycleStage         `json:"current_stage"`
 	CapexCAD             int64                  `json:"capex_cad"` // In CAD cents or whole dollars; we use whole CAD
+	CapexStatus          ConfidenceLevel        `json:"capex_status"`
 	ProponentID          string                 `json:"proponent_id"`
 	Proponent            *Entity                `json:"proponent,omitempty"`
 	Confidence           ConfidenceLevel        `json:"confidence"`
+	EvidenceIDs          []string               `json:"evidence_ids,omitempty"`
+	ExternalIDs          map[string]string      `json:"external_ids,omitempty"`
 	IsSynthetic          bool                   `json:"is_synthetic"` // Clearly tags DEMO data
 	LastMeaningfulUpdate time.Time              `json:"last_meaningful_update"`
 	Scores               map[string]float64     `json:"scores,omitempty"` // buildability, investability, supplierability, strategicity
@@ -92,6 +100,8 @@ type Relationship struct {
 	EvidenceID     string          `json:"evidence_id"`
 	Evidence       *Evidence       `json:"evidence,omitempty"`
 	CreatedAt      time.Time       `json:"created_at"`
+	ValidFrom      *time.Time      `json:"valid_from,omitempty"`
+	ValidTo        *time.Time      `json:"valid_to,omitempty"`
 }
 
 // ProjectScore represents a versioned, deterministic score with factor breakdown.
@@ -102,6 +112,13 @@ type ProjectScore struct {
 	ScoreValue   float64            `json:"score_value"` // 0-100
 	ScoreVersion string             `json:"score_version"` // e.g. "buildability-v1.0"
 	Factors      map[string]float64 `json:"factors"`
+	UnknownFactors []string         `json:"unknown_factors,omitempty"`
+	Coverage       float64          `json:"coverage"`
+	Confidence     ConfidenceLevel  `json:"confidence"`
+	InputHash      string           `json:"input_hash"`
+	PreviousValue  *float64         `json:"previous_value,omitempty"`
+	Movement       *float64         `json:"movement,omitempty"`
+	MovementReasons []string        `json:"movement_reasons,omitempty"`
 	Explanation  string             `json:"explanation"`
 	CalculatedAt time.Time          `json:"calculated_at"`
 }
@@ -113,6 +130,7 @@ type CapitalItem struct {
 	Category         CapitalCategory `json:"category"`
 	Status           CapitalStatus   `json:"status"`
 	AmountCAD        int64           `json:"amount_cad"`
+	AmountType       string          `json:"amount_type"` // exact, maximum, estimated, unknown
 	ProviderEntityID string          `json:"provider_entity_id,omitempty"`
 	ProviderName     string          `json:"provider_name"`
 	Notes            string          `json:"notes,omitempty"`
@@ -151,6 +169,7 @@ type Opportunity struct {
 	RequirementClass RequirementClass `json:"requirement_class"` // CONFIRMED, DERIVED, SPECULATIVE
 	Category         string           `json:"category"` // engineering, electrical, environmental, etc.
 	EstimatedCAD     int64            `json:"estimated_cad,omitempty"`
+	EstimateStatus   ConfidenceLevel  `json:"estimate_status"`
 	Description      string           `json:"description"`
 	TriggerMilestone string           `json:"trigger_milestone"` // e.g., "FID", "ENVIRONMENTAL_APPROVAL"
 	CreatedAt        time.Time        `json:"created_at"`
