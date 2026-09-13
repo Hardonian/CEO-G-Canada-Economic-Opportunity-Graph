@@ -10,6 +10,7 @@ import (
 	"strconv"
 	"strings"
 	"testing"
+	"time"
 
 	"github.com/Hardonian/CEO-G-Canada-Economic-Opportunity-Graph/internal/database"
 	"github.com/Hardonian/CEO-G-Canada-Economic-Opportunity-Graph/internal/domain"
@@ -275,6 +276,38 @@ func TestReadinessChecksStoreAndMetricsFailClosed(t *testing.T) {
 	}
 }
 
+func TestReadinessTimeoutCancelsDependencyCheck(t *testing.T) {
+	options := testOptions()
+	options.ReadinessTimeout = 10 * time.Millisecond
+	server := mustServer(t, waitingRadarStore{}, options)
+
+	started := time.Now()
+	response := httptest.NewRecorder()
+	server.ServeHTTP(response, httptest.NewRequest(http.MethodGet, "/ready", nil))
+	if response.Code != http.StatusServiceUnavailable {
+		t.Fatalf("status = %d, want %d", response.Code, http.StatusServiceUnavailable)
+	}
+	if elapsed := time.Since(started); elapsed > time.Second {
+		t.Fatalf("readiness dependency check was not bounded: %s", elapsed)
+	}
+}
+
+func TestRequestIDIsAvailableToStoreContext(t *testing.T) {
+	store := &requestIDStore{}
+	server := mustServer(t, store, testOptions())
+	request := httptest.NewRequest(http.MethodGet, "/api/v1/projects", nil)
+	request.Header.Set("X-Request-ID", "agency-correlation-42")
+	response := httptest.NewRecorder()
+	server.ServeHTTP(response, request)
+
+	if response.Code != http.StatusOK {
+		t.Fatalf("status = %d, body = %s", response.Code, response.Body.String())
+	}
+	if store.requestID != "agency-correlation-42" {
+		t.Fatalf("store context request ID = %q", store.requestID)
+	}
+}
+
 func TestPanicResponseAndLogsRedactRecoveredValue(t *testing.T) {
 	var logs bytes.Buffer
 	options := testOptions()
@@ -329,4 +362,23 @@ type panicListStore struct {
 
 func (panicListStore) ListProjects(context.Context, database.ProjectFilter) ([]*domain.Project, int, error) {
 	panic("super-secret-password")
+}
+
+type waitingRadarStore struct {
+	database.Store
+}
+
+func (waitingRadarStore) GetRadarStats(ctx context.Context) (*database.RadarStats, error) {
+	<-ctx.Done()
+	return nil, ctx.Err()
+}
+
+type requestIDStore struct {
+	database.Store
+	requestID string
+}
+
+func (s *requestIDStore) ListProjects(ctx context.Context, _ database.ProjectFilter) ([]*domain.Project, int, error) {
+	s.requestID = RequestIDFromContext(ctx)
+	return nil, 0, nil
 }
