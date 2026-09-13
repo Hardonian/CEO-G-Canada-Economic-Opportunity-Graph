@@ -1,0 +1,43 @@
+# Node / Next.js
+node_modules/
+.next/
+out/
+build/
+dist/
+.pnpm-store/
+
+# Compiled Binaries & Archives
+bin/
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+
+# Test & Coverage
+*.test
+*.out
+coverage/
+
+# OS & IDE metadata
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Environment Variables & Logs
+*.log
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Next.js telemetry & cache
+.vercel

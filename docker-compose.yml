@@ -1,0 +1,48 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: cog-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: canada_opportunity_graph
+      POSTGRES_USER: cog
+      POSTGRES_PASSWORD: cog_secure_password
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+      - ./migrations/001_initial_schema.sql:/docker-entrypoint-initdb.d/001_initial_schema.sql
+
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: runner
+    container_name: cog-api
+    restart: unless-stopped
+    command: ["/app/bin/api"]
+    environment:
+      PORT: 8080
+      DATABASE_URL: postgres://cog:cog_secure_password@postgres:5432/canada_opportunity_graph?sslmode=disable
+    ports:
+      - "8080:8080"
+    depends_on:
+      - postgres
+
+  worker:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: runner
+    container_name: cog-worker
+    restart: unless-stopped
+    command: ["/app/bin/worker"]
+    environment:
+      DATABASE_URL: postgres://cog:cog_secure_password@postgres:5432/canada_opportunity_graph?sslmode=disable
+    depends_on:
+      - postgres
+
+volumes:
+  pgdata:
