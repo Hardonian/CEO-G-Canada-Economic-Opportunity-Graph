@@ -33,24 +33,24 @@ export default function Navbar() {
   ];
 
   return (
-    <header className="sticky top-0 z-50 border-b border-border bg-[#080D1A]/95 backdrop-blur-md">
+    <header className="sticky top-0 z-50 border-b border-border/80 bg-[#050B08]/90 backdrop-blur-md">
       {/* Top Banner: Status & National Intelligence Ticker */}
-      <div className="bg-[#0B132B] px-4 py-1 text-xs border-b border-borderSubtle flex items-center justify-between text-text-muted">
+      <div className="bg-[#08130E] px-4 py-1 text-xs border-b border-borderSubtle flex items-center justify-between text-text-muted">
         <div className="flex items-center gap-3">
-          <span className="inline-flex items-center gap-1.5 text-accent-green font-medium">
-            <span className="h-2 w-2 rounded-full bg-accent-green animate-pulse"></span>
-            LIVE CAPITAL INTELLIGENCE
+          <span className="inline-flex items-center gap-1.5 text-aurora font-medium tracking-wide">
+            <span className="h-2 w-2 rounded-full bg-aurora shadow-[0_0_8px_#00F5A0] animate-pulse"></span>
+            LIVE CAPITAL RADAR
           </span>
           <span className="hidden sm:inline text-border">|</span>
-          <span className="hidden sm:inline">Tracking $11.02B CAD in Major Infrastructure & Strategic Assets</span>
+          <span className="hidden sm:inline text-text-muted">Tracking $11.02B CAD in Strategic Assets & Downstream Supply Chains</span>
         </div>
         <div className="flex items-center gap-3">
-          <span className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded bg-card text-accent-cyan border border-border text-[10px] font-mono">
+          <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded bg-card text-aurora-mint border border-primary/30 text-[10px] font-mono shadow-sm">
             CEGS 0.1 SPEC COMPLIANT
           </span>
           <button 
             onClick={() => setLang(lang === "en" ? "fr" : "en")}
-            className="flex items-center gap-1 hover:text-text-main transition-colors text-[11px] font-mono"
+            className="flex items-center gap-1 text-text-muted hover:text-text-main hover:text-aurora transition-colors text-[11px] font-mono"
             title="Toggle Language / Basculer la langue"
           >
             <Languages className="h-3 w-3" />
@@ -64,15 +64,15 @@ export default function Navbar() {
         <div className="flex items-center justify-between h-14">
           {/* Brand Logo */}
           <Link href="/" className="flex items-center gap-2.5 group">
-            <div className="h-8 w-8 rounded bg-primary/10 border border-primary/40 flex items-center justify-center text-primary group-hover:bg-primary group-hover:text-white transition-all shadow-sm">
-              <span className="font-bold text-sm tracking-tighter">🇨🇦</span>
+            <div className="h-9 w-9 rounded-lg bg-card border border-primary/40 flex items-center justify-center text-primary group-hover:border-aurora group-hover:shadow-[0_0_12px_rgba(0,245,160,0.3)] transition-all">
+              <span className="font-bold text-base">🍁</span>
             </div>
             <div>
-              <div className="font-bold text-sm tracking-tight text-text-main group-hover:text-white flex items-center gap-1.5">
+              <div className="font-bold text-sm tracking-tight text-text-main group-hover:text-aurora flex items-center gap-1.5 transition-colors">
                 CanadaOpportunityGraph
-                <span className="text-[10px] px-1 rounded bg-surface border border-border text-text-subtle font-mono font-normal">v1.0</span>
+                <span className="text-[10px] px-1.5 py-0.5 rounded bg-surface border border-border text-gold font-mono font-medium">CEGS v0.1</span>
               </div>
-              <div className="text-[10px] text-text-subtle tracking-wider uppercase font-mono">
+              <div className="text-[10px] text-text-muted tracking-wider uppercase font-mono">
                 Economic Graph & Capital Radar
               </div>
             </div>
@@ -87,16 +87,16 @@ export default function Navbar() {
                 <Link
                   key={item.href}
                   href={item.href}
-                  className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded-md text-xs font-medium transition-colors ${
+                  className={`flex items-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-medium transition-all ${
                     isActive
-                      ? "bg-card text-accent-cyan border border-border"
-                      : "text-text-muted hover:text-text-main hover:bg-surface"
+                      ? "bg-card text-aurora border border-primary/50 shadow-[0_0_12px_rgba(0,245,160,0.15)]"
+                      : "text-text-muted hover:text-text-main hover:bg-surface/80"
                   }`}
                 >
-                  <Icon className={`h-3.5 w-3.5 ${isActive ? "text-accent-cyan" : "text-text-subtle"}`} />
+                  <Icon className={`h-3.5 w-3.5 ${isActive ? "text-aurora" : "text-text-subtle"}`} />
                   <span>{item.label}</span>
                   {item.badge && (
-                    <span className="ml-1 text-[9px] font-mono px-1 py-0.2 rounded bg-primary/20 text-primary border border-primary/30">
+                    <span className="ml-1 text-[9px] font-mono px-1.5 py-0.5 rounded bg-gold/20 text-gold border border-gold/30">
                       {item.badge}
                     </span>
                   )}
@@ -109,11 +109,11 @@ export default function Navbar() {
           <div className="flex items-center gap-2">
             <Link
               href="/projects"
-              className="flex items-center gap-2 px-3 py-1.5 rounded border border-border bg-surface text-text-muted text-xs hover:border-text-subtle transition-colors shadow-inner"
+              className="flex items-center gap-2 px-3 py-1.5 rounded-lg border border-border bg-surface text-text-muted text-xs hover:border-aurora/50 hover:text-text-main transition-all shadow-inner"
             >
               <Search className="h-3.5 w-3.5 text-text-subtle" />
-              <span className="hidden sm:inline">Search graph...</span>
-              <kbd className="hidden lg:inline text-[10px] font-mono bg-card px-1 py-0.5 rounded border border-borderSubtle text-text-subtle">
+              <span className="hidden sm:inline">Search projects...</span>
+              <kbd className="hidden lg:inline text-[10px] font-mono bg-card px-1.5 py-0.5 rounded border border-borderSubtle text-aurora">
                 /
               </kbd>
             </Link>

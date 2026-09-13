@@ -3,20 +3,20 @@ import { Shield, FileText, Database, GitFork, ExternalLink, Terminal } from "luc
 
 export default function Footer() {
   return (
-    <footer className="border-t border-border bg-[#050811] text-text-muted text-xs">
+    <footer className="border-t border-border/80 bg-[#040806] text-text-muted text-xs">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
           {/* Col 1: Mission */}
           <div className="md:col-span-1 space-y-3">
             <div className="flex items-center gap-2">
-              <span className="text-base">🇨🇦</span>
+              <span className="text-base">🍁</span>
               <span className="font-bold text-text-main text-sm">CanadaOpportunityGraph</span>
             </div>
             <p className="text-text-subtle leading-relaxed">
               The canonical machine-readable intelligence layer for major Canadian economic development, infrastructure capital, and sovereign procurement.
             </p>
             <div className="pt-2">
-              <div className="inline-flex items-center gap-1.5 px-2 py-1 rounded bg-card border border-border text-[11px] font-mono text-accent-cyan">
+              <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded bg-card border border-primary/30 text-[11px] font-mono text-aurora shadow-sm">
                 <Database className="h-3 w-3" />
                 CEGS 0.1 Reference Implementation
               </div>
