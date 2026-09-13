@@ -1,2 +1,2 @@
-# CanadaEconomicOpportunityGraph_CEO-G
+# Canada Economic Opportunity Graph, CEO-G
 Know what Canada is building before everyone else does. Follow Canadian capital before it becomes Canadian construction.
