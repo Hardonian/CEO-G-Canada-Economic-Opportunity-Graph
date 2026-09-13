@@ -382,7 +382,7 @@ func classifySectorFromNotice(notice GazetteRecord) (domain.Sector, string) {
 		return domain.SectorTransportation, "Transportation & Ports"
 	}
 	if strings.Contains(searchText, "housing") || strings.Contains(searchText, "infrastructure") {
-		return domain.SectorHousingInfra, "Housing-Enabling Infrastructure"
+		return domain.SectorHousingEnabling, "Housing-Enabling Infrastructure"
 	}
 	if strings.Contains(searchText, "mining") || strings.Contains(searchText, "quarry") {
 		return domain.SectorMiningMetals, "Mining & Metals"
@@ -394,7 +394,7 @@ func classifySectorFromNotice(notice GazetteRecord) (domain.Sector, string) {
 		return domain.SectorForestryBioeconomy, "Forestry & Bioeconomy"
 	}
 	
-	return domain.SectorIndustrial, "Industrial & Manufacturing"
+	return domain.SectorIndustrialMfg, "Industrial & Manufacturing"
 }
 
 func mapGazetteCategory(category string) domain.LifecycleStage {

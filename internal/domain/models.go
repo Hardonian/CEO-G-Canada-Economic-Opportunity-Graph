@@ -40,6 +40,7 @@ type Entity struct {
 	AISovereignty *AISovereignty    `json:"ai_sovereignty,omitempty"`
 	EvidenceID    string            `json:"evidence_id,omitempty"`
 	Evidence      *Evidence         `json:"evidence,omitempty"`
+	Metadata      map[string]interface{} `json:"metadata,omitempty"`
 	CreatedAt     time.Time         `json:"created_at"`
 	UpdatedAt     time.Time         `json:"updated_at"`
 }
@@ -157,6 +158,7 @@ type Procurement struct {
 	RequirementClass RequirementClass `json:"requirement_class"` // CONFIRMED, DERIVED
 	EvidenceID       string           `json:"evidence_id"`
 	Evidence         *Evidence        `json:"evidence,omitempty"`
+	Metadata         map[string]interface{} `json:"metadata,omitempty"`
 	CreatedAt        time.Time        `json:"created_at"`
 }
 
