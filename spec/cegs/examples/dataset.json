@@ -1,0 +1,28 @@
+{
+  "cegs": "0.1",
+  "id": "cegs:manifest:ca:q1-2026-snapshot",
+  "type": "manifest",
+  "dataset_id": "cegs-canada-national-q1-2026",
+  "title": "Canada Major Projects & Capital Opportunities — Q1 2026 Public Snapshot",
+  "description": "Standard CEGS export containing verified Canadian major projects across critical minerals, clean power, AI compute, and sovereign defence infrastructure.",
+  "publisher": "CanadaOpportunityGraph Open Consortium",
+  "license": "CC-BY-4.0",
+  "generated_at": "2026-09-12T20:00:00Z",
+  "record_counts": {
+    "projects": 15,
+    "organizations": 24,
+    "events": 42,
+    "relationships": 38,
+    "evidence": 51,
+    "procurements": 18
+  },
+  "jurisdictions": ["CA", "CA:ON", "CA:BC", "CA:QC", "CA:AB", "CA:SK"],
+  "covered_time_period": {
+    "start": "2024-01-01T00:00:00Z",
+    "end": "2026-09-12T00:00:00Z"
+  },
+  "schema_hashes": {
+    "project.schema.json": "a1b2c3d4e5f6...",
+    "organization.schema.json": "f6e5d4c3b2a1..."
+  }
+}

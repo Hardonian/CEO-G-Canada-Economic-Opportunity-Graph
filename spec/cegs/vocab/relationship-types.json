@@ -1,0 +1,24 @@
+{
+  "cegs_vocab": "relationship-types",
+  "version": "0.1",
+  "types": [
+    { "id": "owns", "inverse": "owned_by", "description": "Legal equity ownership of project or entity." },
+    { "id": "operates", "inverse": "operated_by", "description": "Day-to-day industrial operational responsibility." },
+    { "id": "develops", "inverse": "developed_by", "description": "Lead commercial development organization." },
+    { "id": "proposes", "inverse": "proposed_by", "description": "Entity formally filing permit or regulatory proposal." },
+    { "id": "finances", "inverse": "financed_by", "description": "Provides commercial debt, syndication, or project financing." },
+    { "id": "invests_in", "inverse": "investment_from", "description": "Direct equity or venture capital investment." },
+    { "id": "guarantees", "inverse": "guaranteed_by", "description": "Provides loan guarantee or financial backstop (e.g. Indigenous Loan Guarantee Program)." },
+    { "id": "regulates", "inverse": "regulated_by", "description": "Statutory regulatory authority (e.g. CER, CNSC, provincial utility boards)." },
+    { "id": "approves", "inverse": "approved_by", "description": "Government minister or agency providing statutory permit or EA decision." },
+    { "id": "supplies", "inverse": "supplied_by", "description": "Provides materials, specialized equipment, or engineering services." },
+    { "id": "contracts_with", "inverse": "contracted_by", "description": "Binding commercial or procurement contract." },
+    { "id": "located_in", "inverse": "contains_location", "description": "Geographical inclusion within province, municipality, or treaty territory." },
+    { "id": "depends_on", "inverse": "enables", "description": "Physical, electrical, or logistical prerequisite asset (e.g. transmission tie-in)." },
+    { "id": "offtakes_from", "inverse": "offtake_to", "description": "Long-term power purchase or commodity offtake agreement." },
+    { "id": "partners_with", "inverse": "partners_with", "description": "Joint venture or formal commercial partnership." },
+    { "id": "indigenous_partner", "inverse": "partner_nation", "description": "First Nation, Métis, or Inuit formal equity participation or Impact Benefit Agreement (IBA)." },
+    { "id": "procurement_for", "inverse": "has_procurement", "description": "Tender or competitive solicitation specifically targeting project requirements." },
+    { "id": "related_to", "inverse": "related_to", "description": "Generic bidirectional association." }
+  ]
+}

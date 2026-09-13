@@ -1,0 +1,17 @@
+{
+  "cegs": "0.1",
+  "id": "cegs:event:ca:darlington-cib-financing",
+  "type": "event",
+  "event_type": "capital.committed",
+  "subject": "cegs:project:ca:on:darlington-new-nuclear",
+  "occurred_at": "2026-03-15T15:00:00Z",
+  "observed_at": "2026-03-15T16:20:00Z",
+  "title": "Canada Infrastructure Bank commits $970M concessionary loan for Darlington SMR",
+  "description": "The Canada Infrastructure Bank finalized a $970 million investment agreement in Phase 1 site preparation and early nuclear components for the BWRX-300 deployment.",
+  "evidence": ["cegs:evidence:ca:cib-darlington-release"],
+  "attributes": {
+    "amount_cad": 970000000,
+    "provider": "cegs:org:ca:canada-infrastructure-bank"
+  },
+  "created_at": "2026-03-15T17:00:00Z"
+}

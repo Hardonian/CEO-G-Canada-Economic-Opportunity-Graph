@@ -1,0 +1,14 @@
+{
+  "cegs_vocab": "evidence-status",
+  "version": "0.1",
+  "states": [
+    { "id": "VERIFIED", "definition": "Corroborated directly by a Tier 1 authoritative publisher (Government, Statutory Regulator)." },
+    { "id": "SUPPORTED", "definition": "Corroborated by a Tier 2 issuer disclosure (SEDAR+, official annual report) or multiple independent Tier 3 news reports." },
+    { "id": "REPORTED", "definition": "Reported by a single source without independent statutory verification." },
+    { "id": "INFERRED", "definition": "Derived algorithmically via deterministic dependency ontologies or graph traversals." },
+    { "id": "CONFLICTED", "definition": "Multiple active sources assert mutually irreconcilable factual statements." },
+    { "id": "UNKNOWN", "definition": "Data point is unobserved or not disclosed in public record." },
+    { "id": "STALE", "definition": "Information has exceeded its review horizon without recent reconfirmation." },
+    { "id": "RETRACTED", "definition": "Source publication or claim has been formally withdrawn by the publisher." }
+  ]
+}

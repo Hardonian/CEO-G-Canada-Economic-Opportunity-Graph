@@ -1,0 +1,30 @@
+{
+  "cegs_vocab": "source-classes",
+  "version": "0.1",
+  "tiers": [
+    {
+      "tier": 1,
+      "name": "Primary / Authoritative",
+      "description": "Statutory registries, impact assessment records, federal and provincial gazettes, CanadaBuys tenders, CER filings, Crown corporations.",
+      "examples": ["Impact Assessment Agency of Canada", "Canadian Energy Regulator", "CanadaBuys", "Natural Resources Canada", "Department of National Defence"]
+    },
+    {
+      "tier": 2,
+      "name": "Corporate Issuers & Regulatory Filings",
+      "description": "SEDAR+ disclosures, stock exchange filings (TSX), audited annual financial statements, official proponent press releases.",
+      "examples": ["SEDAR+ filings", "TSX regulatory disclosures", "Corporate investor presentations"]
+    },
+    {
+      "tier": 3,
+      "name": "Credible News Organizations",
+      "description": "Major investigative and business journalism organizations with professional editorial standards.",
+      "examples": ["The Globe and Mail", "Bloomberg", "Reuters", "Canadian Press", "CBC"]
+    },
+    {
+      "tier": 4,
+      "name": "Secondary Industry Research",
+      "description": "Trade association newsletters, consultancy reports, academic working papers.",
+      "examples": ["Mining Association of Canada bulletins", "Consulting whitepapers"]
+    }
+  ]
+}

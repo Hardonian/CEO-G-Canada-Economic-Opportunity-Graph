@@ -1,0 +1,20 @@
+{
+  "cegs": "0.1",
+  "id": "cegs:org:ca:ontario-power-generation",
+  "type": "organization",
+  "canonical_name": "Ontario Power Generation Inc.",
+  "legal_name": "Ontario Power Generation Inc.",
+  "aliases": ["OPG", "Ontario Power Generation"],
+  "jurisdiction": "CA:ON",
+  "entity_type": "CrownCorp",
+  "website": "https://www.opg.com",
+  "identifiers": {
+    "LEI": "549300V6G7N5P4H8Y892",
+    "NEBN": "864192087"
+  },
+  "description": "Commercial Crown corporation owned by the Province of Ontario, responsible for approximately 50% of the electricity generated in the province.",
+  "created_at": "2026-01-05T00:00:00Z",
+  "updated_at": "2026-08-20T12:00:00Z",
+  "provenance": ["cegs:evidence:ca:opg-corporate-annual-report"],
+  "extensions": {}
+}

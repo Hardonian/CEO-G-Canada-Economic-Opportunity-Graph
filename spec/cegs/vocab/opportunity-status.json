@@ -1,0 +1,18 @@
+{
+  "cegs_vocab": "opportunity-status",
+  "version": "0.1",
+  "classes": [
+    {
+      "id": "CONFIRMED",
+      "definition": "Directly referenced in an active tender, procurement plan, or regulatory filing."
+    },
+    {
+      "id": "DERIVED",
+      "definition": "Derived deterministically from a sector dependency ontology based on the project's verified scale and stage."
+    },
+    {
+      "id": "SPECULATIVE",
+      "definition": "Potential downstream economic demand conditional on secondary expansions or non-binding offtake intentions."
+    }
+  ]
+}

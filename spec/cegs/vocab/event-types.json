@@ -1,0 +1,54 @@
+{
+  "cegs_vocab": "event-types",
+  "version": "0.1",
+  "namespaces": {
+    "project": [
+      "project.discovered",
+      "project.announced",
+      "project.stage_changed",
+      "project.delayed",
+      "project.paused",
+      "project.cancelled"
+    ],
+    "capital": [
+      "capital.proposed",
+      "capital.announced",
+      "capital.committed",
+      "capital.closed",
+      "capital.grant_awarded",
+      "capital.loan_guaranteed",
+      "capital.tax_credit_qualified"
+    ],
+    "regulatory": [
+      "regulatory.filing_submitted",
+      "regulatory.terms_of_reference",
+      "regulatory.public_comment_period",
+      "regulatory.hearing_convened",
+      "regulatory.approved",
+      "regulatory.rejected"
+    ],
+    "procurement": [
+      "procurement.rfi_issued",
+      "procurement.rfp_issued",
+      "procurement.contract_awarded",
+      "procurement.cancelled"
+    ],
+    "construction": [
+      "construction.groundbreaking",
+      "construction.milestone_completed",
+      "construction.commissioning_started",
+      "construction.commercial_operation"
+    ],
+    "indigenous": [
+      "indigenous.consultation_initiated",
+      "indigenous.cooperation_agreement",
+      "indigenous.impact_benefit_agreement",
+      "indigenous.equity_partnership_signed"
+    ],
+    "commercial": [
+      "commercial.offtake_signed",
+      "commercial.joint_venture_formed",
+      "commercial.epcm_contractor_selected"
+    ]
+  }
+}
