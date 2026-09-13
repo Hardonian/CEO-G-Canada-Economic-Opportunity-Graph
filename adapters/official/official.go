@@ -28,6 +28,7 @@ type sourceRecord struct {
 	EffectiveDate  string                 `json:"effective_date"`
 	RetrievedAt    string                 `json:"retrieved_at"`
 	SourceClass    string                 `json:"source_class"`
+	SourceTier     domain.SourceTier      `json:"source_tier"`
 	Locator        string                 `json:"locator"`
 	Excerpt        string                 `json:"excerpt"`
 	Confidence     domain.ConfidenceLevel `json:"confidence"`
@@ -160,7 +161,7 @@ func (a *Adapter) Parse(data []byte) (*adapters.IngestionResult, error) {
 			evidenceID := identity.StableID("evidence", adapterName, src.SourceID+":"+hash)
 			evidence := &domain.Evidence{
 				ID: evidenceID, SourceURL: src.SourceURL, Publisher: src.Publisher,
-				SourceTier: domain.SourceTier1, RetrievalTimestamp: retrieved,
+				SourceTier: src.SourceTier, RetrievalTimestamp: retrieved,
 				PublicationDate: &publication, EffectiveDate: &effective,
 				Confidence: src.Confidence, ExtractionMethod: "human_reviewed_primary_source_snapshot",
 				ContentHash: hash, HashScope: "normalized_source_record", SourceClass: src.SourceClass, SourceRecordID: src.SourceID,
@@ -253,6 +254,9 @@ func validateRecord(rec projectRecord) error {
 	for _, src := range rec.Sources {
 		if src.SourceID == "" || src.SourceURL == "" || src.Publisher == "" || src.Excerpt == "" {
 			return fmt.Errorf("official record %q contains incomplete source metadata", rec.ExternalID)
+		}
+		if src.SourceTier < domain.SourceTier1 || src.SourceTier > domain.SourceTier4 {
+			return fmt.Errorf("official source %q has invalid source tier %d", src.SourceID, src.SourceTier)
 		}
 		if src.Confidence != domain.ConfidenceVerified && src.Confidence != domain.ConfidenceSupported && src.Confidence != domain.ConfidenceReported {
 			return fmt.Errorf("official source %q uses unsupported confidence %q", src.SourceID, src.Confidence)
