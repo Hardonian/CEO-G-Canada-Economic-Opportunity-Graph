@@ -6,6 +6,8 @@ import (
 	"fmt"
 	"sort"
 	"time"
+
+	"github.com/Hardonian/CEO-G-Canada-Economic-Opportunity-Graph/internal/domain"
 )
 
 const (
