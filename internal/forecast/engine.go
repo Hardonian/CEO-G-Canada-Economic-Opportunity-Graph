@@ -640,7 +640,7 @@ func evaluateDataQuality(ctx normalizedContext, asOf time.Time) DataQuality {
 	newestAge := (*int)(nil)
 	for _, evidence := range resolved {
 		evidenceQuality += (tierScore(evidence.SourceTier) + confidenceScore(evidence.Confidence)) / 2
-		if evidence.Confidence == domain.ConfidenceConflicted {
+		if evidence.Confidence == domain.ConfidenceConflict {
 			conflicted++
 		}
 		date := evidence.RetrievalTimestamp
@@ -1180,7 +1180,7 @@ func validLifecycleStage(stage domain.LifecycleStage) bool {
 	if stage == "" {
 		return true
 	}
-	for _, candidate := range domain.ValidLifecycleStages() {
+	for _, candidate := range domain.ValidLifecycleStages {
 		if stage == candidate {
 			return true
 		}
@@ -1230,7 +1230,7 @@ func capexUncertainty(confidence domain.ConfidenceLevel) float64 {
 		return 0.35
 	case domain.ConfidenceStale:
 		return 0.40
-	case domain.ConfidenceConflicted:
+	case domain.ConfidenceConflict:
 		return 0.50
 	default:
 		return 0.50
@@ -1320,7 +1320,7 @@ func confidenceScore(value domain.ConfidenceLevel) float64 {
 		return 35
 	case domain.ConfidenceStale:
 		return 20
-	case domain.ConfidenceConflicted:
+	case domain.ConfidenceConflict:
 		return 10
 	case domain.ConfidenceRetracted:
 		return 0

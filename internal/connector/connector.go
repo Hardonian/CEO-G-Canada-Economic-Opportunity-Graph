@@ -2,11 +2,13 @@ package connector
 
 import (
 	"context"
+	"strconv"
 	"sync"
 	"time"
 
 	"github.com/Hardonian/CEO-G-Canada-Economic-Opportunity-Graph/adapters"
 	"github.com/Hardonian/CEO-G-Canada-Economic-Opportunity-Graph/adapters/middleware"
+	"github.com/Hardonian/CEO-G-Canada-Economic-Opportunity-Graph/internal/domain"
 )
 
 // Connector wraps a single Adapter with its middleware chain, health
@@ -39,6 +41,9 @@ func NewConnector(adapter adapters.Adapter, middlewares ...middleware.AdapterMid
 
 // Name returns the underlying adapter's name.
 func (c *Connector) Name() string { return c.adapter.Name() }
+
+// Tier returns the underlying adapter's tier.
+func (c *Connector) Tier() domain.SourceTier { return c.adapter.Tier() }
 
 // Fetch runs the middleware-wrapped adapter and tracks the last hash.
 func (c *Connector) Fetch(ctx context.Context) ([]byte, error) {
@@ -111,7 +116,7 @@ func (c *Connector) Status() ConnectorStatus {
 	c.mu.RUnlock()
 	return ConnectorStatus{
 		Name:        h.AdapterName,
-		Tier:        string(h.Tier),
+		Tier:        strconv.Itoa(int(h.Tier)),
 		Status:      h.Status,
 		LastAttempt: h.LastAttempt,
 		LastSuccess: h.LastSuccess,

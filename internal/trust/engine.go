@@ -41,7 +41,7 @@ func Evaluate(project *domain.Project, evidence []*domain.Evidence, relationship
 		if item.SourceTier == domain.SourceTier1 {
 			primary++
 		}
-		if item.Confidence == domain.ConfidenceConflicted {
+		if item.Confidence == domain.ConfidenceConflict {
 			report.ConflictingClaims++
 		}
 		candidate := item.RetrievalTimestamp

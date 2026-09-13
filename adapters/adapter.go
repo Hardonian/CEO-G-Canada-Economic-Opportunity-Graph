@@ -49,6 +49,10 @@ type Adapter interface {
 	Health() *SourceHealth
 }
 
+// SourceTier is a compatibility alias for domain.SourceTier used by
+// adapter middleware and older callers.
+type SourceTier = domain.SourceTier
+
 // HashDocument produces a deterministic SHA-256 hex string for change detection.
 func HashDocument(content []byte) string {
 	sum := sha256.Sum256(content)
@@ -81,7 +85,7 @@ func ReadBoundedFile(path string, maxBytes int64) ([]byte, error) {
 }
 
 // HashRecord hashes the normalized record rather than a whole multi-record
-// fixture, keeping evidence revisions scoped to the assertion they support.
+// fixture, keeping evidence revisions scoped to the assertion it supports.
 func HashRecord(record any) (string, error) {
 	data, err := json.Marshal(record)
 	if err != nil {

@@ -507,7 +507,7 @@ func classifySector(attrs arcAttributes) (domain.Sector, string) {
 			return domain.SectorEnergyFuels, "Energy infrastructure"
 		}
 	default:
-		return domain.SectorIndustrial, sourceSector
+		return domain.SectorIndustrialMfg, sourceSector
 	}
 }
 

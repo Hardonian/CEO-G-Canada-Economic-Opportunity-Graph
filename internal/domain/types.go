@@ -24,6 +24,9 @@ const (
 	ConfidenceConflict   ConfidenceLevel = "CONFLICTED" // Multiple active sources assert irreconcilable facts
 	ConfidenceStale      ConfidenceLevel = "STALE"      // Information has exceeded its review horizon
 	ConfidenceRetracted  ConfidenceLevel = "RETRACTED"  // Source publication or claim formally withdrawn
+	// ConfidenceConflicted is retained as a compatibility alias for older
+	// callers and models.
+	ConfidenceConflicted = ConfidenceConflict
 )
 
 // Sector represents a Canadian economic infrastructure sector.
@@ -41,6 +44,9 @@ const (
 	SectorMiningMetals         Sector = "Mining & Metals"
 	SectorEnergyFuels          Sector = "Energy & Fuels"
 	SectorForestryBioeconomy   Sector = "Forestry & Bioeconomy"
+	// Compatibility aliases for earlier domain versions.
+	SectorHousingInfra = SectorHousingEnabling
+	SectorManufacturing = SectorIndustrialMfg
 )
 
 // LifecycleStage represents the current stage of a capital project.
@@ -67,32 +73,42 @@ const (
 	StageCancelled         LifecycleStage = "CANCELLED"
 )
 
+// ValidLifecycleStages returns all valid lifecycle stages for validation.
+var ValidLifecycleStages = []LifecycleStage{
+	StageUnknown, StageDiscovered, StageAnnounced, StageReferred,
+	StageEarlyDevelopment, StageFeasibility, StageFinancing,
+	StageEnvironmentalReview, StagePermitting, StageProcurement,
+	StageFIDLikely, StageFID, StageConstruction, StageCommissioning,
+	StageOperating, StageDelayed, StagePaused, StageCancelled,
+}
+
 // CapitalCategory represents the type of capital event.
 type CapitalCategory string
 
 const (
-	CapitalCategoryCIB          CapitalCategory = "CIB"           // Canada Infrastructure Bank
-	CapitalCategoryCGF          CapitalCategory = "CGF"           // Canada Growth Fund
-	CapitalCategoryEquity       CapitalCategory = "EQUITY"
-	CapitalCategoryDebt         CapitalCategory = "DEBT"
-	CapitalCategoryGrant        CapitalCategory = "GRANT"
-	CapitalCategoryLoan         CapitalCategory = "LOAN"
-	CapitalCategoryTaxCredit    CapitalCategory = "TAX_CREDIT"
-	CapitalCategoryProcurement  CapitalCategory = "PROCUREMENT"
+	CapitalCategoryCIB           CapitalCategory = "CIB"           // Canada Infrastructure Bank
+	CapitalCategoryCGF           CapitalCategory = "CGF"           // Canada Growth Fund
+	CapitalCategoryEquity        CapitalCategory = "EQUITY"
+	CapitalCategoryDebt          CapitalCategory = "DEBT"
+	CapitalCategoryGrant         CapitalCategory = "GRANT"
+	CapitalCategoryLoan          CapitalCategory = "LOAN"
+	CapitalCategoryTaxCredit     CapitalCategory = "TAX_CREDIT"
+	CapitalCategoryProcurement   CapitalCategory = "PROCUREMENT"
 	CapitalCategoryPrivateEquity CapitalCategory = "PRIVATE_EQUITY"
+	CapitalCategoryLoanGuarantee CapitalCategory = "LOAN_GUARANTEE"
 )
 
 // CapitalStatus represents the status of a capital item.
 type CapitalStatus string
 
 const (
-	CapitalProposed             CapitalStatus = "PROPOSED"
-	CapitalAnnounced            CapitalStatus = "ANNOUNCED"
-	CapitalCommitted            CapitalStatus = "COMMITTED"
+	CapitalProposed               CapitalStatus = "PROPOSED"
+	CapitalAnnounced              CapitalStatus = "ANNOUNCED"
+	CapitalCommitted              CapitalStatus = "COMMITTED"
 	CapitalConditionallyCommitted CapitalStatus = "CONDITIONALLY_COMMITTED"
-	CapitalClosed               CapitalStatus = "CLOSED"
-	CapitalDisbursed            CapitalStatus = "DISBURSED"
-	CapitalCancelled            CapitalStatus = "CANCELLED"
+	CapitalClosed                 CapitalStatus = "CLOSED"
+	CapitalDisbursed              CapitalStatus = "DISBURSED"
+	CapitalCancelled              CapitalStatus = "CANCELLED"
 )
 
 // RequirementClass represents the confidence class of a procurement or opportunity.

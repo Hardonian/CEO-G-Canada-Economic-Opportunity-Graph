@@ -1,0 +1,52 @@
+{
+  "source": "Ontario Gazette",
+  "source_url": "https://www.ontario.ca/page/ontario-gazette",
+  "retrieved_at": "2026-09-13T00:00:00Z",
+  "effective_at": "2026-09-13T00:00:00Z",
+  "dataset_vintage": "2026-Q3",
+  "notices": [
+    {
+      "notice_id": "OG-2026-09-001",
+      "title": "Environmental Assessment Registration for the Ring of Fire Clean Energy Transmission Line",
+      "content": "The proponent, NorthStar Energy Corporation, has filed a preliminary screening report for a 450-kilometre 500-kV transmission line to connect Ring of Fire mining projects to the Ontario grid. Construction is estimated at C$2.8 billion.",
+      "publish_date": "2026-09-10",
+      "source_url": "https://www.ontario.ca/page/ontario-gazette-notice-2026-09-001",
+      "category": "Environmental Assessment",
+      "proponent_name": "NorthStar Energy Corporation",
+      "project_name": "Ring of Fire Clean Energy Transmission Line",
+      "location": "Thunder Bay",
+      "amount_text": "C$2.8 billion",
+      "metadata": {
+        "naics_code": "221114",
+        "procurement_type": "infrastructure"
+      }
+    },
+    {
+      "notice_id": "OG-2026-09-012",
+      "title": "Request for Proposals: Transit-Oriented Development at Oakville GO Station",
+      "content": "Metrolinx invites qualified proponents to submit proposals for the design, build, and financing of a mixed-use transit-oriented development at the Oakville GO Station. The procurement has an estimated value of C$450 million.",
+      "publish_date": "2026-09-12",
+      "source_url": "https://www.ontario.ca/page/ontario-gazette-notice-2026-09-012",
+      "category": "Procurement",
+      "proponent_name": "Metrolinx",
+      "project_name": "Oakville GO Station Transit-Oriented Development",
+      "location": "Oakville",
+      "amount_text": "C$450 million",
+      "metadata": {
+        "naics_code": "23",
+        "procurement_type": "design-build-finance"
+      }
+    },
+    {
+      "notice_id": "OG-2026-09-005",
+      "title": "Annual Report on Provincial Parks Operations",
+      "content": "This notice provides the annual summary of operating revenues and expenditures for Ontario's provincial parks system for the fiscal year 2025-26.",
+      "publish_date": "2026-09-08",
+      "source_url": "https://www.ontario.ca/page/ontario-gazette-notice-2026-09-005",
+      "category": "Administrative",
+      "metadata": {
+        "naics_code": "924110"
+      }
+    }
+  ]
+}

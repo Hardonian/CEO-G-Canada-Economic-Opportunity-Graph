@@ -5,7 +5,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
-	"net/url"
 	"regexp"
 	"strconv"
 	"strings"
@@ -205,7 +204,7 @@ func (a *GazetteAdapter) Parse(data []byte) (*adapters.IngestionResult, error) {
 	
 	publisher := gazettePublisher(a.province)
 	
-	for index, notice := range fixture.Notices {
+	for _, notice := range fixture.Notices {
 		if strings.TrimSpace(notice.NoticeID) == "" || strings.TrimSpace(notice.Title) == "" {
 			continue
 		}

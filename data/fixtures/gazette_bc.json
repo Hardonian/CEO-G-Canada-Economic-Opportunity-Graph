@@ -1,0 +1,41 @@
+{
+  "source": "BC Gazette",
+  "source_url": "https://www.bcgazette.ca/",
+  "retrieved_at": "2026-09-13T00:00:00Z",
+  "effective_at": "2026-09-13T00:00:00Z",
+  "dataset_vintage": "2026-09",
+  "notices": [
+    {
+      "notice_id": "BCG-2026-09-078",
+      "title": "Environmental Assessment Certificate Amendment for the Site C Dam Expansion",
+      "content": "BC Hydro has submitted a proposal to expand the Site C dam generating capacity by adding a 200 MW powerhouse. The capital investment is projected at C$850 million for the expansion phase.",
+      "publish_date": "2026-09-10",
+      "source_url": "https://www.bcgazette.ca/notice/BCG-2026-09-078",
+      "category": "Environmental Assessment",
+      "proponent_name": "BC Hydro",
+      "project_name": "Site C Dam Expansion",
+      "location": "Fort St. John",
+      "amount_text": "C$850 million",
+      "metadata": {
+        "naics_code": "221111",
+        "procurement_type": "hydro_electric"
+      }
+    },
+    {
+      "notice_id": "BCG-2026-09-052",
+      "title": "Request for Qualifications: Vancouver International Airport Terminal 3 Expansion",
+      "content": "The Vancouver Airport Authority requests qualifications from qualified design-builder teams for the expansion of the international terminal. The project is estimated at C$1.2 billion.",
+      "publish_date": "2026-09-12",
+      "source_url": "https://www.bcgazette.ca/notice/BCG-2026-09-052",
+      "category": "Procurement",
+      "proponent_name": "Vancouver Airport Authority",
+      "project_name": "YVR Terminal 3 Expansion",
+      "location": "Richmond",
+      "amount_text": "C$1.2 billion",
+      "metadata": {
+        "naics_code": "481111",
+        "procurement_type": "airport_infrastructure"
+      }
+    }
+  ]
+}

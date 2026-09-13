@@ -1,5 +1,9 @@
 package database
 
+import (
+	"github.com/Hardonian/CEO-G-Canada-Economic-Opportunity-Graph/internal/domain"
+)
+
 // ensureSlugIndexLocked builds the slug -> project ID index while the store
 // write lock is held.
 func (m *MemoryStore) ensureSlugIndexLocked() {
@@ -49,16 +53,6 @@ func (m *MemoryStore) RebuildIndexes() {
 			}
 		}
 	}
-}
-
-func entityNames(entity *domain.Entity) []string {
-	if entity == nil {
-		return nil
-	}
-	names := make([]string, 0, 2+len(entity.Aliases))
-	names = append(names, entity.LegalName, entity.CommonName)
-	names = append(names, entity.Aliases...)
-	return names
 }
 
 func normalizedName(value string) string {

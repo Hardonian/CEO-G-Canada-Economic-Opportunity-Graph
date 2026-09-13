@@ -1,0 +1,41 @@
+{
+  "source": "Gazette officielle du Québec",
+  "source_url": "https://gazetteofficielle.gouv.qc.ca/",
+  "retrieved_at": "2026-09-13T00:00:00Z",
+  "effective_at": "2026-09-13T00:00:00Z",
+  "dataset_vintage": "2026-S35",
+  "notices": [
+    {
+      "notice_id": "GOQ-2026-09-045",
+      "title": "Dérogation environnementale pour le projet d'énergie solaire de Saint-Honoré",
+      "content": "Le ministère de l'Environnementautorise le projet d'énergie solaire de 150 MW de capacité au cours de laquelle la société GreenPower Canada prévoit d'investir 320 millions de dollars CAD.",
+      "publish_date": "2026-09-09",
+      "source_url": "https://gazetteofficielle.gouv.qc.ca/avis/GOQ-2026-09-045",
+      "category": "Environmental Assessment",
+      "proponent_name": "GreenPower Canada",
+      "project_name": "Projet d'énergie solaire Saint-Honoré",
+      "location": "Saint-Honoré, Estrie",
+      "amount_text": "320 million CAD",
+      "metadata": {
+        "naics_code": "221114",
+        "procurement_type": "renewable_energy"
+      }
+    },
+    {
+      "notice_id": "GOQ-2026-09-033",
+      "title": "Appel d'offres : approvisionnement en matériel de transport collectif électrique",
+      "content": "La Régie autonome des transports par cont ractuels (RATC) lance un appel d'offres pour l'achat de 120 autobus électriques et l'installation d'infrastructures de charge. Valeur estimée : 85 millions de dollars.",
+      "publish_date": "2026-09-11",
+      "source_url": "https://gazetteofficielle.gouv.qc.ca/avis/GOQ-2026-09-033",
+      "category": "Procurement",
+      "proponent_name": "Régie autonome des transports par contrats",
+      "project_name": "Flotte d'autobus électriques RATC",
+      "location": "Montréal",
+      "amount_text": "85 million CAD",
+      "metadata": {
+        "naics_code": "485110",
+        "procurement_type": "rolling_stock"
+      }
+    }
+  ]
+}

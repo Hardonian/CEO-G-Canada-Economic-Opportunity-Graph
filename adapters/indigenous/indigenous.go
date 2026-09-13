@@ -145,7 +145,7 @@ func (a *IndigenousAdapter) Parse(data []byte) (*adapters.IngestionResult, error
 		sourceURL = ISCBusinessDirectoryURL
 	}
 	
-	for index, biz := range fixture.Businesses {
+	for _, biz := range fixture.Businesses {
 		if strings.TrimSpace(biz.BusinessID) == "" || strings.TrimSpace(biz.BusinessName) == "" {
 			continue
 		}
@@ -176,10 +176,11 @@ func (a *IndigenousAdapter) Parse(data []byte) (*adapters.IngestionResult, error
 				"isc_business_id": biz.BusinessID,
 				"naics_code":      biz.NAICSCode,
 			},
-			Description: buildBusinessDescription(biz),
+			Description:  buildBusinessDescription(biz),
 			EvidenceID:   evidenceID,
 			CreatedAt:    effective,
 			UpdatedAt:    effective,
+			Metadata:     biz.Metadata,
 		}
 		
 		evidence := &domain.Evidence{
@@ -246,7 +247,7 @@ func CrossReferenceProcurement(businesses []*domain.Entity, procurement *domain.
 		}
 		
 		// Ownership threshold for set-asides
-		ownership := getOwnershipPercent(biz.Metadata)
+		ownership := getOwnershipPercent(biz)
 		if ownership < 51 {
 			continue
 		}
@@ -383,7 +384,7 @@ func getOwnershipPercent(biz *domain.Entity) int {
 	return 100
 }
 
-func hasRelevantCapability(biz *domain.Entity, projectSector, projectSubsector domain.Sector) bool {
+func hasRelevantCapability(biz *domain.Entity, projectSector, projectSubsector string) bool {
 	capabilities := []string{}
 	if caps, ok := biz.Metadata["capabilities"].([]interface{}); ok {
 		for _, c := range caps {
@@ -396,7 +397,7 @@ func hasRelevantCapability(biz *domain.Entity, projectSector, projectSubsector d
 	// Also check NAICS
 	bizNAICS := biz.Identifiers["naics_code"]
 	
-	sectorKeywords := sectorKeywords(projectSector, projectSubsector)
+	sectorKeywords := sectorKeywordsFromStrings(projectSector, projectSubsector)
 	
 	for _, cap := range capabilities {
 		for _, keyword := range sectorKeywords {
@@ -415,6 +416,39 @@ func hasRelevantCapability(biz *domain.Entity, projectSector, projectSubsector d
 	}
 	
 	return false
+}
+
+func sectorKeywordsFromStrings(sector, subsector string) []string {
+	// Convert string sector to domain.Sector for keyword lookup
+	var domainSector domain.Sector
+	switch sector {
+	case "Critical Minerals":
+		domainSector = domain.SectorCriticalMinerals
+	case "Nuclear & Clean Power":
+		domainSector = domain.SectorNuclearEnergy
+	case "Clean Energy & Grid":
+		domainSector = domain.SectorCleanEnergy
+	case "AI Compute & Data Centres":
+		domainSector = domain.SectorAICompute
+	case "Defence & Arctic":
+		domainSector = domain.SectorDefenceArctic
+	case "Transportation & Ports":
+		domainSector = domain.SectorTransportation
+	case "Industrial & Manufacturing":
+		domainSector = domain.SectorIndustrialMfg
+	case "Housing-Enabling Infrastructure":
+		domainSector = domain.SectorHousingEnabling
+	case "Mining & Metals":
+		domainSector = domain.SectorMiningMetals
+	case "Energy & Fuels":
+		domainSector = domain.SectorEnergyFuels
+	case "Forestry & Bioeconomy":
+		domainSector = domain.SectorForestryBioeconomy
+	default:
+		domainSector = domain.SectorIndustrialMfg
+	}
+	
+	return sectorKeywords(domainSector, domain.Sector(subsector))
 }
 
 func sectorKeywords(sector, subsector domain.Sector) []string {
