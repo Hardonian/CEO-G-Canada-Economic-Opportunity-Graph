@@ -1,0 +1,57 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://canadaopportunitygraph.ca/schemas/source-config-v1.json",
+  "title": "CanadaOpportunityGraph source configuration",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "publishers", "sources"],
+  "properties": {
+    "schema_version": { "const": "1" },
+    "publishers": { "type": "array", "items": { "$ref": "#/$defs/publisher" } },
+    "publisher_policies": { "type": "array", "items": { "$ref": "#/$defs/publisher_policy" } },
+    "sources": { "type": "array", "items": { "$ref": "#/$defs/source" } },
+    "private_configs": {
+      "type": "array",
+      "description": "Non-secret adapter settings and secret-manager references only; never literal credentials."
+    }
+  },
+  "$defs": {
+    "publisher": {
+      "type": "object",
+      "required": ["id", "name", "authority_tier"],
+      "properties": {
+        "id": { "type": "string" },
+        "entity_id": { "type": "string" },
+        "name": { "type": "string" },
+        "canonical_domain": { "type": "string" },
+        "jurisdiction": { "type": "string" },
+        "authority_tier": { "type": "integer", "minimum": 1, "maximum": 5 }
+      },
+      "additionalProperties": true
+    },
+    "publisher_policy": {
+      "type": "object",
+      "required": ["publisher_id", "max_concurrency", "requests_per_minute", "burst", "minimum_poll_interval_seconds"],
+      "additionalProperties": true
+    },
+    "source": {
+      "type": "object",
+      "required": ["id", "publisher_id", "name", "canonical_url", "source_kind", "source_family", "authority_tier", "lifecycle_status", "health_status", "terms_status", "robots_status"],
+      "properties": {
+        "id": { "type": "string" },
+        "publisher_id": { "type": "string" },
+        "parent_source_id": { "type": "string" },
+        "name": { "type": "string" },
+        "canonical_url": { "type": "string", "format": "uri", "pattern": "^https?://" },
+        "source_kind": { "enum": ["CATALOG", "DATASET", "RESOURCE", "API", "FEED", "DOCUMENT_REPOSITORY", "DOCUMENT", "WEB_PAGE"] },
+        "source_family": { "type": "string" },
+        "authority_tier": { "type": "integer", "minimum": 1, "maximum": 5 },
+        "lifecycle_status": { "enum": ["DISCOVERED", "CLASSIFIED", "TESTED", "APPROVED", "ACTIVE", "REJECTED", "BLOCKED", "RETIRED"] },
+        "health_status": { "enum": ["UNKNOWN", "HEALTHY", "STALE", "DEGRADED", "BROKEN", "DISABLED"] },
+        "terms_status": { "enum": ["UNKNOWN", "ALLOWED", "RESTRICTED", "BLOCKED", "NOT_APPLICABLE"] },
+        "robots_status": { "enum": ["UNKNOWN", "ALLOWED", "RESTRICTED", "BLOCKED", "NOT_APPLICABLE"] }
+      },
+      "additionalProperties": true
+    }
+  }
+}

@@ -1,0 +1,61 @@
+{
+  "schema_version": "1",
+  "publishers": [
+    {
+      "id": "publisher:ca:tbs",
+      "name": "Treasury Board of Canada Secretariat",
+      "canonical_domain": "open.canada.ca",
+      "jurisdiction": "CA",
+      "authority_tier": 1
+    }
+  ],
+  "publisher_policies": [
+    {
+      "publisher_id": "publisher:ca:tbs",
+      "max_concurrency": 2,
+      "requests_per_minute": 30,
+      "burst": 2,
+      "minimum_poll_interval_seconds": 900,
+      "default_attribution": "Government of Canada Open Government Portal",
+      "default_license": "Open Government Licence - Canada",
+      "allowed_schemes": ["https"]
+    }
+  ],
+  "sources": [
+    {
+      "id": "source:ca:tbs:open-government-catalog",
+      "publisher_id": "publisher:ca:tbs",
+      "name": "Government of Canada Open Government catalogue",
+      "canonical_url": "https://open.canada.ca/data/en/api/3/action/package_search",
+      "source_kind": "CATALOG",
+      "jurisdiction": "CA",
+      "geographies": ["CA"],
+      "source_family": "CKAN",
+      "access_method": "REST_API",
+      "content_type": "application/json",
+      "authority_tier": 1,
+      "subject_tags": ["open-data", "economic-development", "infrastructure"],
+      "languages": ["en-CA", "fr-CA"],
+      "update_frequency": "CONTINUAL",
+      "lifecycle_status": "APPROVED",
+      "health_status": "UNKNOWN",
+      "terms_status": "ALLOWED",
+      "robots_status": "NOT_APPLICABLE",
+      "license": "Open Government Licence - Canada",
+      "authentication_required": false,
+      "parser": "ckan-v1",
+      "adapter": "ckan",
+      "polling_policy": "recently-changed-first; full-catalog reconciliation weekly",
+      "incremental_capability": "RECENTLY_CHANGED,PAGINATION,ETAG,LAST_MODIFIED",
+      "historical_depth": "catalog-defined",
+      "estimated_value": 95,
+      "estimated_cost": 15,
+      "coverage_score": 0,
+      "capabilities": {
+        "read_only": true,
+        "source_of_sources": true,
+        "recently_changed_url": "https://open.canada.ca/data/en/api/3/action/recently_changed_packages_activity_list"
+      }
+    }
+  ]
+}

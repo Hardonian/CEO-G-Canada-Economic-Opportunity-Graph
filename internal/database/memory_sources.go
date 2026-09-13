@@ -769,3 +769,416 @@ func (m *MemoryStore) GetActiveMappingVersion(ctx context.Context, sourceID, nam
 	}
 	return nil, ErrNotFound
 }
+
+func (m *MemoryStore) EnqueueIngestionJob(ctx context.Context, job *domain.IngestionJob) (*domain.IngestionJob, error) {
+	if err := contextError(ctx); err != nil {
+		return nil, err
+	}
+	if err := validateIngestionJob(job); err != nil {
+		return nil, err
+	}
+	m.mu.Lock()
+	defer m.mu.Unlock()
+	return m.enqueueIngestionJobLocked(job)
+}
+
+func (m *MemoryStore) enqueueIngestionJobLocked(job *domain.IngestionJob) (*domain.IngestionJob, error) {
+	if _, ok := m.sources[job.SourceID]; !ok {
+		return nil, fmt.Errorf("source %q: %w", job.SourceID, ErrNotFound)
+	}
+	if existingID, ok := m.ingestionJobDedupeIndex[job.DedupeKey]; ok {
+		return cloneIngestionJob(m.ingestionJobs[existingID]), nil
+	}
+	if existing, ok := m.ingestionJobs[job.ID]; ok {
+		return cloneIngestionJob(existing), nil
+	}
+	copy := cloneIngestionJob(job)
+	if copy.Status == "" {
+		copy.Status = domain.IngestionJobQueued
+	}
+	if copy.MaxAttempts <= 0 {
+		copy.MaxAttempts = 3
+	}
+	m.ingestionJobs[copy.ID] = copy
+	m.ingestionJobDedupeIndex[copy.DedupeKey] = copy.ID
+	return cloneIngestionJob(copy), nil
+}
+
+func (m *MemoryStore) GetIngestionJob(ctx context.Context, id string) (*domain.IngestionJob, error) {
+	if err := contextError(ctx); err != nil {
+		return nil, err
+	}
+	m.mu.RLock()
+	defer m.mu.RUnlock()
+	job, ok := m.ingestionJobs[id]
+	if !ok {
+		return nil, ErrNotFound
+	}
+	return cloneIngestionJob(job), nil
+}
+
+func (m *MemoryStore) ListIngestionJobs(ctx context.Context, filter domain.IngestionJobFilter) ([]*domain.IngestionJob, int, error) {
+	if err := contextError(ctx); err != nil {
+		return nil, 0, err
+	}
+	m.mu.RLock()
+	defer m.mu.RUnlock()
+	result := make([]*domain.IngestionJob, 0)
+	for _, job := range m.ingestionJobs {
+		if filter.SourceID != "" && job.SourceID != filter.SourceID {
+			continue
+		}
+		if filter.Queue != "" && job.Queue != filter.Queue {
+			continue
+		}
+		if filter.Mode != "" && job.Mode != filter.Mode {
+			continue
+		}
+		if filter.Status != "" && job.Status != filter.Status {
+			continue
+		}
+		result = append(result, cloneIngestionJob(job))
+	}
+	sort.Slice(result, func(i, j int) bool {
+		if !result[i].CreatedAt.Equal(result[j].CreatedAt) {
+			return result[i].CreatedAt.Before(result[j].CreatedAt)
+		}
+		return result[i].ID < result[j].ID
+	})
+	total := len(result)
+	start, end := pageBounds(total, filter.Offset, filter.Limit)
+	return result[start:end], total, nil
+}
+
+func (m *MemoryStore) ClaimIngestionJobs(ctx context.Context, request ClaimJobsRequest) ([]*domain.IngestionJob, error) {
+	if err := contextError(ctx); err != nil {
+		return nil, err
+	}
+	if request.WorkerID == "" || request.Limit <= 0 || request.Now.IsZero() || request.LeaseDuration <= 0 {
+		return nil, fmt.Errorf("worker id, positive limit, current time, and lease duration are required")
+	}
+	m.mu.Lock()
+	defer m.mu.Unlock()
+	queueSet := make(map[domain.IngestionQueue]struct{}, len(request.Queues))
+	for _, queue := range request.Queues {
+		queueSet[queue] = struct{}{}
+	}
+	now := request.Now.UTC()
+	eligible := make([]*domain.IngestionJob, 0)
+	for _, job := range m.ingestionJobs {
+		if len(queueSet) > 0 {
+			if _, ok := queueSet[job.Queue]; !ok {
+				continue
+			}
+		}
+		queued := job.Status == domain.IngestionJobQueued || job.Status == domain.IngestionJobRetry
+		expired := job.Status == domain.IngestionJobRunning && job.LeaseExpiresAt != nil && !job.LeaseExpiresAt.After(now)
+		if (!queued && !expired) || job.AvailableAt.After(now) {
+			continue
+		}
+		if job.MaxAttempts > 0 && job.AttemptCount >= job.MaxAttempts {
+			deadAt := now
+			job.Status = domain.IngestionJobDeadLetter
+			job.DeadLetteredAt = &deadAt
+			job.LeaseOwner = ""
+			job.LeaseExpiresAt = nil
+			job.UpdatedAt = now
+			continue
+		}
+		eligible = append(eligible, job)
+	}
+	sort.Slice(eligible, func(i, j int) bool {
+		if eligible[i].Priority != eligible[j].Priority {
+			return eligible[i].Priority < eligible[j].Priority
+		}
+		if !eligible[i].AvailableAt.Equal(eligible[j].AvailableAt) {
+			return eligible[i].AvailableAt.Before(eligible[j].AvailableAt)
+		}
+		if !eligible[i].CreatedAt.Equal(eligible[j].CreatedAt) {
+			return eligible[i].CreatedAt.Before(eligible[j].CreatedAt)
+		}
+		return eligible[i].ID < eligible[j].ID
+	})
+	if len(eligible) > request.Limit {
+		eligible = eligible[:request.Limit]
+	}
+	result := make([]*domain.IngestionJob, 0, len(eligible))
+	for _, job := range eligible {
+		leaseExpires := now.Add(request.LeaseDuration)
+		job.Status = domain.IngestionJobRunning
+		job.LeaseOwner = request.WorkerID
+		job.LeaseExpiresAt = &leaseExpires
+		job.AttemptCount++
+		if job.StartedAt == nil {
+			startedAt := now
+			job.StartedAt = &startedAt
+		}
+		job.UpdatedAt = now
+		result = append(result, cloneIngestionJob(job))
+	}
+	return result, nil
+}
+
+func (m *MemoryStore) CompleteIngestionJob(ctx context.Context, request CompleteJobRequest) (*domain.IngestionJob, error) {
+	if err := contextError(ctx); err != nil {
+		return nil, err
+	}
+	if request.JobID == "" || request.WorkerID == "" || request.At.IsZero() {
+		return nil, fmt.Errorf("job id, worker id, and completion time are required")
+	}
+	m.mu.Lock()
+	defer m.mu.Unlock()
+	return m.completeIngestionJobLocked(request)
+}
+
+func (m *MemoryStore) completeIngestionJobLocked(request CompleteJobRequest) (*domain.IngestionJob, error) {
+	job, ok := m.ingestionJobs[request.JobID]
+	if !ok {
+		return nil, ErrNotFound
+	}
+	if err := validateJobLease(job, request.WorkerID, request.At); err != nil {
+		return nil, err
+	}
+	at := request.At.UTC()
+	job.Status = domain.IngestionJobSucceeded
+	job.CompletedAt = &at
+	job.LeaseOwner = ""
+	job.LeaseExpiresAt = nil
+	job.FailureStage = ""
+	job.LastError = ""
+	job.UpdatedAt = at
+	return cloneIngestionJob(job), nil
+}
+
+func (m *MemoryStore) FailIngestionJob(ctx context.Context, request FailJobRequest) (*domain.IngestionJob, error) {
+	if err := contextError(ctx); err != nil {
+		return nil, err
+	}
+	if request.JobID == "" || request.WorkerID == "" || request.At.IsZero() || request.Error == "" {
+		return nil, fmt.Errorf("job id, worker id, failure time, and error are required")
+	}
+	m.mu.Lock()
+	defer m.mu.Unlock()
+	return m.failIngestionJobLocked(request)
+}
+
+func (m *MemoryStore) failIngestionJobLocked(request FailJobRequest) (*domain.IngestionJob, error) {
+	job, ok := m.ingestionJobs[request.JobID]
+	if !ok {
+		return nil, ErrNotFound
+	}
+	if err := validateJobLease(job, request.WorkerID, request.At); err != nil {
+		return nil, err
+	}
+	at := request.At.UTC()
+	job.FailureStage = request.FailureStage
+	job.LastError = request.Error
+	job.LeaseOwner = ""
+	job.LeaseExpiresAt = nil
+	job.UpdatedAt = at
+	if request.RetryAt != nil && job.AttemptCount < job.MaxAttempts {
+		job.Status = domain.IngestionJobRetry
+		job.AvailableAt = request.RetryAt.UTC()
+		return cloneIngestionJob(job), nil
+	}
+	job.Status = domain.IngestionJobDeadLetter
+	job.DeadLetteredAt = &at
+	return cloneIngestionJob(job), nil
+}
+
+func (m *MemoryStore) ReplayDeadLetterJob(ctx context.Context, request ReplayJobRequest) (*domain.IngestionJob, error) {
+	if err := contextError(ctx); err != nil {
+		return nil, err
+	}
+	if request.DeadLetterJobID == "" || request.NewJobID == "" || request.DedupeKey == "" || request.AvailableAt.IsZero() || request.RequestedAt.IsZero() {
+		return nil, fmt.Errorf("dead-letter job id, new job id, dedupe key, and timestamps are required")
+	}
+	m.mu.Lock()
+	defer m.mu.Unlock()
+	dead, ok := m.ingestionJobs[request.DeadLetterJobID]
+	if !ok {
+		return nil, ErrNotFound
+	}
+	if dead.Status != domain.IngestionJobDeadLetter {
+		return nil, fmt.Errorf("job %q is not dead-lettered: %w", dead.ID, ErrInvalidTransition)
+	}
+	if existingID, ok := m.ingestionJobDedupeIndex[request.DedupeKey]; ok {
+		return cloneIngestionJob(m.ingestionJobs[existingID]), nil
+	}
+	if _, ok := m.ingestionJobs[request.NewJobID]; ok {
+		return nil, fmt.Errorf("new replay job id already exists: %w", ErrSourceConflict)
+	}
+	requestedAt := request.RequestedAt.UTC()
+	replay := cloneIngestionJob(dead)
+	replay.ID = request.NewJobID
+	replay.DedupeKey = request.DedupeKey
+	replay.Mode = domain.IngestionModeReplay
+	replay.Status = domain.IngestionJobQueued
+	replay.AvailableAt = request.AvailableAt.UTC()
+	replay.LeaseOwner = ""
+	replay.LeaseExpiresAt = nil
+	replay.AttemptCount = 0
+	replay.FailureStage = ""
+	replay.LastError = ""
+	replay.ReplayOfJobID = dead.ID
+	replay.StartedAt = nil
+	replay.CompletedAt = nil
+	replay.DeadLetteredAt = nil
+	replay.CreatedAt = requestedAt
+	replay.UpdatedAt = requestedAt
+	m.ingestionJobs[replay.ID] = replay
+	m.ingestionJobDedupeIndex[replay.DedupeKey] = replay.ID
+	return cloneIngestionJob(replay), nil
+}
+
+func (m *MemoryStore) SaveOutboxEvent(ctx context.Context, event *domain.OutboxEvent) error {
+	if err := contextError(ctx); err != nil {
+		return err
+	}
+	if err := validateOutboxEvent(event); err != nil {
+		return err
+	}
+	m.mu.Lock()
+	defer m.mu.Unlock()
+	return m.saveOutboxEventLocked(event)
+}
+
+func (m *MemoryStore) saveOutboxEventLocked(event *domain.OutboxEvent) error {
+	if _, ok := m.sources[event.SourceID]; !ok {
+		return fmt.Errorf("source %q: %w", event.SourceID, ErrNotFound)
+	}
+	if _, ok := m.outboxEvents[event.ID]; ok {
+		return nil
+	}
+	if owner, ok := m.outboxHashIndex[event.Hash]; ok && owner != event.ID {
+		return fmt.Errorf("outbox fingerprint already exists as %q: %w", owner, ErrSourceConflict)
+	}
+	copy := cloneOutboxEvent(event)
+	if copy.Status == "" {
+		copy.Status = domain.OutboxPending
+	}
+	m.outboxEvents[copy.ID] = copy
+	m.outboxHashIndex[copy.Hash] = copy.ID
+	return nil
+}
+
+func (m *MemoryStore) ListOutboxEvents(ctx context.Context, status domain.OutboxStatus, limit, offset int) ([]*domain.OutboxEvent, int, error) {
+	if err := contextError(ctx); err != nil {
+		return nil, 0, err
+	}
+	m.mu.RLock()
+	defer m.mu.RUnlock()
+	result := make([]*domain.OutboxEvent, 0)
+	for _, event := range m.outboxEvents {
+		if status != "" && event.Status != status {
+			continue
+		}
+		result = append(result, cloneOutboxEvent(event))
+	}
+	sort.Slice(result, func(i, j int) bool {
+		if !result[i].CreatedAt.Equal(result[j].CreatedAt) {
+			return result[i].CreatedAt.Before(result[j].CreatedAt)
+		}
+		return result[i].ID < result[j].ID
+	})
+	total := len(result)
+	start, end := pageBounds(total, offset, limit)
+	return result[start:end], total, nil
+}
+
+func (m *MemoryStore) ClaimOutboxEvents(ctx context.Context, request ClaimOutboxRequest) ([]*domain.OutboxEvent, error) {
+	if err := contextError(ctx); err != nil {
+		return nil, err
+	}
+	if request.WorkerID == "" || request.Limit <= 0 || request.Now.IsZero() || request.LeaseDuration <= 0 {
+		return nil, fmt.Errorf("worker id, positive limit, current time, and lease duration are required")
+	}
+	m.mu.Lock()
+	defer m.mu.Unlock()
+	now := request.Now.UTC()
+	eligible := make([]*domain.OutboxEvent, 0)
+	for _, event := range m.outboxEvents {
+		pending := event.Status == domain.OutboxPending || event.Status == domain.OutboxFailed
+		expired := event.Status == domain.OutboxPublishing && event.LeaseExpiresAt != nil && !event.LeaseExpiresAt.After(now)
+		if (!pending && !expired) || event.AvailableAt.After(now) {
+			continue
+		}
+		eligible = append(eligible, event)
+	}
+	sort.Slice(eligible, func(i, j int) bool {
+		if !eligible[i].AvailableAt.Equal(eligible[j].AvailableAt) {
+			return eligible[i].AvailableAt.Before(eligible[j].AvailableAt)
+		}
+		if !eligible[i].CreatedAt.Equal(eligible[j].CreatedAt) {
+			return eligible[i].CreatedAt.Before(eligible[j].CreatedAt)
+		}
+		return eligible[i].ID < eligible[j].ID
+	})
+	if len(eligible) > request.Limit {
+		eligible = eligible[:request.Limit]
+	}
+	result := make([]*domain.OutboxEvent, 0, len(eligible))
+	for _, event := range eligible {
+		leaseExpires := now.Add(request.LeaseDuration)
+		event.Status = domain.OutboxPublishing
+		event.LeaseOwner = request.WorkerID
+		event.LeaseExpiresAt = &leaseExpires
+		event.AttemptCount++
+		event.UpdatedAt = now
+		result = append(result, cloneOutboxEvent(event))
+	}
+	return result, nil
+}
+
+func (m *MemoryStore) CompleteOutboxEvent(ctx context.Context, request CompleteOutboxRequest) (*domain.OutboxEvent, error) {
+	if err := contextError(ctx); err != nil {
+		return nil, err
+	}
+	if request.EventID == "" || request.WorkerID == "" || request.At.IsZero() {
+		return nil, fmt.Errorf("event id, worker id, and completion time are required")
+	}
+	m.mu.Lock()
+	defer m.mu.Unlock()
+	event, ok := m.outboxEvents[request.EventID]
+	if !ok {
+		return nil, ErrNotFound
+	}
+	if err := validateOutboxLease(event, request.WorkerID, request.At); err != nil {
+		return nil, err
+	}
+	at := request.At.UTC()
+	event.Status = domain.OutboxPublished
+	event.PublishedAt = &at
+	event.LeaseOwner = ""
+	event.LeaseExpiresAt = nil
+	event.LastError = ""
+	event.UpdatedAt = at
+	return cloneOutboxEvent(event), nil
+}
+
+func (m *MemoryStore) FailOutboxEvent(ctx context.Context, request FailOutboxRequest) (*domain.OutboxEvent, error) {
+	if err := contextError(ctx); err != nil {
+		return nil, err
+	}
+	if request.EventID == "" || request.WorkerID == "" || request.Error == "" || request.At.IsZero() {
+		return nil, fmt.Errorf("event id, worker id, error, and failure time are required")
+	}
+	m.mu.Lock()
+	defer m.mu.Unlock()
+	event, ok := m.outboxEvents[request.EventID]
+	if !ok {
+		return nil, ErrNotFound
+	}
+	if err := validateOutboxLease(event, request.WorkerID, request.At); err != nil {
+		return nil, err
+	}
+	event.Status = domain.OutboxFailed
+	event.LastError = request.Error
+	event.LeaseOwner = ""
+	event.LeaseExpiresAt = nil
+	if !request.RetryAt.IsZero() {
+		event.AvailableAt = request.RetryAt.UTC()
+	}
+	event.UpdatedAt = request.At.UTC()
+	return cloneOutboxEvent(event), nil
+}
