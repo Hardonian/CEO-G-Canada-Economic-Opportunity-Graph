@@ -57,6 +57,27 @@
       "canonical_name_fr": "Infrastructures habilitantes pour le logement",
       "description": "Municipal trunk water/wastewater mains, stormwater detention, district thermal networks, and arterial roads directly unlocking housing developments.",
       "naics_codes": ["237110"]
+    },
+    {
+      "id": "mining-metals",
+      "canonical_name": "Mining & Metals",
+      "canonical_name_fr": "Mines et métaux",
+      "description": "Source-reported mining and mineral-processing projects that have not yet been classified against Canada's critical-minerals list.",
+      "naics_codes": ["2121", "2122", "2123"]
+    },
+    {
+      "id": "energy-fuels",
+      "canonical_name": "Energy & Fuels",
+      "canonical_name_fr": "Énergie et combustibles",
+      "description": "Energy production, processing, and transport projects not classified as nuclear or clean electricity infrastructure.",
+      "naics_codes": ["211", "213", "486"]
+    },
+    {
+      "id": "forestry-bioeconomy",
+      "canonical_name": "Forestry & Bioeconomy",
+      "canonical_name_fr": "Foresterie et bioéconomie",
+      "description": "Forest products, pulp and paper, engineered wood, and forest-sector bioeconomy projects.",
+      "naics_codes": ["113", "321", "322"]
     }
   ]
 }

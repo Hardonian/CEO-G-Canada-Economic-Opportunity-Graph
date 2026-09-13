@@ -6,6 +6,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ---
 
+## [0.1.1] - 2026-09-13
+
+### Added
+- Additive sector terms for `Mining & Metals`, `Energy & Fuels`, and `Forestry & Bioeconomy` so nationwide source inventories can be represented without falsely classifying all mining as critical minerals or all energy as clean power.
+- Nationwide NRCan Major Projects Inventory snapshot support with record-level hashes and explicit `REPORTED` epistemic status.
+
 ## [0.1.0] - 2026-09-12
 
 ### Added

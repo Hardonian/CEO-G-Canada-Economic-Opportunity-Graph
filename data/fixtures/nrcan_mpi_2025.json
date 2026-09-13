@@ -1,0 +1,6206 @@
+{
+  "source": "Natural Resources Canada Major Projects Inventory",
+  "source_url": "https://open.canada.ca/data/en/dataset/f5f2db55-31e4-42fb-8c73-23e1c44de9b2",
+  "dataset_vintage": "2025-2035",
+  "effective_at": "2026-04-20T00:00:00Z",
+  "retrieved_at": "2026-09-13T14:56:51Z",
+  "license": "Open Government Licence - Canada",
+  "feature_count": 295,
+  "features": [
+    {
+      "attributes": {
+        "id": "0000",
+        "company": "Bighorn Mining, LTD",
+        "project_name": "Vista' Coal Project (Vista Test Underground Mine and Vista Mine Phase II Expansion Projects)",
+        "province": "Alberta",
+        "location": "Yellowhead County",
+        "capital_cost": "719.00",
+        "capital_cost_range": "500 - 750",
+        "sector": "Mining",
+        "status": "Planned",
+        "clean_technology": "No",
+        "clean_technology_type": "N/A",
+        "code": 7,
+        "OBJECTID": 1
+      },
+      "geometry": {
+        "x": -117.53001568297921,
+        "y": 53.3300064699671
+      }
+    },
+    {
+      "attributes": {
+        "id": "0010",
+        "company": "Aeolis / Boralex",
+        "project_name": "Hackney Hills Wind Park",
+        "province": "British Columbia",
+        "location": "Fort St. John",
+        "capital_cost": "400.00",
+        "capital_cost_range": "250 - 500",
+        "sector": "Energy",
+        "status": "Planned",
+        "clean_technology": "Yes",
+        "clean_technology_type": "Wind",
+        "code": 1,
+        "OBJECTID": 2
+      },
+      "geometry": {
+        "x": -120.84756646255396,
+        "y": 56.24926915303787
+      }
+    },
+    {
+      "attributes": {
+        "id": "0021",
+        "company": "Champion Iron Limited",
+        "project_name": "Kamistiatusset (Kami)",
+        "province": "Newfoundland and Labrador",
+        "location": "Labrador West",
+        "capital_cost": "3,864.00",
+        "capital_cost_range": "2,500 - 5,000",
+        "sector": "Mining",
+        "status": "Planned",
+        "clean_technology": "No",
+        "clean_technology_type": "N/A",
+        "code": 8,
+        "OBJECTID": 3
+      },
+      "geometry": {
+        "x": -67.0269998898326,
+        "y": 52.82401051123534
+      }
+    },
+    {
+      "attributes": {
+        "id": "0022",
+        "company": "Kinross Gold Corp. (formerly Rockcliff Metals Corp.)",
+        "project_name": "Snow Lake",
+        "province": "Manitoba",
+        "location": "120 km E of Flin Flon",
+        "capital_cost": "81.00",
+        "capital_cost_range": "50 - 100",
+        "sector": "Mining",
+        "status": "Planned",
+        "clean_technology": "No",
+        "clean_technology_type": "N/A",
+        "code": 7,
+        "OBJECTID": 4
+      },
+      "geometry": {
+        "x": -100.0310118088602,
+        "y": 54.9100085621847
+      }
+    },
+    {
+      "attributes": {
+        "id": "0025",
+        "company": "Almaden Minerals",
+        "project_name": "Siwash/Elk Gold Mine",
+        "province": "British Columbia",
+        "location": "Merritt",
+        "capital_cost": "100.00",
+        "capital_cost_range": "100 - 250",
+        "sector": "Mining",
+        "status": "Planned",
+        "clean_technology": "No",
+        "clean_technology_type": "N/A",
+        "code": 7,
+        "OBJECTID": 5
+      },
+      "geometry": {
+        "x": -120.77460828520952,
+        "y": 50.106273921173255
+      }
+    },
+    {
+      "attributes": {
+        "id": "0027",
+        "company": "Syntaris Power Corp.",
+        "project_name": "Lower Wood River Hydropower Project",
+        "province": "British Columbia",
+        "location": "Mica",
+        "capital_cost": "144.00",
+        "capital_cost_range": "100 - 250",
+        "sector": "Energy",
+        "status": "Planned",
+        "clean_technology": "Yes",
+        "clean_technology_type": "Hydro",
+        "code": 1,
+        "OBJECTID": 6
+      },
+      "geometry": {
+        "x": -118.56378144940811,
+        "y": 52.00866727854351
+      }
+    },
+    {
+      "attributes": {
+        "id": "0067",
+        "company": "BC Hydro",
+        "project_name": "Peace River Site C Hydro-electric project",
+        "province": "British Columbia",
+        "location": "Fort St. John",
+        "capital_cost": "16,000.00",
+        "capital_cost_range": "10,000 +",
+        "sector": "Energy",
+        "status": "Under Construction",
+        "clean_technology": "Yes",
+        "clean_technology_type": "Hydro",
+        "code": 33,
+        "OBJECTID": 7
+      },
+      "geometry": {
+        "x": -120.8483104651631,
+        "y": 56.250795152938124
+      }
+    },
+    {
+      "attributes": {
+        "id": "0073",
+        "company": "BHP",
+        "project_name": "Jansen",
+        "province": "Saskatchewan",
+        "location": "Jansen",
+        "capital_cost": "7,840.00",
+        "capital_cost_range": "5,000 - 10,000",
+        "sector": "Mining",
+        "status": "Under Construction",
+        "clean_technology": "No",
+        "clean_technology_type": "N/A",
+        "code": 99,
+        "OBJECTID": 8
+      },
+      "geometry": {
+        "x": -104.69001224070671,
+        "y": 51.85000782071534
+      }
+    },
+    {
+      "attributes": {
+        "id": "0075",
+        "company": "IPC Canada Ltd.",
+        "project_name": "Blackrod",
+        "province": "Alberta",
+        "location": "Regional Municipality of Wood Buffalo (RMWB) & Lac La Biche County",
+        "capital_cost": "2,927.00",
+        "capital_cost_range": "2,500 - 5,000",
+        "sector": "Energy",
+        "status": "Under Construction",
+        "clean_technology": "No",
+        "clean_technology_type": "N/A",
+        "code": 22,
+        "OBJECTID": 9
+      },
+      "geometry": {
+        "x": -112.61193843788737,
+        "y": 55.611718192527775
+      }
+    },
+    {
+      "attributes": {
+        "id": "0088",
+        "company": "Canadian Kailuan Dehua Mines Co., Ltd.",
+        "project_name": "Gething Coal Project",
+        "province": "British Columbia",
+        "location": "Hudson Hope",
+        "capital_cost": "1,360.00",
+        "capital_cost_range": "1,000 - 2,500",
+        "sector": "Mining",
+        "status": "Planned",
+        "clean_technology": "No",
+        "clean_technology_type": "N/A",
+        "code": 8,
+        "OBJECTID": 10
+      },
+      "geometry": {
+        "x": -121.9153005005524,
+        "y": 55.87531699888506
+      }
+    },
+    {
+      "attributes": {
+        "id": "0089",
+        "company": "Canadian Natural Resources Limited",
+        "project_name": "Grouse",
+        "province": "Alberta",
+        "location": "Hudson Hope",
+        "capital_cost": "1,500.00",
+        "capital_cost_range": "1,000 - 2,500",
+        "sector": "Energy",
+        "status": "Planned",
+        "clean_technology": "No",
+        "clean_technology_type": "N/A",
+        "code": 2,
+        "OBJECTID": 11
+      },
+      "geometry": {
+        "x": -111.75578167788436,
+        "y": 55.466299088800085
+      }
+    },
+    {
+      "attributes": {
+        "id": "0092",
+        "company": "NorZinc",
+        "project_name": "Prairie Creek",
+        "province": "Northwest Territories",
+        "location": "Dehcho, 170 km of Fort Simpson",
+        "capital_cost": "474.00",
+        "capital_cost_range": "250 - 500",
+        "sector": "Mining",
+        "status": "Planned",
+        "clean_technology": "No",
+        "clean_technology_type": "N/A",
+        "code": 7,
+        "OBJECTID": 12
+      },
+      "geometry": {
+        "x": -124.79402109391468,
+        "y": 61.56000566411855
+      }
+    },
+    {
+      "attributes": {
+        "id": "0094",
+        "company": "Canagold Resources Ltd.",
+        "project_name": "New Polaris Gold Mine",
+        "province": "British Columbia",
+        "location": "Atlin",
+        "capital_cost": "143.70",
+        "capital_cost_range": "100 - 250",
+        "sector": "Mining",
+        "status": "Planned",
+        "clean_technology": "No",
+        "clean_technology_type": "N/A",
+        "code": 7,
+        "OBJECTID": 13
+      },
+      "geometry": {
+        "x": -133.64002062724154,
+        "y": 58.70100432364988
+      }
+    },
+    {
+      "attributes": {
+        "id": "0100",
+        "company": "Alamos Gold Inc.",
+        "project_name": "Lynn Lake (Gordon site + MacLellan Site)",
+        "province": "Manitoba",
+        "location": "Lynn Lake (Gordon site)",
+        "capital_cost": "842.40",
+        "capital_cost_range": "750 - 1,000",
+        "sector": "Mining",
+        "status": "Under Construction",
+        "clean_technology": "No",
+        "clean_technology_type": "N/A",
+        "code": 77,
+        "OBJECTID": 14
+      },
+      "geometry": {
+        "x": -100.43561259130239,
+        "y": 56.90890867947579
+      }
+    },
+    {
+      "attributes": {
+        "id": "0105",
+        "company": "Suncor Energy Inc.",
+        "project_name": "Syncrude (Mildred Lake Extension)",
+        "province": "Alberta",
+        "location": "Regional Municipality of Wood Buffalo (RMWB)",
+        "capital_cost": "3,300.00",
+        "capital_cost_range": "2,500 - 5,000",
+        "sector": "Energy",
+        "status": "Under Construction",
+        "clean_technology": "No",
+        "clean_technology_type": "N/A",
+        "code": 22,
+        "OBJECTID": 15
+      },
+      "geometry": {
+        "x": -110.84681502112532,
+        "y": 55.639007409698884
+      }
+    },
+    {
+      "attributes": {
+        "id": "0114",
+        "company": "NWP Coal Canada Ltd.",
+        "project_name": "Crown Mountain Coal Project",
+        "province": "British Columbia",
+        "location": "Fernie",
+        "capital_cost": "561.00",
+        "capital_cost_range": "500 - 750",
+        "sector": "Mining",
+        "status": "Planned",
+        "clean_technology": "No",
+        "clean_technology_type": "N/A",
+        "code": 7,
+        "OBJECTID": 16
+      },
+      "geometry": {
+        "x": -114.72901405161481,
+        "y": 49.80200658814145
+      }
+    },
+    {
+      "attributes": {
+        "id": "0130",
+        "company": "Corporation Lithium Éléments Critiques",
+        "project_name": "Rose Lithium-Tantale",
+        "province": "Quebec",
+        "location": "Eeyou Istchee Baie-James",
+        "capital_cost": "610.00",
+        "capital_cost_range": "500 - 750",
+        "sector": "Mining",
+        "status": "Planned",
+        "clean_technology": "No",
+        "clean_technology_type": "N/A",
+        "code": 7,
+        "OBJECTID": 17
+      },
+      "geometry": {
+        "x": -73.5479763864564,
+        "y": 53.252079330428096
+      }
+    },
+    {
+      "attributes": {
+        "id": "0138",
+        "company": "Agnico Eagle Mines Limited",
+        "project_name": "Detour Lake open pit expansion and underground development",
+        "province": "Ontario",
+        "location": "Detour Lake",
+        "capital_cost": "731.00",
+        "capital_cost_range": "500 - 750",
+        "sector": "Mining",
+        "status": "Under Construction",
+        "clean_technology": "No",
+        "clean_technology_type": "N/A",
+        "code": 77,
+        "OBJECTID": 18
+      },
+      "geometry": {
+        "x": -79.71000417815658,
+        "y": 50.016009581788296
+      }
+    },
+    {
+      "attributes": {
+        "id": "0140",
+        "company": "Canadian Natural Resources Limited",
+        "project_name": "Pike (Formely Kirby)",
+        "province": "Alberta",
+        "location": "Lac la Biche County",
+        "capital_cost": "7,700.00",
+        "capital_cost_range": "5,000 - 10,000",
+        "sector": "Energy",
+        "status": "Under Construction",
+        "clean_technology": "No",
+        "clean_technology_type": "N/A",
+        "code": 33,
+        "OBJECTID": 19
+      },
+      "geometry": {
+        "x": -110.82403594354774,
+        "y": 55.448226400882255
+      }
+    },
+    {
+      "attributes": {
+        "id": "0165",
+        "company": "WindRiver Power Corp.",
+        "project_name": "Kinskuch Hydroelectric Project",
+        "province": "British Columbia",
+        "location": "Iskut",
+        "capital_cost": "300.00",
+        "capital_cost_range": "250 - 500",
+        "sector": "Energy",
+        "status": "Planned",
+        "clean_technology": "Yes",
+        "clean_technology_type": "Hydro",
+        "code": 1,
+        "OBJECTID": 20
+      },
+      "geometry": {
+        "x": -129.97926772233177,
+        "y": 57.85717888202591
+      }
+    },
+    {
+      "attributes": {
+        "id": "0186",
+        "company": "Fortune Minerals Limited",
+        "project_name": "NICO Cobalt-Gold-Bismuth Mine",
+        "province": "Northwest Territories",
+        "location": "160 km Northwest of Yellowknife",
+        "capital_cost": "589.00",
+        "capital_cost_range": "500 - 750",
+        "sector": "Mining",
+        "status": "Planned",
+        "clean_technology": "No",
+        "clean_technology_type": "N/A",
+        "code": 7,
+        "OBJECTID": 21
+      },
+      "geometry": {
+        "x": -116.75002073521468,
+        "y": 63.55000689263416
+      }
+    },
+    {
+      "attributes": {
+        "id": "0188",
+        "company": "Fosthall Creek Power LP",
+        "project_name": "Fosthall Creek Hydropower Project",
+        "province": "British Columbia",
+        "location": "Nakusp",
+        "capital_cost": "50.00",
+        "capital_cost_range": "50 - 100",
+        "sector": "Energy",
+        "status": "Planned",
+        "clean_technology": "Yes",
+        "clean_technology_type": "Hydro",
+        "code": 1,
+        "OBJECTID": 22
+      },
+      "geometry": {
+        "x": -117.80108978074341,
+        "y": 50.241338271704784
+      }
+    },
+    {
+      "attributes": {
+        "id": "0205",
+        "company": "Giga Metals Corp. & Mitsubishi Corporation",
+        "project_name": "Turnagain Project",
+        "province": "British Columbia",
+        "location": "Dease Lake Area",
+        "capital_cost": "2,459.10",
+        "capital_cost_range": "1,000 - 2,500",
+        "sector": "Mining",
+        "status": "Planned",
+        "clean_technology": "No",
+        "clean_technology_type": "N/A",
+        "code": 8,
+        "OBJECTID": 23
+      },
+      "geometry": {
+        "x": -128.8260198901801,
+        "y": 58.47600505207062
+      }
+    },
+    {
+      "attributes": {
+        "id": "0207",
+        "company": "Harvest Operations Corp.",
+        "project_name": "BlackGold Oil Sands Project",
+        "province": "Alberta",
+        "location": "Regional Municipality of Wood Buffalo (SE of Conklin)",
+        "capital_cost": "900.00",
+        "capital_cost_range": "750 - 1,000",
+        "sector": "Energy",
+        "status": "Planned",
+        "clean_technology": "No",
+        "clean_technology_type": "N/A",
+        "code": 1,
+        "OBJECTID": 24
+      },
+      "geometry": {
+        "x": -110.9730248301697,
+        "y": 55.58264649024491
+      }
+    },
+    {
+      "attributes": {
+        "id": "0208",
+        "company": "Hawkeye Energy Corp.",
+        "project_name": "Hawkeye Green Energy Grid Project",
+        "province": "British Columbia",
+        "location": "Powell River",
+        "capital_cost": "450.00",
+        "capital_cost_range": "250 - 500",
+        "sector": "Energy",
+        "status": "Planned",
+        "clean_technology": "Yes",
+        "clean_technology_type": "Hydro",
+        "code": 1,
+        "OBJECTID": 25
+      },
+      "geometry": {
+        "x": -124.52480981895786,
+        "y": 49.83605046771149
+      }
+    },
+    {
+      "attributes": {
+        "id": "0215",
+        "company": "Husky Energy Inc.",
+        "project_name": "White Rose Expansion",
+        "province": "Newfoundland and Labrador",
+        "location": "Offshore Newfoundland",
+        "capital_cost": "2,300.00",
+        "capital_cost_range": "1,000 - 2,500",
+        "sector": "Energy",
+        "status": "Under Construction",
+        "clean_technology": "No",
+        "clean_technology_type": "N/A",
+        "code": 22,
+        "OBJECTID": 26
+      },
+      "geometry": {
+        "x": -48.713372081034386,
+        "y": 47.100054801869035
+      }
+    },
+    {
+      "attributes": {
+        "id": "0220",
+        "company": "Hydro-Québec",
+        "project_name": "Rénovation de groupes à la centrale électrique Beauharnois",
+        "province": "Quebec",
+        "location": "Beauharnois",
+        "capital_cost": "1,600.00",
+        "capital_cost_range": "1,000 - 2,500",
+        "sector": "Energy",
+        "status": "Under Construction",
+        "clean_technology": "Yes",
+        "clean_technology_type": "Hydro",
+        "code": 22,
+        "OBJECTID": 27
+      },
+      "geometry": {
+        "x": -73.87550572317538,
+        "y": 45.32898811241681
+      }
+    },
+    {
+      "attributes": {
+        "id": "0238",
+        "company": "Karnalyte Resources Inc",
+        "project_name": "Wynyard Potash Project",
+        "province": "Saskatchewan",
+        "location": "Wynyard",
+        "capital_cost": "789.00",
+        "capital_cost_range": "750 - 1,000",
+        "sector": "Mining",
+        "status": "Planned",
+        "clean_technology": "No",
+        "clean_technology_type": "N/A",
+        "code": 7,
+        "OBJECTID": 28
+      },
+      "geometry": {
+        "x": -104.05701203455665,
+        "y": 51.70900787213243
+      }
+    },
+    {
+      "attributes": {
+        "id": "0256",
+        "company": "NorthWest Copper",
+        "project_name": "Lorraine-Jayjay Copper Mine",
+        "province": "British Columbia",
+        "location": "Prince George",
+        "capital_cost": "100.00",
+        "capital_cost_range": "100 - 250",
+        "sector": "Mining",
+        "status": "Planned",
+        "clean_technology": "No",
+        "clean_technology_type": "N/A",
+        "code": 7,
+        "OBJECTID": 29
+      },
+      "geometry": {
+        "x": -125.58334814590174,
+        "y": 55.91667549600581
+      }
+    },
+    {
+      "attributes": {
+        "id": "0265",
+        "company": "Valory Resources Inc.",
+        "project_name": "Summit Coal/Mine 14",
+        "province": "Alberta",
+        "location": "Grande Cache",
+        "capital_cost": "114.00",
+        "capital_cost_range": "100 - 250",
+        "sector": "Mining",
+        "status": "Planned",
+        "clean_technology": "No",
+        "clean_technology_type": "N/A",
+        "code": 7,
+        "OBJECTID": 30
+      },
+      "geometry": {
+        "x": -119.13301227310603,
+        "y": 54.101287303887275
+      }
+    },
+    {
+      "attributes": {
+        "id": "0268",
+        "company": "Niobay Metals Inc.",
+        "project_name": "Crevier",
+        "province": "Quebec",
+        "location": "Rivière-Mistassini",
+        "capital_cost": "330.00",
+        "capital_cost_range": "250 - 500",
+        "sector": "Mining",
+        "status": "Planned",
+        "clean_technology": "No",
+        "clean_technology_type": "N/A",
+        "code": 7,
+        "OBJECTID": 31
+      },
+      "geometry": {
+        "x": -72.77300169955804,
+        "y": 49.46500982741502
+      }
+    },
+    {
+      "attributes": {
+        "id": "0273",
+        "company": "Strategic Resources Inc.",
+        "project_name": "BlackRock - Mine",
+        "province": "Quebec",
+        "location": "Eeyou Istchee Baie-James",
+        "capital_cost": "373.00",
+        "capital_cost_range": "250 - 500",
+        "sector": "Mining",
+        "status": "Planned",
+        "clean_technology": "No",
+        "clean_technology_type": "N/A",
+        "code": 7,
+        "OBJECTID": 32
+      },
+      "geometry": {
+        "x": -74.4035363157786,
+        "y": 49.87561982143532
+      }
+    },
+    {
+      "attributes": {
+        "id": "0276",
+        "company": "Mine Arnaud inc.",
+        "project_name": "Arnaud",
+        "province": "Quebec",
+        "location": "Sept-Îles",
+        "capital_cost": "768.00",
+        "capital_cost_range": "750 - 1,000",
+        "sector": "Mining",
+        "status": "Planned",
+        "clean_technology": "No",
+        "clean_technology_type": "N/A",
+        "code": 7,
+        "OBJECTID": 33
+      },
+      "geometry": {
+        "x": -66.56890853566424,
+        "y": 50.2621421578062
+      }
+    },
+    {
+      "attributes": {
+        "id": "0298",
+        "company": "NB Power and Partners",
+        "project_name": "Smart Grid Investments Phase",
+        "province": "New Brunswick",
+        "location": "Various locations across NB  (St. John)",
+        "capital_cost": "147.00",
+        "capital_cost_range": "100 - 250",
+        "sector": "Energy",
+        "status": "Under Construction",
+        "clean_technology": "Yes",
+        "clean_technology_type": "Hydro",
+        "code": 11,
+        "OBJECTID": 34
+      },
+      "geometry": {
+        "x": -66.06856207473336,
+        "y": 45.275189351486695
+      }
+    },
+    {
+      "attributes": {
+        "id": "0299",
+        "company": "Nemaska Lithium inc.",
+        "project_name": "Whabouchi",
+        "province": "Quebec",
+        "location": "Eeyou Istchee Baie-James",
+        "capital_cost": "1,268.00",
+        "capital_cost_range": "1,000 - 2,500",
+        "sector": "Mining",
+        "status": "Under Construction",
+        "clean_technology": "No",
+        "clean_technology_type": "N/A",
+        "code": 88,
+        "OBJECTID": 35
+      },
+      "geometry": {
+        "x": -75.85500303853362,
+        "y": 51.68201001410796
+      }
+    },
+    {
+      "attributes": {
+        "id": "0314",
+        "company": "Wyloo",
+        "project_name": "Eagle's Nest (McFaulds Lake)",
+        "province": "Ontario",
+        "location": "Webequie",
+        "capital_cost": "609.00",
+        "capital_cost_range": "500 - 750",
+        "sector": "Mining",
+        "status": "Planned",
+        "clean_technology": "No",
+        "clean_technology_type": "N/A",
+        "code": 7,
+        "OBJECTID": 36
+      },
+      "geometry": {
+        "x": -86.30086686518703,
+        "y": 52.741009526087495
+      }
+    },
+    {
+      "attributes": {
+        "id": "0316",
+        "company": "Fireweed Metals",
+        "project_name": "MacTung (tungsten)",
+        "province": "Yukon",
+        "location": "390 km northeast of Whitehorse",
+        "capital_cost": "402.00",
+        "capital_cost_range": "250 - 500",
+        "sector": "Mining",
+        "status": "Planned",
+        "clean_technology": "No",
+        "clean_technology_type": "N/A",
+        "code": 7,
+        "OBJECTID": 37
+      },
+      "geometry": {
+        "x": -130.16602326476865,
+        "y": 63.28300480314283
+      }
+    },
+    {
+      "attributes": {
+        "id": "0329",
+        "company": "Northcliff Resources (HDI Mining)",
+        "project_name": "Sisson Project",
+        "province": "New Brunswick",
+        "location": "Fredericton",
+        "capital_cost": "579.00",
+        "capital_cost_range": "500 - 750",
+        "sector": "Mining",
+        "status": "Planned",
+        "clean_technology": "No",
+        "clean_technology_type": "N/A",
+        "code": 7,
+        "OBJECTID": 38
+      },
+      "geometry": {
+        "x": -67.04499946846897,
+        "y": 46.365009516467026
+      }
+    },
+    {
+      "attributes": {
+        "id": "0333",
+        "company": "Ontario Power Generation",
+        "project_name": "Darlington Refurbishment Project",
+        "province": "Ontario",
+        "location": "Clarington",
+        "capital_cost": "12,800.00",
+        "capital_cost_range": "10,000 +",
+        "sector": "Energy",
+        "status": "Under Construction",
+        "clean_technology": "Yes",
+        "clean_technology_type": "Nuclear",
+        "code": 33,
+        "OBJECTID": 39
+      },
+      "geometry": {
+        "x": -78.71949018864062,
+        "y": 43.86987765370181
+      }
+    },
+    {
+      "attributes": {
+        "id": "0344",
+        "company": "Agnico Eagle Mines Limited",
+        "project_name": "Hammond Reef",
+        "province": "Ontario",
+        "location": "Atikokan",
+        "capital_cost": "1,313.00",
+        "capital_cost_range": "1,000 - 2,500",
+        "sector": "Mining",
+        "status": "Planned",
+        "clean_technology": "No",
+        "clean_technology_type": "N/A",
+        "code": 8,
+        "OBJECTID": 40
+      },
+      "geometry": {
+        "x": -91.4580078290333,
+        "y": 48.938008672024736
+      }
+    },
+    {
+      "attributes": {
+        "id": "0371",
+        "company": "Métaux Torngat ltée",
+        "project_name": "Strange Lake / B-Zone",
+        "province": "Quebec",
+        "location": "Rivière-Koksoak",
+        "capital_cost": "1,631.00",
+        "capital_cost_range": "1,000 - 2,500",
+        "sector": "Mining",
+        "status": "Planned",
+        "clean_technology": "No",
+        "clean_technology_type": "N/A",
+        "code": 8,
+        "OBJECTID": 41
+      },
+      "geometry": {
+        "x": -64.17399903374098,
+        "y": 56.32501102824515
+      }
+    },
+    {
+      "attributes": {
+        "id": "0376",
+        "company": "Magneto Investments Limited Partnership",
+        "project_name": "Dumont Nickel",
+        "province": "Quebec",
+        "location": "Launay",
+        "capital_cost": "1,357.00",
+        "capital_cost_range": "1,000 - 2,500",
+        "sector": "Mining",
+        "status": "Planned",
+        "clean_technology": "No",
+        "clean_technology_type": "N/A",
+        "code": 8,
+        "OBJECTID": 42
+      },
+      "geometry": {
+        "x": -78.43600357621206,
+        "y": 48.653009448949824
+      }
+    },
+    {
+      "attributes": {
+        "id": "0389",
+        "company": "B2Gold Corp.",
+        "project_name": "Back River Gold Project (Goose)",
+        "province": "Nunavut",
+        "location": "Western Nunavut (Kitikmeot region); 110 km southwest of Bathurst Inlet",
+        "capital_cost": "610.00",
+        "capital_cost_range": "500 - 750",
+        "sector": "Mining",
+        "status": "Under Construction",
+        "clean_technology": "No",
+        "clean_technology_type": "N/A",
+        "code": 77,
+        "OBJECTID": 43
+      },
+      "geometry": {
+        "x": -106.42861914471649,
+        "y": 65.54500838824258
+      }
+    },
+    {
+      "attributes": {
+        "id": "0391",
+        "company": "Seabridge Gold Inc.",
+        "project_name": "Courageous Lake",
+        "province": "Northwest Territories",
+        "location": "230 km Northeast of Yellowknife",
+        "capital_cost": "1,034.60",
+        "capital_cost_range": "1,000 - 2,500",
+        "sector": "Mining",
+        "status": "Planned",
+        "clean_technology": "No",
+        "clean_technology_type": "N/A",
+        "code": 8,
+        "OBJECTID": 44
+      },
+      "geometry": {
+        "x": -111.29001963946293,
+        "y": 64.12000768901687
+      }
+    },
+    {
+      "attributes": {
+        "id": "0399",
+        "company": "Canadian Natural Resources Limited",
+        "project_name": "AOSP Jackpine",
+        "province": "Alberta",
+        "location": "Fort McMurray",
+        "capital_cost": "12,000.00",
+        "capital_cost_range": "10,000 +",
+        "sector": "Energy",
+        "status": "Planned",
+        "clean_technology": "No",
+        "clean_technology_type": "N/A",
+        "code": 3,
+        "OBJECTID": 45
+      },
+      "geometry": {
+        "x": -111.36769668637707,
+        "y": 57.224504531129696
+      }
+    },
+    {
+      "attributes": {
+        "id": "0403",
+        "company": "Star Diamond corp",
+        "project_name": "Star-Orion Diamond Project",
+        "province": "Saskatchewan",
+        "location": "Prince Albert",
+        "capital_cost": "1,408.77",
+        "capital_cost_range": "1,000 - 2,500",
+        "sector": "Mining",
+        "status": "Planned",
+        "clean_technology": "No",
+        "clean_technology_type": "N/A",
+        "code": 8,
+        "OBJECTID": 46
+      },
+      "geometry": {
+        "x": -104.80154066405008,
+        "y": 53.259057929234096
+      }
+    },
+    {
+      "attributes": {
+        "id": "0404",
+        "company": "Spanish Mountain Gold Ltd.",
+        "project_name": "Spanish Mountain Copper-Gold Mines",
+        "province": "British Columbia",
+        "location": "Williams Lake",
+        "capital_cost": "1,250.00",
+        "capital_cost_range": "1,000 - 2,500",
+        "sector": "Mining",
+        "status": "Planned",
+        "clean_technology": "No",
+        "clean_technology_type": "N/A",
+        "code": 8,
+        "OBJECTID": 47
+      },
+      "geometry": {
+        "x": -121.3880471551603,
+        "y": 52.57970895690986
+      }
+    },
+    {
+      "attributes": {
+        "id": "0417",
+        "company": "Generation Mining Ltd.",
+        "project_name": "Marathon PGM Copper Mine",
+        "province": "Ontario",
+        "location": "Marathon",
+        "capital_cost": "809.00",
+        "capital_cost_range": "750 - 1,000",
+        "sector": "Mining",
+        "status": "Planned",
+        "clean_technology": "No",
+        "clean_technology_type": "N/A",
+        "code": 7,
+        "OBJECTID": 48
+      },
+      "geometry": {
+        "x": -86.31900619666705,
+        "y": 48.782009009451706
+      }
+    },
+    {
+      "attributes": {
+        "id": "0422",
+        "company": "Suncor Energy Inc.",
+        "project_name": "Lewis",
+        "province": "Alberta",
+        "location": "Regional Municipality of Wood Buffalo",
+        "capital_cost": "6,200.00",
+        "capital_cost_range": "5,000 - 10,000",
+        "sector": "Energy",
+        "status": "Planned",
+        "clean_technology": "No",
+        "clean_technology_type": "N/A",
+        "code": 3,
+        "OBJECTID": 49
+      },
+      "geometry": {
+        "x": -111.0483611526399,
+        "y": 56.94062750751476
+      }
+    },
+    {
+      "attributes": {
+        "id": "0439",
+        "company": "Osisko Metals Inc/Appian",
+        "project_name": "Pine Point",
+        "province": "Northwest Territories",
+        "location": "East of Hay River, South of Yellowknife",
+        "capital_cost": "653.30",
+        "capital_cost_range": "500 - 750",
+        "sector": "Mining",
+        "status": "Planned",
+        "clean_technology": "No",
+        "clean_technology_type": "N/A",
+        "code": 7,
+        "OBJECTID": 50
+      },
+      "geometry": {
+        "x": -114.42401837089625,
+        "y": 60.85400716897554
+      }
+    },
+    {
+      "attributes": {
+        "id": "0441",
+        "company": "JDS GOLD (prev. Taseko Mines Ltd.)",
+        "project_name": "Harmony Gold Mine",
+        "province": "British Columbia",
+        "location": "Graham Island",
+        "capital_cost": "50.00",
+        "capital_cost_range": "50 - 100",
+        "sector": "Mining",
+        "status": "Planned",
+        "clean_technology": "No",
+        "clean_technology_type": "N/A",
+        "code": 7,
+        "OBJECTID": 51
+      },
+      "geometry": {
+        "x": -132.39788606993898,
+        "y": 53.514068535581025
+      }
+    },
+    {
+      "attributes": {
+        "id": "0442",
+        "company": "Teck Resources Ltd.",
+        "project_name": "Highland Valley Copper 2040 (HVC 2040)",
+        "province": "British Columbia",
+        "location": "Logan Lake",
+        "capital_cost": "1,100.00",
+        "capital_cost_range": "1,000 - 2,500",
+        "sector": "Mining",
+        "status": "Planned",
+        "clean_technology": "No",
+        "clean_technology_type": "N/A",
+        "code": 8,
+        "OBJECTID": 52
+      },
+      "geometry": {
+        "x": -121.0185854294602,
+        "y": 50.47073190941969
+      }
+    },
+    {
+      "attributes": {
+        "id": "0443",
+        "company": "Glencore Plc",
+        "project_name": "Line Creek Coal Mine Expansion",
+        "province": "British Columbia",
+        "location": "Sparwood",
+        "capital_cost": "140.00",
+        "capital_cost_range": "100 - 250",
+        "sector": "Mining",
+        "status": "Planned",
+        "clean_technology": "No",
+        "clean_technology_type": "N/A",
+        "code": 7,
+        "OBJECTID": 53
+      },
+      "geometry": {
+        "x": -114.85204509906578,
+        "y": 49.88479657979064
+      }
+    },
+    {
+      "attributes": {
+        "id": "0460",
+        "company": "GoldMining Inc",
+        "project_name": "Yellowknife Gold",
+        "province": "Northwest Territories",
+        "location": "Yellowknife",
+        "capital_cost": "193.00",
+        "capital_cost_range": "100 - 250",
+        "sector": "Mining",
+        "status": "Planned",
+        "clean_technology": "No",
+        "clean_technology_type": "N/A",
+        "code": 7,
+        "OBJECTID": 54
+      },
+      "geometry": {
+        "x": -113.90901971873586,
+        "y": 63.18200729792352
+      }
+    },
+    {
+      "attributes": {
+        "id": "0485",
+        "company": "Conuma Coal Resources Ltd.",
+        "project_name": "Wolverine Coal Mine (Hermann Deposit)",
+        "province": "British Columbia",
+        "location": "Tumbler Ridge",
+        "capital_cost": "55.00",
+        "capital_cost_range": "50 - 100",
+        "sector": "Mining",
+        "status": "Planned",
+        "clean_technology": "No",
+        "clean_technology_type": "N/A",
+        "code": 7,
+        "OBJECTID": 55
+      },
+      "geometry": {
+        "x": -120.871599055951,
+        "y": 55.266604120834074
+      }
+    },
+    {
+      "attributes": {
+        "id": "0488",
+        "company": "Western Copper and Gold Corporation",
+        "project_name": "Casino Mine",
+        "province": "Yukon",
+        "location": "150 km northwest of Carmacks and 300 km northwest from Whitehorse",
+        "capital_cost": "3,617.00",
+        "capital_cost_range": "2,500 - 5,000",
+        "sector": "Mining",
+        "status": "Planned",
+        "clean_technology": "No",
+        "clean_technology_type": "N/A",
+        "code": 8,
+        "OBJECTID": 56
+      },
+      "geometry": {
+        "x": -138.82302382397302,
+        "y": 62.73900339189579
+      }
+    },
+    {
+      "attributes": {
+        "id": "0499",
+        "company": "Taseko Mines Ltd.",
+        "project_name": "Yellowhead Cooper Project",
+        "province": "British Columbia",
+        "location": "Kamloops",
+        "capital_cost": "1,985.00",
+        "capital_cost_range": "1,000 - 2,500",
+        "sector": "Mining",
+        "status": "Planned",
+        "clean_technology": "No",
+        "clean_technology_type": "N/A",
+        "code": 8,
+        "OBJECTID": 57
+      },
+      "geometry": {
+        "x": -119.81701553066624,
+        "y": 51.51900610389491
+      }
+    },
+    {
+      "attributes": {
+        "id": "0533",
+        "company": "Granite Creek Copper",
+        "project_name": "Carmacks Copper Project",
+        "province": "Yukon",
+        "location": "220 km north of Whitehorse, Yukon",
+        "capital_cost": "220.07",
+        "capital_cost_range": "100 - 250",
+        "sector": "Mining",
+        "status": "Planned",
+        "clean_technology": "No",
+        "clean_technology_type": "N/A",
+        "code": 7,
+        "OBJECTID": 58
+      },
+      "geometry": {
+        "x": -136.69902333088874,
+        "y": 62.34300375631277
+      }
+    },
+    {
+      "attributes": {
+        "id": "0545",
+        "company": "Holmes Hydro",
+        "project_name": "Robson Valley Hydroelectric Project",
+        "province": "British Columbia",
+        "location": "McBride",
+        "capital_cost": "200.00",
+        "capital_cost_range": "100 - 250",
+        "sector": "Energy",
+        "status": "Planned",
+        "clean_technology": "Yes",
+        "clean_technology_type": "Hydro",
+        "code": 1,
+        "OBJECTID": 59
+      },
+      "geometry": {
+        "x": -119.84065113668431,
+        "y": 53.34686518237983
+      }
+    },
+    {
+      "attributes": {
+        "id": "0606",
+        "company": "NexGold Mining Corp.",
+        "project_name": "Goliath Complex",
+        "province": "Ontario",
+        "location": "Dryden",
+        "capital_cost": "335.00",
+        "capital_cost_range": "250 - 500",
+        "sector": "Mining",
+        "status": "Planned",
+        "clean_technology": "No",
+        "clean_technology_type": "N/A",
+        "code": 7,
+        "OBJECTID": 60
+      },
+      "geometry": {
+        "x": -92.60830532532985,
+        "y": 49.757772688021305
+      }
+    },
+    {
+      "attributes": {
+        "id": "0607",
+        "company": "Value Creation Inc.",
+        "project_name": "TriStar Advanced (In Situ + Upgrader)",
+        "province": "Alberta",
+        "location": "Regional Municipality of Wood Buffalo (RMWB)",
+        "capital_cost": "2,000.00",
+        "capital_cost_range": "1,000 - 2,500",
+        "sector": "Energy",
+        "status": "Planned",
+        "clean_technology": "No",
+        "clean_technology_type": "N/A",
+        "code": 2,
+        "OBJECTID": 61
+      },
+      "geometry": {
+        "x": -111.15659353076784,
+        "y": 56.736821431867355
+      }
+    },
+    {
+      "attributes": {
+        "id": "0615",
+        "company": "Labrador Iron Mines Holdings Ltd.",
+        "project_name": "Houston Project",
+        "province": "Newfoundland and Labrador",
+        "location": "Northwestern Labrador",
+        "capital_cost": "86.80",
+        "capital_cost_range": "50 - 100",
+        "sector": "Mining",
+        "status": "Planned",
+        "clean_technology": "No",
+        "clean_technology_type": "N/A",
+        "code": 7,
+        "OBJECTID": 62
+      },
+      "geometry": {
+        "x": -66.65885890014313,
+        "y": 54.69805376798678
+      }
+    },
+    {
+      "attributes": {
+        "id": "0620",
+        "company": "KGHM International",
+        "project_name": "Victoria Project",
+        "province": "Ontario",
+        "location": "Sudbury",
+        "capital_cost": "1,000.00",
+        "capital_cost_range": "1,000 - 2,500",
+        "sector": "Mining",
+        "status": "Under Construction",
+        "clean_technology": "No",
+        "clean_technology_type": "N/A",
+        "code": 88,
+        "OBJECTID": 63
+      },
+      "geometry": {
+        "x": -81.38640430050344,
+        "y": 46.42350894960109
+      }
+    },
+    {
+      "attributes": {
+        "id": "0636",
+        "company": "Arianne Phosphate inc.",
+        "project_name": "Lac à Paul - Mine",
+        "province": "Quebec",
+        "location": "Mont-Valin",
+        "capital_cost": "2,092.50",
+        "capital_cost_range": "1,000 - 2,500",
+        "sector": "Mining",
+        "status": "Planned",
+        "clean_technology": "No",
+        "clean_technology_type": "N/A",
+        "code": 8,
+        "OBJECTID": 64
+      },
+      "geometry": {
+        "x": -70.71762200625507,
+        "y": 49.88358496892095
+      }
+    },
+    {
+      "attributes": {
+        "id": "0643",
+        "company": "Search Minerals Inc.",
+        "project_name": "Deep Fox + Foxtrot",
+        "province": "Newfoundland and Labrador",
+        "location": "Port Hope Simpson",
+        "capital_cost": "421.80",
+        "capital_cost_range": "250 - 500",
+        "sector": "Mining",
+        "status": "Planned",
+        "clean_technology": "No",
+        "clean_technology_type": "N/A",
+        "code": 7,
+        "OBJECTID": 65
+      },
+      "geometry": {
+        "x": -55.81775260558225,
+        "y": 52.39928762597729
+      }
+    },
+    {
+      "attributes": {
+        "id": "0644",
+        "company": "Ontario Power Generation",
+        "project_name": "New Nuclear Power Plant - Darlington Small Modular Reactor Project",
+        "province": "Ontario",
+        "location": "Darlington",
+        "capital_cost": "20,900.00",
+        "capital_cost_range": "10,000 +",
+        "sector": "Energy",
+        "status": "Under Construction",
+        "clean_technology": "Yes",
+        "clean_technology_type": "Nuclear",
+        "code": 33,
+        "OBJECTID": 66
+      },
+      "geometry": {
+        "x": -78.70653018556989,
+        "y": 43.872692654798904
+      }
+    },
+    {
+      "attributes": {
+        "id": "0648",
+        "company": "Northern Graphite",
+        "project_name": "Bissett Creek",
+        "province": "Ontario",
+        "location": "Pembroke",
+        "capital_cost": "102.00",
+        "capital_cost_range": "100 - 250",
+        "sector": "Mining",
+        "status": "Planned",
+        "clean_technology": "No",
+        "clean_technology_type": "N/A",
+        "code": 7,
+        "OBJECTID": 67
+      },
+      "geometry": {
+        "x": -78.05921718200017,
+        "y": 46.12374106752311
+      }
+    },
+    {
+      "attributes": {
+        "id": "0652",
+        "company": "Woodfibre LNG",
+        "project_name": "Woodfibre LNG project",
+        "province": "British Columbia",
+        "location": "Squamish",
+        "capital_cost": "6,880.00",
+        "capital_cost_range": "5,000 - 10,000",
+        "sector": "Energy",
+        "status": "Under Construction",
+        "clean_technology": "No",
+        "clean_technology_type": "N/A",
+        "code": 33,
+        "OBJECTID": 68
+      },
+      "geometry": {
+        "x": -123.2527935730007,
+        "y": 49.66667261106278
+      }
+    },
+    {
+      "attributes": {
+        "id": "0654",
+        "company": "Bruce Power",
+        "project_name": "Bruce Nuclear Refurbishment",
+        "province": "Ontario",
+        "location": "Tiverton",
+        "capital_cost": "13,000.00",
+        "capital_cost_range": "10,000 +",
+        "sector": "Energy",
+        "status": "Under Construction",
+        "clean_technology": "Yes",
+        "clean_technology_type": "Nuclear",
+        "code": 33,
+        "OBJECTID": 69
+      },
+      "geometry": {
+        "x": -81.58610414476549,
+        "y": 44.32730859487263
+      }
+    },
+    {
+      "attributes": {
+        "id": "0684",
+        "company": "Strathcona Resources (formerly Osum Oil Sands Corp.)",
+        "project_name": "Sepiko Kesik Project",
+        "province": "Alberta",
+        "location": "Municipal District of Opportunity",
+        "capital_cost": "3,200.00",
+        "capital_cost_range": "2,500 - 5,000",
+        "sector": "Energy",
+        "status": "Planned",
+        "clean_technology": "No",
+        "clean_technology_type": "N/A",
+        "code": 2,
+        "OBJECTID": 70
+      },
+      "geometry": {
+        "x": -113.13101269811,
+        "y": 56.689006357656304
+      }
+    },
+    {
+      "attributes": {
+        "id": "0688",
+        "company": "Graymont Western Canada Inc.",
+        "project_name": "Giscome Quarry and Lime Plant Project",
+        "province": "British Columbia",
+        "location": "Prince George",
+        "capital_cost": "130.00",
+        "capital_cost_range": "100 - 250",
+        "sector": "Mining",
+        "status": "Planned",
+        "clean_technology": "No",
+        "clean_technology_type": "N/A",
+        "code": 7,
+        "OBJECTID": 71
+      },
+      "geometry": {
+        "x": -122.28529883694632,
+        "y": 54.05294189589867
+      }
+    },
+    {
+      "attributes": {
+        "id": "0692",
+        "company": "EDF Renouvelables",
+        "project_name": "Taylor Wind Project",
+        "province": "British Columbia",
+        "location": "Taylor",
+        "capital_cost": "600.00",
+        "capital_cost_range": "500 - 750",
+        "sector": "Energy",
+        "status": "Planned",
+        "clean_technology": "Yes",
+        "clean_technology_type": "Wind",
+        "code": 1,
+        "OBJECTID": 72
+      },
+      "geometry": {
+        "x": -120.76406333996326,
+        "y": 55.99995315826963
+      }
+    },
+    {
+      "attributes": {
+        "id": "0697",
+        "company": "Husky Energy Inc., Suncor, Nalcor Energy",
+        "project_name": "White Rose Expansion - White Rose West",
+        "province": "Newfoundland and Labrador",
+        "location": "Offshore Newfoundland",
+        "capital_cost": "3,800.00",
+        "capital_cost_range": "2,500 - 5,000",
+        "sector": "Energy",
+        "status": "Under Construction",
+        "clean_technology": "No",
+        "clean_technology_type": "N/A",
+        "code": 22,
+        "OBJECTID": 73
+      },
+      "geometry": {
+        "x": -48.00539284949052,
+        "y": 46.471909691658915
+      }
+    },
+    {
+      "attributes": {
+        "id": "0703",
+        "company": "StormFisher Hydrogen (formerly Recyclage Carbone Varennes)",
+        "project_name": "Usine de carburant à faible intensité carbone (inclut un électrolyseur)",
+        "province": "Quebec",
+        "location": "Varennes",
+        "capital_cost": "1,490.00",
+        "capital_cost_range": "1,000 - 2,500",
+        "sector": "Energy",
+        "status": "Under Construction",
+        "clean_technology": "Yes",
+        "clean_technology_type": "Multiple",
+        "code": 22,
+        "OBJECTID": 74
+      },
+      "geometry": {
+        "x": -73.43509360332713,
+        "y": 45.681224190687864
+      }
+    },
+    {
+      "attributes": {
+        "id": "0707",
+        "company": "Port Alberni Harbour Authority",
+        "project_name": "Port Alberni LNG Export Facility",
+        "province": "British Columbia",
+        "location": "Port Alberni",
+        "capital_cost": "1,600.00",
+        "capital_cost_range": "1,000 - 2,500",
+        "sector": "Energy",
+        "status": "Planned",
+        "clean_technology": "No",
+        "clean_technology_type": "N/A",
+        "code": 2,
+        "OBJECTID": 75
+      },
+      "geometry": {
+        "x": -124.81107569248316,
+        "y": 49.23001940949698
+      }
+    },
+    {
+      "attributes": {
+        "id": "0764",
+        "company": "Highwater Power Corporation Altagas Ltd.",
+        "project_name": "Log Creek Water Power  Project",
+        "province": "British Columbia",
+        "location": "Boston Bar",
+        "capital_cost": "20.00",
+        "capital_cost_range": "10 - 50 ",
+        "sector": "Energy",
+        "status": "Planned",
+        "clean_technology": "Yes",
+        "clean_technology_type": "Hydro",
+        "code": 1,
+        "OBJECTID": 76
+      },
+      "geometry": {
+        "x": -121.54588336902086,
+        "y": 49.9389418236295
+      }
+    },
+    {
+      "attributes": {
+        "id": "0782",
+        "company": "J.D. Irving",
+        "project_name": "Saint John Pulp Mill Upgrades",
+        "province": "New Brunswick",
+        "location": "Saint John",
+        "capital_cost": "1,100.00",
+        "capital_cost_range": "1,000 - 2,500",
+        "sector": "Forest",
+        "status": "Planned",
+        "clean_technology": "No",
+        "clean_technology_type": "N/A",
+        "code": 5,
+        "OBJECTID": 77
+      },
+      "geometry": {
+        "x": -66.09149908118636,
+        "y": 45.26270934868865
+      }
+    },
+    {
+      "attributes": {
+        "id": "0783",
+        "company": "First Mining Gold Corp.",
+        "project_name": "Springpole Lake Gold Project",
+        "province": "Ontario",
+        "location": "Uchi Lake",
+        "capital_cost": "957.70",
+        "capital_cost_range": "750 - 1,000",
+        "sector": "Mining",
+        "status": "Planned",
+        "clean_technology": "No",
+        "clean_technology_type": "N/A",
+        "code": 7,
+        "OBJECTID": 78
+      },
+      "geometry": {
+        "x": -92.2930085513306,
+        "y": 51.39610891156503
+      }
+    },
+    {
+      "attributes": {
+        "id": "0794",
+        "company": "Ascot Resources Ltd",
+        "project_name": "Premier Gold Project",
+        "province": "British Columbia",
+        "location": "Stewart",
+        "capital_cost": "224.00",
+        "capital_cost_range": "100 - 250",
+        "sector": "Mining",
+        "status": "Planned",
+        "clean_technology": "No",
+        "clean_technology_type": "N/A",
+        "code": 7,
+        "OBJECTID": 79
+      },
+      "geometry": {
+        "x": -130.05245887185313,
+        "y": 56.09639486958686
+      }
+    },
+    {
+      "attributes": {
+        "id": "0795",
+        "company": "Nouveau Monde Graphite inc.",
+        "project_name": "Uatnan",
+        "province": "Quebec",
+        "location": "Rivière-aux-Outardes",
+        "capital_cost": "1,417.00",
+        "capital_cost_range": "1,000 - 2,500",
+        "sector": "Mining",
+        "status": "Planned",
+        "clean_technology": "No",
+        "clean_technology_type": "N/A",
+        "code": 8,
+        "OBJECTID": 80
+      },
+      "geometry": {
+        "x": -69.06496351158638,
+        "y": 51.125353209077495
+      }
+    },
+    {
+      "attributes": {
+        "id": "0800",
+        "company": "Joyce Direct Iron Inc.",
+        "project_name": "Joyce Lake DSO (the Attikamagen Project)",
+        "province": "Newfoundland and Labrador",
+        "location": "Menihek",
+        "capital_cost": "270.40",
+        "capital_cost_range": "250 - 500",
+        "sector": "Mining",
+        "status": "Planned",
+        "clean_technology": "No",
+        "clean_technology_type": "N/A",
+        "code": 7,
+        "OBJECTID": 81
+      },
+      "geometry": {
+        "x": -66.71179994376196,
+        "y": 54.97491080040812
+      }
+    },
+    {
+      "attributes": {
+        "id": "0802",
+        "company": "Vulcan Materials Company",
+        "project_name": "Black Point Aggregate Project",
+        "province": "Nova Scotia",
+        "location": "Guysborough County",
+        "capital_cost": "131.57",
+        "capital_cost_range": "100 - 250",
+        "sector": "Mining",
+        "status": "Planned",
+        "clean_technology": "No",
+        "clean_technology_type": "N/A",
+        "code": 7,
+        "OBJECTID": 82
+      },
+      "geometry": {
+        "x": -61.14966738415389,
+        "y": 45.34797546397969
+      }
+    },
+    {
+      "attributes": {
+        "id": "0817",
+        "company": "Focus Graphite inc.",
+        "project_name": "Lac Knife",
+        "province": "Quebec",
+        "location": "Rivière-Mouchalagane",
+        "capital_cost": "236.50",
+        "capital_cost_range": "100 - 250",
+        "sector": "Mining",
+        "status": "Planned",
+        "clean_technology": "No",
+        "clean_technology_type": "N/A",
+        "code": 7,
+        "OBJECTID": 83
+      },
+      "geometry": {
+        "x": -67.18001992633815,
+        "y": 52.54810046931572
+      }
+    },
+    {
+      "attributes": {
+        "id": "0841",
+        "company": "Canadian Natural Resources Limited",
+        "project_name": "Jackfish",
+        "province": "Alberta",
+        "location": "Regional Municipality of Wood Buffalo (SE of Conklin)",
+        "capital_cost": "750.00",
+        "capital_cost_range": "750 - 1,000",
+        "sector": "Energy",
+        "status": "Planned",
+        "clean_technology": "No",
+        "clean_technology_type": "N/A",
+        "code": 1,
+        "OBJECTID": 84
+      },
+      "geometry": {
+        "x": -110.87381498492836,
+        "y": 55.527907399695295
+      }
+    },
+    {
+      "attributes": {
+        "id": "0850",
+        "company": "Syncrude Canada Ltd.",
+        "project_name": "Syncrude Mildred Lake Extension",
+        "province": "Alberta",
+        "location": "Mildred Lake",
+        "capital_cost": "3,300.00",
+        "capital_cost_range": "2,500 - 5,000",
+        "sector": "Energy",
+        "status": "Under Construction",
+        "clean_technology": "No",
+        "clean_technology_type": "N/A",
+        "code": 22,
+        "OBJECTID": 85
+      },
+      "geometry": {
+        "x": -111.58510376639647,
+        "y": 57.04521839482405
+      }
+    },
+    {
+      "attributes": {
+        "id": "0858",
+        "company": "ConocoPhillips Canada",
+        "project_name": "Surmont",
+        "province": "Alberta",
+        "location": "Regional Municipality of Wood Buffalo",
+        "capital_cost": "6,000.00",
+        "capital_cost_range": "5,000 - 10,000",
+        "sector": "Energy",
+        "status": "Planned",
+        "clean_technology": "No",
+        "clean_technology_type": "N/A",
+        "code": 3,
+        "OBJECTID": 86
+      },
+      "geometry": {
+        "x": -110.950615259331,
+        "y": 56.193607428181664
+      }
+    },
+    {
+      "attributes": {
+        "id": "0862",
+        "company": "Taseko Mines Ltd.",
+        "project_name": "Aley Niobium Project",
+        "province": "British Columbia",
+        "location": "Mackenzie",
+        "capital_cost": "870.00",
+        "capital_cost_range": "750 - 1,000",
+        "sector": "Mining",
+        "status": "Planned",
+        "clean_technology": "No",
+        "clean_technology_type": "N/A",
+        "code": 7,
+        "OBJECTID": 87
+      },
+      "geometry": {
+        "x": -122.43976408456514,
+        "y": 56.96872095421967
+      }
+    },
+    {
+      "attributes": {
+        "id": "0865",
+        "company": "Imperial Metals Corporation",
+        "project_name": "Ruddock Creek Zinc-Lead Mine Development Project",
+        "province": "British Columbia",
+        "location": "Clearwater",
+        "capital_cost": "100.00",
+        "capital_cost_range": "100 - 250",
+        "sector": "Mining",
+        "status": "Planned",
+        "clean_technology": "No",
+        "clean_technology_type": "N/A",
+        "code": 7,
+        "OBJECTID": 88
+      },
+      "geometry": {
+        "x": -119.00529547594222,
+        "y": 51.822204216193086
+      }
+    },
+    {
+      "attributes": {
+        "id": "0891",
+        "company": "Burgundy Diamond Mines Limited",
+        "project_name": "Ekati (Misery Deep)",
+        "province": "Northwest Territories",
+        "location": "Ekati Mine",
+        "capital_cost": "126.72",
+        "capital_cost_range": "100 - 250",
+        "sector": "Mining",
+        "status": "Planned",
+        "clean_technology": "No",
+        "clean_technology_type": "N/A",
+        "code": 7,
+        "OBJECTID": 89
+      },
+      "geometry": {
+        "x": -110.18559463279554,
+        "y": 64.56529985302292
+      }
+    },
+    {
+      "attributes": {
+        "id": "0893",
+        "company": "Lincoln Ventures Ltd (prev. PRISM Diversifed Ltd.)",
+        "project_name": "Clear Hills Project",
+        "province": "Alberta",
+        "location": "MD of Clear Hills",
+        "capital_cost": "300.00",
+        "capital_cost_range": "250 - 500",
+        "sector": "Mining",
+        "status": "Planned",
+        "clean_technology": "No",
+        "clean_technology_type": "N/A",
+        "code": 7,
+        "OBJECTID": 90
+      },
+      "geometry": {
+        "x": -117.88806140147031,
+        "y": 56.548165358548935
+      }
+    },
+    {
+      "attributes": {
+        "id": "0894",
+        "company": "Newmont Goldcorp Corp.",
+        "project_name": "Coffee Gold Mine",
+        "province": "Yukon",
+        "location": "130km south of Dawson City, Yukon",
+        "capital_cost": "317.00",
+        "capital_cost_range": "250 - 500",
+        "sector": "Mining",
+        "status": "Planned",
+        "clean_technology": "No",
+        "clean_technology_type": "N/A",
+        "code": 7,
+        "OBJECTID": 91
+      },
+      "geometry": {
+        "x": -139.51571696418452,
+        "y": 62.847531272999404
+      }
+    },
+    {
+      "attributes": {
+        "id": "0896",
+        "company": "Uranium Energy Corp",
+        "project_name": "Roughrider Project",
+        "province": "Saskatchewan",
+        "location": "North Point Landing",
+        "capital_cost": "755.00",
+        "capital_cost_range": "750 - 1,000",
+        "sector": "Mining",
+        "status": "Planned",
+        "clean_technology": "No",
+        "clean_technology_type": "N/A",
+        "code": 7,
+        "OBJECTID": 92
+      },
+      "geometry": {
+        "x": -106.6749938649092,
+        "y": 52.255296646925
+      }
+    },
+    {
+      "attributes": {
+        "id": "0897",
+        "company": "Orano/Denison Mines Corp.",
+        "project_name": "McClean Lake Uranium Mine Expansion",
+        "province": "Saskatchewan",
+        "location": "McClean Lake",
+        "capital_cost": "300.00",
+        "capital_cost_range": "250 - 500",
+        "sector": "Mining",
+        "status": "Under Construction",
+        "clean_technology": "No",
+        "clean_technology_type": "N/A",
+        "code": 77,
+        "OBJECTID": 93
+      },
+      "geometry": {
+        "x": -103.86914915303966,
+        "y": 58.25770039256929
+      }
+    },
+    {
+      "attributes": {
+        "id": "0928",
+        "company": "Interfor Corporation",
+        "project_name": "Mill upgrade",
+        "province": "British Columbia",
+        "location": "Castlegar",
+        "capital_cost": "50.00",
+        "capital_cost_range": "50 - 100",
+        "sector": "Forest",
+        "status": "Under Construction",
+        "clean_technology": "No",
+        "clean_technology_type": "N/A",
+        "code": 44,
+        "OBJECTID": 94
+      },
+      "geometry": {
+        "x": -117.73701652415909,
+        "y": 49.33563122565679
+      }
+    },
+    {
+      "attributes": {
+        "id": "0938",
+        "company": "Cedar LNG  (partnership between Pembina Pipeline Corporation and Haisla Nation)",
+        "project_name": "Cedar LNG",
+        "province": "British Columbia",
+        "location": "Kitimat",
+        "capital_cost": "4,000.00",
+        "capital_cost_range": "2,500 - 5,000",
+        "sector": "Energy",
+        "status": "Planned",
+        "clean_technology": "No",
+        "clean_technology_type": "N/A",
+        "code": 2,
+        "OBJECTID": 95
+      },
+      "geometry": {
+        "x": -128.72793278374058,
+        "y": 53.9254160368947
+      }
+    },
+    {
+      "attributes": {
+        "id": "0943",
+        "company": "Tilbury Jetty LP",
+        "project_name": "Tilbury Marine Jetty",
+        "province": "British Columbia",
+        "location": "Delta",
+        "capital_cost": "175.00",
+        "capital_cost_range": "100 - 250",
+        "sector": "Energy",
+        "status": "Planned",
+        "clean_technology": "No",
+        "clean_technology_type": "N/A",
+        "code": 1,
+        "OBJECTID": 96
+      },
+      "geometry": {
+        "x": -123.02352039431199,
+        "y": 49.141803214496605
+      }
+    },
+    {
+      "attributes": {
+        "id": "0957",
+        "company": "Atrum Coal",
+        "project_name": "Groundhog Project Anthracite Coal Mine",
+        "province": "British Columbia",
+        "location": "Smithers Area",
+        "capital_cost": "600.00",
+        "capital_cost_range": "500 - 750",
+        "sector": "Mining",
+        "status": "Planned",
+        "clean_technology": "No",
+        "clean_technology_type": "N/A",
+        "code": 7,
+        "OBJECTID": 97
+      },
+      "geometry": {
+        "x": -128.76231097893887,
+        "y": 56.70066505667226
+      }
+    },
+    {
+      "attributes": {
+        "id": "0965",
+        "company": "BC Hydro",
+        "project_name": "G.M. Shrum Units 1 to 10 Control Systems Upgrade Project",
+        "province": "British Columbia",
+        "location": "Hudson Hope",
+        "capital_cost": "75.00",
+        "capital_cost_range": "50 - 100",
+        "sector": "Energy",
+        "status": "Under Construction",
+        "clean_technology": "No",
+        "clean_technology_type": "N/A",
+        "code": 11,
+        "OBJECTID": 98
+      },
+      "geometry": {
+        "x": -122.2027623146087,
+        "y": 56.01667596272236
+      }
+    },
+    {
+      "attributes": {
+        "id": "0970",
+        "company": "Creative Energy Vancouver Platforms Inc.",
+        "project_name": "Creative Energy Plant",
+        "province": "British Columbia",
+        "location": "Vancouver",
+        "capital_cost": "100.00",
+        "capital_cost_range": "100 - 250",
+        "sector": "Energy",
+        "status": "Under Construction",
+        "clean_technology": "Yes",
+        "clean_technology_type": "Bioenergy",
+        "code": 11,
+        "OBJECTID": 99
+      },
+      "geometry": {
+        "x": -123.11245344429159,
+        "y": 49.27818960970724
+      }
+    },
+    {
+      "attributes": {
+        "id": "0974",
+        "company": "Enbridge/ Borealis Inc./ Kitselas First Nation",
+        "project_name": "Lakelse Geothermal Power Plant",
+        "province": "British Columbia",
+        "location": "Terrace",
+        "capital_cost": "120.00",
+        "capital_cost_range": "100 - 250",
+        "sector": "Energy",
+        "status": "Planned",
+        "clean_technology": "Yes",
+        "clean_technology_type": "Bioenergy",
+        "code": 1,
+        "OBJECTID": 100
+      },
+      "geometry": {
+        "x": -128.5403179643181,
+        "y": 54.44564506940774
+      }
+    },
+    {
+      "attributes": {
+        "id": "0980",
+        "company": "Kruger Energy Inc.",
+        "project_name": "Isle Pierre Wind Farm",
+        "province": "British Columbia",
+        "location": "Prince George",
+        "capital_cost": "400.00",
+        "capital_cost_range": "250 - 500",
+        "sector": "Energy",
+        "status": "Planned",
+        "clean_technology": "Yes",
+        "clean_technology_type": "Wind",
+        "code": 1,
+        "OBJECTID": 101
+      },
+      "geometry": {
+        "x": -123.40390597474111,
+        "y": 53.912783744705926
+      }
+    },
+    {
+      "attributes": {
+        "id": "0983",
+        "company": "Red Willow Wind LP",
+        "project_name": "Red Willow Wind Farm",
+        "province": "British Columbia",
+        "location": "Tumbler Ridge",
+        "capital_cost": "480.00",
+        "capital_cost_range": "250 - 500",
+        "sector": "Energy",
+        "status": "Planned",
+        "clean_technology": "Yes",
+        "clean_technology_type": "Wind",
+        "code": 1,
+        "OBJECTID": 102
+      },
+      "geometry": {
+        "x": -120.37502777981982,
+        "y": 54.80866917107059
+      }
+    },
+    {
+      "attributes": {
+        "id": "1028",
+        "company": "Alamos Gold Inc.",
+        "project_name": "Island Gold Expansion",
+        "province": "Ontario",
+        "location": "Dubreuilville",
+        "capital_cost": "627.40",
+        "capital_cost_range": "500 - 750",
+        "sector": "Mining",
+        "status": "Under Construction",
+        "clean_technology": "No",
+        "clean_technology_type": "N/A",
+        "code": 77,
+        "OBJECTID": 103
+      },
+      "geometry": {
+        "x": -84.41081551177002,
+        "y": 48.28345906006437
+      }
+    },
+    {
+      "attributes": {
+        "id": "1034",
+        "company": "Paladin Energy Limited",
+        "project_name": "Patterson Lake South",
+        "province": "Saskatchewan",
+        "location": "Athabasca Basin District",
+        "capital_cost": "1,155.00",
+        "capital_cost_range": "1,000 - 2,500",
+        "sector": "Mining",
+        "status": "Planned",
+        "clean_technology": "No",
+        "clean_technology_type": "N/A",
+        "code": 8,
+        "OBJECTID": 104
+      },
+      "geometry": {
+        "x": -109.31676043002705,
+        "y": 57.63575670697263
+      }
+    },
+    {
+      "attributes": {
+        "id": "1037",
+        "company": "Nisga'a Nation, Western LNG, Rockies LNG Partners",
+        "project_name": "Ksi Lisims LNG",
+        "province": "British Columbia",
+        "location": "Nasoga Gulf",
+        "capital_cost": "10,000.00",
+        "capital_cost_range": "10,000 +",
+        "sector": "Energy",
+        "status": "Planned",
+        "clean_technology": "No",
+        "clean_technology_type": "N/A",
+        "code": 3,
+        "OBJECTID": 105
+      },
+      "geometry": {
+        "x": -130.0726223522332,
+        "y": 54.9015738613368
+      }
+    },
+    {
+      "attributes": {
+        "id": "1042",
+        "company": "BMC Minerals Ltd.",
+        "project_name": "Kudz Ze Kayah",
+        "province": "Yukon",
+        "location": "115 km southeast of Ross River",
+        "capital_cost": "647.00",
+        "capital_cost_range": "500 - 750",
+        "sector": "Mining",
+        "status": "Planned",
+        "clean_technology": "No",
+        "clean_technology_type": "N/A",
+        "code": 7,
+        "OBJECTID": 106
+      },
+      "geometry": {
+        "x": -130.61002197067023,
+        "y": 61.45805475892291
+      }
+    },
+    {
+      "attributes": {
+        "id": "1045",
+        "company": "Northern Energy Solutions (NES)",
+        "project_name": "NES Wood Pellet Plant",
+        "province": "New Brunswick",
+        "location": "Miramichi",
+        "capital_cost": "70.00",
+        "capital_cost_range": "50 - 100",
+        "sector": "Forest",
+        "status": "Planned",
+        "clean_technology": "Yes",
+        "clean_technology_type": "Bioenergy",
+        "code": 4,
+        "OBJECTID": 107
+      },
+      "geometry": {
+        "x": -65.49581396276456,
+        "y": 47.022834667708
+      }
+    },
+    {
+      "attributes": {
+        "id": "1050",
+        "company": "Manouane Sipi, Société en commandite\n\n",
+        "project_name": "Centrale hydroélectrique Manouane Sipi (Dam B)",
+        "province": "Quebec",
+        "location": "La Tuque",
+        "capital_cost": "100.00",
+        "capital_cost_range": "100 - 250",
+        "sector": "Energy",
+        "status": "Planned",
+        "clean_technology": "Yes",
+        "clean_technology_type": "Hydro",
+        "code": 1,
+        "OBJECTID": 108
+      },
+      "geometry": {
+        "x": -73.57270179046289,
+        "y": 47.38120946849655
+      }
+    },
+    {
+      "attributes": {
+        "id": "1051",
+        "company": "Fluorspar Holdings PTE Ltd.",
+        "project_name": "St. Lawrence Fluorspar Mine",
+        "province": "Newfoundland and Labrador",
+        "location": "St. Lawrence",
+        "capital_cost": "125.00",
+        "capital_cost_range": "100 - 250",
+        "sector": "Mining",
+        "status": "Planned",
+        "clean_technology": "No",
+        "clean_technology_type": "N/A",
+        "code": 7,
+        "OBJECTID": 109
+      },
+      "geometry": {
+        "x": -55.468195439371286,
+        "y": 46.90798978840714
+      }
+    },
+    {
+      "attributes": {
+        "id": "1052",
+        "company": "Tata Steel Minerals Canada",
+        "project_name": "Howse Property Direct Shipping Ore Mine",
+        "province": "Newfoundland and Labrador",
+        "location": "Menihek",
+        "capital_cost": "100.00",
+        "capital_cost_range": "100 - 250",
+        "sector": "Mining",
+        "status": "Planned",
+        "clean_technology": "No",
+        "clean_technology_type": "N/A",
+        "code": 7,
+        "OBJECTID": 110
+      },
+      "geometry": {
+        "x": -67.16937312320132,
+        "y": 54.94982078449818
+      }
+    },
+    {
+      "attributes": {
+        "id": "1063",
+        "company": "NTPC",
+        "project_name": "Taltson Hydroelectricity Expansion Project (Phase 1)",
+        "province": "Northwest Territories",
+        "location": "Multiple locations",
+        "capital_cost": "1,200.00",
+        "capital_cost_range": "1,000 - 2,500",
+        "sector": "Energy",
+        "status": "Under Construction",
+        "clean_technology": "Yes",
+        "clean_technology_type": "Hydro",
+        "code": 22,
+        "OBJECTID": 111
+      },
+      "geometry": {
+        "x": -112.71445927184739,
+        "y": 61.443080421813875
+      }
+    },
+    {
+      "attributes": {
+        "id": "1067",
+        "company": "Sayona Québec inc.",
+        "project_name": "Authier",
+        "province": "Quebec",
+        "location": "La Motte",
+        "capital_cost": "74.85",
+        "capital_cost_range": "50 - 100",
+        "sector": "Mining",
+        "status": "Planned",
+        "clean_technology": "No",
+        "clean_technology_type": "N/A",
+        "code": 7,
+        "OBJECTID": 112
+      },
+      "geometry": {
+        "x": -78.2573614856853,
+        "y": 48.40059041915822
+      }
+    },
+    {
+      "attributes": {
+        "id": "2020",
+        "company": "PEI Energy Corporation",
+        "project_name": "PEIEC Wind Farm #5",
+        "province": "Prince Edward Island",
+        "location": "Eastern Kings",
+        "capital_cost": "80.00",
+        "capital_cost_range": "50 - 100",
+        "sector": "Energy",
+        "status": "Under Construction",
+        "clean_technology": "Yes",
+        "clean_technology_type": "Wind",
+        "code": 11,
+        "OBJECTID": 113
+      },
+      "geometry": {
+        "x": -62.0998197500688,
+        "y": 46.433855637314906
+      }
+    },
+    {
+      "attributes": {
+        "id": "2025",
+        "company": "Synex Energy Resources Ltd.",
+        "project_name": "Victoria Lake Hydro Project",
+        "province": "British Columbia",
+        "location": "Vancouver Island/Coast, Port Alice",
+        "capital_cost": "18.00",
+        "capital_cost_range": "10 - 50 ",
+        "sector": "Energy",
+        "status": "Planned",
+        "clean_technology": "Yes",
+        "clean_technology_type": "Hydro",
+        "code": 1,
+        "OBJECTID": 114
+      },
+      "geometry": {
+        "x": -127.48676841941774,
+        "y": 50.43487012859043
+      }
+    },
+    {
+      "attributes": {
+        "id": "2075",
+        "company": "FireFly Metals Ltd. (previously operated by Rambler Mining and Metals)",
+        "project_name": "Green Bay Copper-Gold Project (formerly Ming Mine)",
+        "province": "Newfoundland and Labrador",
+        "location": "Baie Verte Peninsula",
+        "capital_cost": "320.00",
+        "capital_cost_range": "250 - 500",
+        "sector": "Mining",
+        "status": "Planned",
+        "clean_technology": "No",
+        "clean_technology_type": "N/A",
+        "code": 7,
+        "OBJECTID": 115
+      },
+      "geometry": {
+        "x": -56.07969568442761,
+        "y": 49.92371026855891
+      }
+    },
+    {
+      "attributes": {
+        "id": "2083",
+        "company": "Ressources Falco ltée",
+        "project_name": "Horne 5",
+        "province": "Quebec",
+        "location": "Rouyn-Noranda",
+        "capital_cost": "1,080.00",
+        "capital_cost_range": "1,000 - 2,500",
+        "sector": "Mining",
+        "status": "Planned",
+        "clean_technology": "No",
+        "clean_technology_type": "N/A",
+        "code": 8,
+        "OBJECTID": 116
+      },
+      "geometry": {
+        "x": -78.9965377176576,
+        "y": 48.234567357337895
+      }
+    },
+    {
+      "attributes": {
+        "id": "2092",
+        "company": "Gold Fields Limited",
+        "project_name": "Windfall",
+        "province": "Quebec",
+        "location": "Eeyou Istchee Baie-James",
+        "capital_cost": "788.60",
+        "capital_cost_range": "750 - 1,000",
+        "sector": "Mining",
+        "status": "Planned",
+        "clean_technology": "No",
+        "clean_technology_type": "N/A",
+        "code": 7,
+        "OBJECTID": 117
+      },
+      "geometry": {
+        "x": -75.64265666082503,
+        "y": 49.026704639838165
+      }
+    },
+    {
+      "attributes": {
+        "id": "2093",
+        "company": "Nouveau Monde Graphite inc.",
+        "project_name": "Matawinie",
+        "province": "Quebec",
+        "location": "Saint-Michel-des-Saints",
+        "capital_cost": "480.80",
+        "capital_cost_range": "250 - 500",
+        "sector": "Mining",
+        "status": "Planned",
+        "clean_technology": "No",
+        "clean_technology_type": "N/A",
+        "code": 7,
+        "OBJECTID": 118
+      },
+      "geometry": {
+        "x": -73.70014777895034,
+        "y": 46.73201035827539
+      }
+    },
+    {
+      "attributes": {
+        "id": "2110",
+        "company": "Nation Innue, RES et Boralex",
+        "project_name": "Apuiat Wind Farm",
+        "province": "Quebec",
+        "location": "MRC de Sept-Rivières",
+        "capital_cost": "608.00",
+        "capital_cost_range": "500 - 750",
+        "sector": "Energy",
+        "status": "Under Construction",
+        "clean_technology": "Yes",
+        "clean_technology_type": "Wind",
+        "code": 11,
+        "OBJECTID": 119
+      },
+      "geometry": {
+        "x": -66.37465246018533,
+        "y": 50.21057015396229
+      }
+    },
+    {
+      "attributes": {
+        "id": "2122",
+        "company": "Yun Ka Whu'ten Holdings",
+        "project_name": "Biomass Project - Anahim Lake",
+        "province": "British Columbia",
+        "location": "Cariboo, Anahim Lake",
+        "capital_cost": "15.00",
+        "capital_cost_range": "10 - 50 ",
+        "sector": "Energy",
+        "status": "Planned",
+        "clean_technology": "Yes",
+        "clean_technology_type": "Bioenergy",
+        "code": 1,
+        "OBJECTID": 120
+      },
+      "geometry": {
+        "x": -125.31755776109446,
+        "y": 52.46535345624128
+      }
+    },
+    {
+      "attributes": {
+        "id": "3101",
+        "company": "Frontier Lithium Inc.",
+        "project_name": "Pakeagama Lake",
+        "province": "Ontario",
+        "location": "180 km NNE of Red Lake",
+        "capital_cost": "943.00",
+        "capital_cost_range": "750 - 1,000",
+        "sector": "Mining",
+        "status": "Planned",
+        "clean_technology": "No",
+        "clean_technology_type": "N/A",
+        "code": 7,
+        "OBJECTID": 121
+      },
+      "geometry": {
+        "x": -93.37697615311228,
+        "y": 52.60084395786029
+      }
+    },
+    {
+      "attributes": {
+        "id": "3104",
+        "company": "Gensource Potash Corp",
+        "project_name": "The Tugaske Project",
+        "province": "Saskatchewan",
+        "location": "Vanguard area - 170 km SSE of Saskatoon",
+        "capital_cost": "352.10",
+        "capital_cost_range": "250 - 500",
+        "sector": "Mining",
+        "status": "Planned",
+        "clean_technology": "No",
+        "clean_technology_type": "N/A",
+        "code": 7,
+        "OBJECTID": 122
+      },
+      "geometry": {
+        "x": -106.21001236790673,
+        "y": 50.8400075749283
+      }
+    },
+    {
+      "attributes": {
+        "id": "3105",
+        "company": "Ram River Coal",
+        "project_name": "Aries",
+        "province": "Alberta",
+        "location": "87.7 km WSW of Rocky Mountain House",
+        "capital_cost": "593.00",
+        "capital_cost_range": "500 - 750",
+        "sector": "Mining",
+        "status": "Planned",
+        "clean_technology": "No",
+        "clean_technology_type": "N/A",
+        "code": 7,
+        "OBJECTID": 123
+      },
+      "geometry": {
+        "x": -115.58001490815992,
+        "y": 52.18000664244126
+      }
+    },
+    {
+      "attributes": {
+        "id": "3106",
+        "company": "Glencore plc",
+        "project_name": "Onaping Depth",
+        "province": "Ontario",
+        "location": "Sudbury",
+        "capital_cost": "1,300.00",
+        "capital_cost_range": "1,000 - 2,500",
+        "sector": "Mining",
+        "status": "Under Construction",
+        "clean_technology": "No",
+        "clean_technology_type": "N/A",
+        "code": 88,
+        "OBJECTID": 124
+      },
+      "geometry": {
+        "x": -81.36921431961548,
+        "y": 46.63706898414721
+      }
+    },
+    {
+      "attributes": {
+        "id": "3600",
+        "company": "Fibre Pontiac",
+        "project_name": "Fibre Pontiac (The Biomass Conversion Centre)",
+        "province": "Quebec",
+        "location": "Pontiac",
+        "capital_cost": "120.00",
+        "capital_cost_range": "100 - 250",
+        "sector": "Energy",
+        "status": "Planned",
+        "clean_technology": "Yes",
+        "clean_technology_type": "Bioenergy",
+        "code": 1,
+        "OBJECTID": 125
+      },
+      "geometry": {
+        "x": -76.10905848348709,
+        "y": 45.54231605809882
+      }
+    },
+    {
+      "attributes": {
+        "id": "3602",
+        "company": "Enbridge Pipelines Inc.",
+        "project_name": "Line 21 (Norman Wells Pipeline) Segment Replacement Project",
+        "province": "Northwest Territories",
+        "location": "Mackenzie River",
+        "capital_cost": "53.00",
+        "capital_cost_range": "50 - 100",
+        "sector": "Energy",
+        "status": "Planned",
+        "clean_technology": "No",
+        "clean_technology_type": "N/A",
+        "code": 1,
+        "OBJECTID": 126
+      },
+      "geometry": {
+        "x": -121.09072054181792,
+        "y": 61.83390622649547
+      }
+    },
+    {
+      "attributes": {
+        "id": "3603",
+        "company": "Maritime Resources Corp.",
+        "project_name": "Hammerdown (Green Bay)",
+        "province": "Newfoundland and Labrador",
+        "location": "King's Point, Green Bay",
+        "capital_cost": "75.00",
+        "capital_cost_range": "50 - 100",
+        "sector": "Mining",
+        "status": "Under Construction",
+        "clean_technology": "No",
+        "clean_technology_type": "N/A",
+        "code": 77,
+        "OBJECTID": 127
+      },
+      "geometry": {
+        "x": -56.23719574001282,
+        "y": 49.5544102109413
+      }
+    },
+    {
+      "attributes": {
+        "id": "3610",
+        "company": "Bathurst Resources (previously Telkwa Mining Ltd.)",
+        "project_name": "Tenas Coal Project",
+        "province": "British Columbia",
+        "location": "Smithers",
+        "capital_cost": "82.00",
+        "capital_cost_range": "50 - 100",
+        "sector": "Mining",
+        "status": "Planned",
+        "clean_technology": "No",
+        "clean_technology_type": "N/A",
+        "code": 7,
+        "OBJECTID": 128
+      },
+      "geometry": {
+        "x": -127.17871783903719,
+        "y": 54.613305256940315
+      }
+    },
+    {
+      "attributes": {
+        "id": "3622",
+        "company": "CVW Cleantech",
+        "project_name": "Titanium and Zircon Extraction Facility",
+        "province": "Alberta",
+        "location": "Regional Municipality of Wood Buffalo",
+        "capital_cost": "400.00",
+        "capital_cost_range": "250 - 500",
+        "sector": "Mining",
+        "status": "Planned",
+        "clean_technology": "No",
+        "clean_technology_type": "N/A",
+        "code": 7,
+        "OBJECTID": 129
+      },
+      "geometry": {
+        "x": -111.75402893118768,
+        "y": 57.33624338775652
+      }
+    },
+    {
+      "attributes": {
+        "id": "3645",
+        "company": "Equinor Canada",
+        "project_name": "Bay du Nord Offshore Oil Project",
+        "province": "Newfoundland and Labrador",
+        "location": "Offshore Newfoundland",
+        "capital_cost": "16,000.00",
+        "capital_cost_range": "10,000 +",
+        "sector": "Energy",
+        "status": "Planned",
+        "clean_technology": "No",
+        "clean_technology_type": "N/A",
+        "code": 3,
+        "OBJECTID": 130
+      },
+      "geometry": {
+        "x": -46.69999236006142,
+        "y": 47.900009903486
+      }
+    },
+    {
+      "attributes": {
+        "id": "4006",
+        "company": "Mines Agnico Eagle ltée",
+        "project_name": "Wasamac",
+        "province": "Quebec",
+        "location": "Rouyn-Noranda",
+        "capital_cost": "533.00",
+        "capital_cost_range": "500 - 750",
+        "sector": "Mining",
+        "status": "Planned",
+        "clean_technology": "No",
+        "clean_technology_type": "N/A",
+        "code": 7,
+        "OBJECTID": 131
+      },
+      "geometry": {
+        "x": -79.19000377817578,
+        "y": 48.210009343261355
+      }
+    },
+    {
+      "attributes": {
+        "id": "4007",
+        "company": "NexGen Energy Ltd.",
+        "project_name": "Rook I",
+        "province": "Saskatchewan",
+        "location": "175 km N of Michel Village",
+        "capital_cost": "2,209.00",
+        "capital_cost_range": "1,000 - 2,500",
+        "sector": "Mining",
+        "status": "Planned",
+        "clean_technology": "No",
+        "clean_technology_type": "N/A",
+        "code": 8,
+        "OBJECTID": 132
+      },
+      "geometry": {
+        "x": -108.9900153251352,
+        "y": 57.590007744516775
+      }
+    },
+    {
+      "attributes": {
+        "id": "4008",
+        "company": "Denison Mines Corp.",
+        "project_name": "Wheeler River - Phoenix",
+        "province": "Saskatchewan",
+        "location": "270 km ENE of La Loche",
+        "capital_cost": "419.00",
+        "capital_cost_range": "250 - 500",
+        "sector": "Mining",
+        "status": "Planned",
+        "clean_technology": "No",
+        "clean_technology_type": "N/A",
+        "code": 7,
+        "OBJECTID": 133
+      },
+      "geometry": {
+        "x": -105.41001430673987,
+        "y": 57.53000816844571
+      }
+    },
+    {
+      "attributes": {
+        "id": "4013",
+        "company": "Rio Tinto",
+        "project_name": "Vaudreuil alumina refinery",
+        "province": "Quebec",
+        "location": "Saguenay-Lac-Saint-Jean",
+        "capital_cost": "250.00",
+        "capital_cost_range": "250 - 500",
+        "sector": "Mining",
+        "status": "Planned",
+        "clean_technology": "No",
+        "clean_technology_type": "N/A",
+        "code": 7,
+        "OBJECTID": 134
+      },
+      "geometry": {
+        "x": -71.1825440483223,
+        "y": 48.42623972777314
+      }
+    },
+    {
+      "attributes": {
+        "id": "4014",
+        "company": "Alcoa/Rio Tinto",
+        "project_name": "The Elysis joint venture",
+        "province": "Quebec",
+        "location": "Saguenay-Lac-Saint-Jean",
+        "capital_cost": "375.00",
+        "capital_cost_range": "250 - 500",
+        "sector": "Mining",
+        "status": "Planned",
+        "clean_technology": "No",
+        "clean_technology_type": "N/A",
+        "code": 7,
+        "OBJECTID": 135
+      },
+      "geometry": {
+        "x": -71.17565104678745,
+        "y": 48.4321497291156
+      }
+    },
+    {
+      "attributes": {
+        "id": "4015",
+        "company": "NexGold Mining Corp. (fmr: Signal Gold Inc. (fmr Anaconda Mining))",
+        "project_name": "Goldboro Gold",
+        "province": "Nova Scotia",
+        "location": "Goldboro",
+        "capital_cost": "271.00",
+        "capital_cost_range": "250 - 500",
+        "sector": "Mining",
+        "status": "Planned",
+        "clean_technology": "No",
+        "clean_technology_type": "N/A",
+        "code": 7,
+        "OBJECTID": 136
+      },
+      "geometry": {
+        "x": -61.64217754832988,
+        "y": 45.20304943006007
+      }
+    },
+    {
+      "attributes": {
+        "id": "4016",
+        "company": "Rio Tinto Lithium",
+        "project_name": "Projet Galaxy Lithium",
+        "province": "Quebec",
+        "location": "Eeyou Istchee Baie-James",
+        "capital_cost": "508.70",
+        "capital_cost_range": "500 - 750",
+        "sector": "Mining",
+        "status": "Planned",
+        "clean_technology": "No",
+        "clean_technology_type": "N/A",
+        "code": 7,
+        "OBJECTID": 137
+      },
+      "geometry": {
+        "x": -77.06035354155169,
+        "y": 52.22926002733913
+      }
+    },
+    {
+      "attributes": {
+        "id": "4021",
+        "company": "Tolko",
+        "project_name": "Mill upgrade",
+        "province": "British Columbia",
+        "location": "Armstrong",
+        "capital_cost": "35.00",
+        "capital_cost_range": "10 - 50 ",
+        "sector": "Forest",
+        "status": "Planned",
+        "clean_technology": "No",
+        "clean_technology_type": "N/A",
+        "code": 4,
+        "OBJECTID": 138
+      },
+      "geometry": {
+        "x": -119.19701509951295,
+        "y": 50.44770612210984
+      }
+    },
+    {
+      "attributes": {
+        "id": "4030",
+        "company": "Gitxsan Development Corp and Airex Energy",
+        "project_name": "Torrefied pellet plant",
+        "province": "British Columbia",
+        "location": "Hazelton",
+        "capital_cost": "50.00",
+        "capital_cost_range": "50 - 100",
+        "sector": "Forest",
+        "status": "Under Construction",
+        "clean_technology": "Yes",
+        "clean_technology_type": "Bioenergy",
+        "code": 44,
+        "OBJECTID": 139
+      },
+      "geometry": {
+        "x": -127.67201817700958,
+        "y": 55.2568051973183
+      }
+    },
+    {
+      "attributes": {
+        "id": "4036",
+        "company": "VanadiumCorp Resource Inc.",
+        "project_name": "Lac Doré Vanadium",
+        "province": "Quebec",
+        "location": "Eeyou Istchee Baie-James",
+        "capital_cost": "321.00",
+        "capital_cost_range": "250 - 500",
+        "sector": "Mining",
+        "status": "Planned",
+        "clean_technology": "No",
+        "clean_technology_type": "N/A",
+        "code": 7,
+        "OBJECTID": 140
+      },
+      "geometry": {
+        "x": -74.02370317576472,
+        "y": 49.83563383268572
+      }
+    },
+    {
+      "attributes": {
+        "id": "4057",
+        "company": "EDF Renewables Canada",
+        "project_name": "Vulcan Solar Project",
+        "province": "Alberta",
+        "location": "Vulcan County",
+        "capital_cost": "155.00",
+        "capital_cost_range": "100 - 250",
+        "sector": "Energy",
+        "status": "Planned",
+        "clean_technology": "Yes",
+        "clean_technology_type": "Solar",
+        "code": 1,
+        "OBJECTID": 141
+      },
+      "geometry": {
+        "x": -113.25314690001144,
+        "y": 50.40378979208051
+      }
+    },
+    {
+      "attributes": {
+        "id": "4079",
+        "company": "BC Hydro",
+        "project_name": "Mica 600V Circuit Breaker Upgrades Project",
+        "province": "British Columbia",
+        "location": "Revelstoke",
+        "capital_cost": "32.00",
+        "capital_cost_range": "10 - 50 ",
+        "sector": "Energy",
+        "status": "Under Construction",
+        "clean_technology": "Yes",
+        "clean_technology_type": "Hydro",
+        "code": 11,
+        "OBJECTID": 142
+      },
+      "geometry": {
+        "x": -118.19468608791263,
+        "y": 51.049743272838825
+      }
+    },
+    {
+      "attributes": {
+        "id": "4081",
+        "company": "BC Hydro",
+        "project_name": "Cheakamus Recoat Units 1 & 2 Penstock Project",
+        "province": "British Columbia",
+        "location": "Squamish",
+        "capital_cost": "35.00",
+        "capital_cost_range": "10 - 50 ",
+        "sector": "Energy",
+        "status": "Under Construction",
+        "clean_technology": "Yes",
+        "clean_technology_type": "Hydro",
+        "code": 11,
+        "OBJECTID": 143
+      },
+      "geometry": {
+        "x": -123.15902656864714,
+        "y": 49.702858623121855
+      }
+    },
+    {
+      "attributes": {
+        "id": "4093",
+        "company": "BC Hydro",
+        "project_name": "Mica Modernize Controls (Digital) Project",
+        "province": "British Columbia",
+        "location": "Revelstoke",
+        "capital_cost": "56.00",
+        "capital_cost_range": "50 - 100",
+        "sector": "Energy",
+        "status": "Under Construction",
+        "clean_technology": "Yes",
+        "clean_technology_type": "Hydro",
+        "code": 11,
+        "OBJECTID": 144
+      },
+      "geometry": {
+        "x": -118.19375507247065,
+        "y": 51.001448269397514
+      }
+    },
+    {
+      "attributes": {
+        "id": "4104",
+        "company": "Canfor Corporation/Licella",
+        "project_name": "Biofuel Facility",
+        "province": "British Columbia",
+        "location": "Prince George",
+        "capital_cost": "70.00",
+        "capital_cost_range": "50 - 100",
+        "sector": "Energy",
+        "status": "Planned",
+        "clean_technology": "Yes",
+        "clean_technology_type": "Bioenergy",
+        "code": 1,
+        "OBJECTID": 145
+      },
+      "geometry": {
+        "x": -122.74572286801184,
+        "y": 53.92241583182545
+      }
+    },
+    {
+      "attributes": {
+        "id": "4106",
+        "company": "BC Hydro",
+        "project_name": "Downtown Vancouver Electricity Supply - West End Strategic Property Purchase",
+        "province": "British Columbia",
+        "location": "Vancouver",
+        "capital_cost": "81.00",
+        "capital_cost_range": "50 - 100",
+        "sector": "Energy",
+        "status": "Under Construction",
+        "clean_technology": "No",
+        "clean_technology_type": "N/A",
+        "code": 11,
+        "OBJECTID": 146
+      },
+      "geometry": {
+        "x": -123.12562044560613,
+        "y": 49.274225608574376
+      }
+    },
+    {
+      "attributes": {
+        "id": "4108",
+        "company": "BCHydro",
+        "project_name": "LNG Canada Load Interconnection Project",
+        "province": "British Columbia",
+        "location": "Kitimat",
+        "capital_cost": "82.00",
+        "capital_cost_range": "50 - 100",
+        "sector": "Energy",
+        "status": "Under Construction",
+        "clean_technology": "No",
+        "clean_technology_type": "N/A",
+        "code": 11,
+        "OBJECTID": 147
+      },
+      "geometry": {
+        "x": -128.63390482274906,
+        "y": 54.06154105091425
+      }
+    },
+    {
+      "attributes": {
+        "id": "4116",
+        "company": "Alcan Aluminum Ltd. and the Province of BC",
+        "project_name": "Kenney Dam Cold Water Release Facility",
+        "province": "British Columbia",
+        "location": "Vanderhoof",
+        "capital_cost": "275.00",
+        "capital_cost_range": "250 - 500",
+        "sector": "Energy",
+        "status": "Planned",
+        "clean_technology": "No",
+        "clean_technology_type": "N/A",
+        "code": 1,
+        "OBJECTID": 148
+      },
+      "geometry": {
+        "x": -124.95001709775694,
+        "y": 53.566672534048
+      }
+    },
+    {
+      "attributes": {
+        "id": "4119",
+        "company": "AltaGas / Vopak Development Canada Inc.",
+        "project_name": "Ridley Island Energy Export Facility (REEF)",
+        "province": "British Columbia",
+        "location": "Prince Rupert",
+        "capital_cost": "750.00",
+        "capital_cost_range": "750 - 1,000",
+        "sector": "Energy",
+        "status": "Planned",
+        "clean_technology": "No",
+        "clean_technology_type": "N/A",
+        "code": 1,
+        "OBJECTID": 149
+      },
+      "geometry": {
+        "x": -130.32220114276933,
+        "y": 54.31419282379263
+      }
+    },
+    {
+      "attributes": {
+        "id": "4126",
+        "company": "Devon Energy Corporation/ BP JV",
+        "project_name": "Pike",
+        "province": "Alberta",
+        "location": "Regional Municipality of Wood Buffalo",
+        "capital_cost": "1,900.00",
+        "capital_cost_range": "1,000 - 2,500",
+        "sector": "Energy",
+        "status": "Planned",
+        "clean_technology": "No",
+        "clean_technology_type": "N/A",
+        "code": 2,
+        "OBJECTID": 151
+      },
+      "geometry": {
+        "x": -110.99578104140443,
+        "y": 55.59941238878263
+      }
+    },
+    {
+      "attributes": {
+        "id": "4143",
+        "company": "Calibre Mining (previously Marathon Gold Corporation)",
+        "project_name": "Valentine Gold Mine",
+        "province": "Newfoundland and Labrador",
+        "location": "55 km SW of Millertown, NL",
+        "capital_cost": "854.00",
+        "capital_cost_range": "750 - 1,000",
+        "sector": "Mining",
+        "status": "Under Construction",
+        "clean_technology": "No",
+        "clean_technology_type": "N/A",
+        "code": 77,
+        "OBJECTID": 152
+      },
+      "geometry": {
+        "x": -57.073596025842335,
+        "y": 48.41821002835787
+      }
+    },
+    {
+      "attributes": {
+        "id": "4148",
+        "company": "Ontario Power Generation",
+        "project_name": "Ranney Falls Expansion",
+        "province": "Ontario",
+        "location": "Campbellford",
+        "capital_cost": "77.00",
+        "capital_cost_range": "50 - 100",
+        "sector": "Energy",
+        "status": "Under Construction",
+        "clean_technology": "No",
+        "clean_technology_type": "N/A",
+        "code": 11,
+        "OBJECTID": 153
+      },
+      "geometry": {
+        "x": -77.8011840315436,
+        "y": 44.291789769462085
+      }
+    },
+    {
+      "attributes": {
+        "id": "4154",
+        "company": "Sustane Technologies",
+        "project_name": "Sustane Chester",
+        "province": "Nova Scotia",
+        "location": "Chester, NS",
+        "capital_cost": "16.00",
+        "capital_cost_range": "10 - 50 ",
+        "sector": "Energy",
+        "status": "Under Construction",
+        "clean_technology": "Yes",
+        "clean_technology_type": "Bioenergy",
+        "code": 11,
+        "OBJECTID": 154
+      },
+      "geometry": {
+        "x": -64.23958942328696,
+        "y": 44.71885929532686
+      }
+    },
+    {
+      "attributes": {
+        "id": "4163",
+        "company": "Canadian Premium Sand",
+        "project_name": "Wanipigow",
+        "province": "Manitoba",
+        "location": "Wanipigow",
+        "capital_cost": "133.70",
+        "capital_cost_range": "100 - 250",
+        "sector": "Mining",
+        "status": "Planned",
+        "clean_technology": "No",
+        "clean_technology_type": "N/A",
+        "code": 7,
+        "OBJECTID": 155
+      },
+      "geometry": {
+        "x": -96.30420971968334,
+        "y": 51.150208545464494
+      }
+    },
+    {
+      "attributes": {
+        "id": "4164",
+        "company": "Hudbay Minerals (previously Copper Mountain Mining Corp.)",
+        "project_name": "New Ingerbelle",
+        "province": "British Columbia",
+        "location": "70 km WSW of Penticton",
+        "capital_cost": "167.00",
+        "capital_cost_range": "100 - 250",
+        "sector": "Mining",
+        "status": "Planned",
+        "clean_technology": "No",
+        "clean_technology_type": "N/A",
+        "code": 7,
+        "OBJECTID": 156
+      },
+      "geometry": {
+        "x": -120.53001502829507,
+        "y": 49.330005909222564
+      }
+    },
+    {
+      "attributes": {
+        "id": "4166",
+        "company": "Foran Mining Corp.",
+        "project_name": "McIlvenna Bay",
+        "province": "Saskatchewan",
+        "location": "65 km W of Creighton",
+        "capital_cost": "1,082.00",
+        "capital_cost_range": "1,000 - 2,500",
+        "sector": "Mining",
+        "status": "Under Construction",
+        "clean_technology": "No",
+        "clean_technology_type": "N/A",
+        "code": 88,
+        "OBJECTID": 157
+      },
+      "geometry": {
+        "x": -102.89001256432822,
+        "y": 54.66000824378048
+      }
+    },
+    {
+      "attributes": {
+        "id": "4167",
+        "company": "Electra Battery Materials Corp.",
+        "project_name": "Cobalt Refinery Complex",
+        "province": "Ontario",
+        "location": "5 km E of Cobalt",
+        "capital_cost": "77.00",
+        "capital_cost_range": "50 - 100",
+        "sector": "Mining",
+        "status": "Under Construction",
+        "clean_technology": "No",
+        "clean_technology_type": "N/A",
+        "code": 77,
+        "OBJECTID": 158
+      },
+      "geometry": {
+        "x": -79.62229383400211,
+        "y": 47.406359196420134
+      }
+    },
+    {
+      "attributes": {
+        "id": "4170",
+        "company": "Fortis BC",
+        "project_name": "Tilbury Phase 2 LNG expansion project",
+        "province": "British Columbia",
+        "location": "Delta",
+        "capital_cost": "3,000.00",
+        "capital_cost_range": "2,500 - 5,000",
+        "sector": "Energy",
+        "status": "Planned",
+        "clean_technology": "No",
+        "clean_technology_type": "N/A",
+        "code": 2,
+        "OBJECTID": 159
+      },
+      "geometry": {
+        "x": -123.03421539525135,
+        "y": 49.14240561290611
+      }
+    },
+    {
+      "attributes": {
+        "id": "4188",
+        "company": "Alpin Sun",
+        "project_name": "Airport City Solar",
+        "province": "Alberta",
+        "location": "Leduc County",
+        "capital_cost": "169.00",
+        "capital_cost_range": "100 - 250",
+        "sector": "Energy",
+        "status": "Planned",
+        "clean_technology": "Yes",
+        "clean_technology_type": "Solar",
+        "code": 1,
+        "OBJECTID": 160
+      },
+      "geometry": {
+        "x": -113.5936694692827,
+        "y": 53.291085568662865
+      }
+    },
+    {
+      "attributes": {
+        "id": "4198",
+        "company": "Climate Transition Development Corporation",
+        "project_name": "Greenview Geothermal Power Plant (Alberta No. 1)",
+        "province": "Alberta",
+        "location": "Greenview No. 16",
+        "capital_cost": "106.00",
+        "capital_cost_range": "100 - 250",
+        "sector": "Energy",
+        "status": "Planned",
+        "clean_technology": "Yes",
+        "clean_technology_type": "Geothermal",
+        "code": 1,
+        "OBJECTID": 161
+      },
+      "geometry": {
+        "x": -117.6498575653256,
+        "y": 54.84183341959331
+      }
+    },
+    {
+      "attributes": {
+        "id": "4201",
+        "company": "Manitoba Hydro",
+        "project_name": "Portage Area Capacity Enhancements",
+        "province": "Manitoba",
+        "location": "Portage la Prarie Area",
+        "capital_cost": "84.90",
+        "capital_cost_range": "50 - 100",
+        "sector": "Energy",
+        "status": "Under Construction",
+        "clean_technology": "Yes",
+        "clean_technology_type": "Hydro",
+        "code": 11,
+        "OBJECTID": 162
+      },
+      "geometry": {
+        "x": -98.29031004119356,
+        "y": 49.97230824054932
+      }
+    },
+    {
+      "attributes": {
+        "id": "4204",
+        "company": "Jupiter Hydro",
+        "project_name": "In-Stream Tidal Demonstration Project",
+        "province": "Nova Scotia",
+        "location": "Bay of Fundy",
+        "capital_cost": "23.30",
+        "capital_cost_range": "10 - 50 ",
+        "sector": "Energy",
+        "status": "Planned",
+        "clean_technology": "Yes",
+        "clean_technology_type": "Tidal",
+        "code": 1,
+        "OBJECTID": 163
+      },
+      "geometry": {
+        "x": -64.40966550695899,
+        "y": 45.357413405075945
+      }
+    },
+    {
+      "attributes": {
+        "id": "4205",
+        "company": "Nova Innovation",
+        "project_name": "The Nova Tidal Array (Petit Passage)",
+        "province": "Nova Scotia",
+        "location": "Petit Passage",
+        "capital_cost": "22.00",
+        "capital_cost_range": "10 - 50 ",
+        "sector": "Energy",
+        "status": "Under Construction",
+        "clean_technology": "Yes",
+        "clean_technology_type": "Tidal",
+        "code": 11,
+        "OBJECTID": 164
+      },
+      "geometry": {
+        "x": -66.20675907830483,
+        "y": 44.3923451902667
+      }
+    },
+    {
+      "attributes": {
+        "id": "4217",
+        "company": "Cenovus Energy Inc.",
+        "project_name": "Spruce Lake East Lloyd",
+        "province": "Saskatchewan",
+        "location": "Spruce Lake",
+        "capital_cost": "350.00",
+        "capital_cost_range": "250 - 500",
+        "sector": "Energy",
+        "status": "Under Construction",
+        "clean_technology": "No",
+        "clean_technology_type": "N/A",
+        "code": 11,
+        "OBJECTID": 165
+      },
+      "geometry": {
+        "x": -109.0896328587503,
+        "y": 53.54445448051496
+      }
+    },
+    {
+      "attributes": {
+        "id": "4219",
+        "company": "Yukon Energy Corporation",
+        "project_name": "Grid-Scale Battery Storage",
+        "province": "Yukon",
+        "location": "Whitehorse",
+        "capital_cost": "35.00",
+        "capital_cost_range": "10 - 50 ",
+        "sector": "Energy",
+        "status": "Under Construction",
+        "clean_technology": "Yes",
+        "clean_technology_type": "Energy Storage",
+        "code": 11,
+        "OBJECTID": 166
+      },
+      "geometry": {
+        "x": -135.27313707668182,
+        "y": 60.77924202999076
+      }
+    },
+    {
+      "attributes": {
+        "id": "4220",
+        "company": "Port Hawkesbury Paper",
+        "project_name": "Goose Harbour Lake Wind Farm (formerly Pirate Harbour)",
+        "province": "Nova Scotia",
+        "location": "Point Tupper",
+        "capital_cost": "450.00",
+        "capital_cost_range": "250 - 500",
+        "sector": "Energy",
+        "status": "Under Construction",
+        "clean_technology": "Yes",
+        "clean_technology_type": "Wind",
+        "code": 11,
+        "OBJECTID": 167
+      },
+      "geometry": {
+        "x": -61.37092407029237,
+        "y": 45.60570360575094
+      }
+    },
+    {
+      "attributes": {
+        "id": "4224",
+        "company": "WindRiver Power Corp. & TC Energy",
+        "project_name": "Canyon Creek Hydro Power Project (storage)",
+        "province": "Alberta",
+        "location": "Yellowhead County",
+        "capital_cost": "200.00",
+        "capital_cost_range": "100 - 250",
+        "sector": "Energy",
+        "status": "Planned",
+        "clean_technology": "Yes",
+        "clean_technology_type": "Hydro",
+        "code": 1,
+        "OBJECTID": 168
+      },
+      "geometry": {
+        "x": -117.52454425439852,
+        "y": 53.53011154187485
+      }
+    },
+    {
+      "attributes": {
+        "id": "4230",
+        "company": "JD Irving",
+        "project_name": "Mill modernization and upgrade",
+        "province": "New Brunswick",
+        "location": "Doaktown",
+        "capital_cost": "35.00",
+        "capital_cost_range": "10 - 50 ",
+        "sector": "Forest",
+        "status": "Under Construction",
+        "clean_technology": "No",
+        "clean_technology_type": "N/A",
+        "code": 44,
+        "OBJECTID": 169
+      },
+      "geometry": {
+        "x": -66.11216915437018,
+        "y": 46.55592957233736
+      }
+    },
+    {
+      "attributes": {
+        "id": "5002",
+        "company": "Inuvialuit Petroleum Corporation",
+        "project_name": "Inuvialuit Energy Security Project",
+        "province": "Northwest Territories",
+        "location": "17km south of Tuktoyaktuk",
+        "capital_cost": "160.00",
+        "capital_cost_range": "100 - 250",
+        "sector": "Energy",
+        "status": "Under Construction",
+        "clean_technology": "No",
+        "clean_technology_type": "N/A",
+        "code": 11,
+        "OBJECTID": 170
+      },
+      "geometry": {
+        "x": -133.07633015431946,
+        "y": 69.29740414354742
+      }
+    },
+    {
+      "attributes": {
+        "id": "5010",
+        "company": "Deh Tai GP Ltd",
+        "project_name": "Tu Deh Kah Geothermal Development",
+        "province": "British Columbia",
+        "location": "Fort Nelson",
+        "capital_cost": "100.00",
+        "capital_cost_range": "100 - 250",
+        "sector": "Energy",
+        "status": "Planned",
+        "clean_technology": "Yes",
+        "clean_technology_type": "Bioenergy",
+        "code": 1,
+        "OBJECTID": 171
+      },
+      "geometry": {
+        "x": -122.66014132981157,
+        "y": 58.772043036142314
+      }
+    },
+    {
+      "attributes": {
+        "id": "5018",
+        "company": "Tlingit Homeland Energy Limited Partnership (THELP)",
+        "project_name": "Atlin Hydro Expansion project",
+        "province": "British Columbia",
+        "location": "Atlin",
+        "capital_cost": "315.00",
+        "capital_cost_range": "250 - 500",
+        "sector": "Energy",
+        "status": "Planned",
+        "clean_technology": "Yes",
+        "clean_technology_type": "Hydro",
+        "code": 1,
+        "OBJECTID": 172
+      },
+      "geometry": {
+        "x": -133.64456514110927,
+        "y": 59.582978309458504
+      }
+    },
+    {
+      "attributes": {
+        "id": "5025",
+        "company": "Interfor Corporation",
+        "project_name": "Mill improvement",
+        "province": "British Columbia",
+        "location": "Castlegar",
+        "capital_cost": "35.00",
+        "capital_cost_range": "10 - 50 ",
+        "sector": "Forest",
+        "status": "Planned",
+        "clean_technology": "No",
+        "clean_technology_type": "N/A",
+        "code": 4,
+        "OBJECTID": 173
+      },
+      "geometry": {
+        "x": -117.73701652415909,
+        "y": 49.33563122565679
+      }
+    },
+    {
+      "attributes": {
+        "id": "5027",
+        "company": "Osisko Development Corp.",
+        "project_name": "Cariboo Gold Project",
+        "province": "British Columbia",
+        "location": "Quesnel",
+        "capital_cost": "881.00",
+        "capital_cost_range": "750 - 1,000",
+        "sector": "Mining",
+        "status": "Planned",
+        "clean_technology": "No",
+        "clean_technology_type": "N/A",
+        "code": 7,
+        "OBJECTID": 174
+      },
+      "geometry": {
+        "x": -121.56140635946164,
+        "y": 53.08972595533802
+      }
+    },
+    {
+      "attributes": {
+        "id": "5029",
+        "company": "Kruger",
+        "project_name": "Brompton paper upgrade",
+        "province": "Quebec",
+        "location": "Sherbrooke",
+        "capital_cost": "397.00",
+        "capital_cost_range": "250 - 500",
+        "sector": "Forest",
+        "status": "Under Construction",
+        "clean_technology": "No",
+        "clean_technology_type": "N/A",
+        "code": 44,
+        "OBJECTID": 175
+      },
+      "geometry": {
+        "x": -71.9508440891272,
+        "y": 45.4832172118445
+      }
+    },
+    {
+      "attributes": {
+        "id": "5038",
+        "company": "TransAlta Renewables",
+        "project_name": "Tempest Wind Power Project",
+        "province": "Alberta",
+        "location": "Flagstaff County",
+        "capital_cost": "105.00",
+        "capital_cost_range": "100 - 250",
+        "sector": "Energy",
+        "status": "Planned",
+        "clean_technology": "Yes",
+        "clean_technology_type": "Wind",
+        "code": 1,
+        "OBJECTID": 176
+      },
+      "geometry": {
+        "x": -111.76417718776113,
+        "y": 52.55555110940332
+      }
+    },
+    {
+      "attributes": {
+        "id": "5047",
+        "company": "Air Products",
+        "project_name": "Canada Net-Zero Hydrogen Energy Complex",
+        "province": "Alberta",
+        "location": "Strathcona County",
+        "capital_cost": "4,570.00",
+        "capital_cost_range": "2,500 - 5,000",
+        "sector": "Energy",
+        "status": "Under Construction",
+        "clean_technology": "Yes",
+        "clean_technology_type": "Multiple",
+        "code": 22,
+        "OBJECTID": 177
+      },
+      "geometry": {
+        "x": -113.3159718726142,
+        "y": 53.58732799303856
+      }
+    },
+    {
+      "attributes": {
+        "id": "5060",
+        "company": "Fortis",
+        "project_name": "Tilbury LNG Phase 1B",
+        "province": "British Columbia",
+        "location": "Delta",
+        "capital_cost": "60.00",
+        "capital_cost_range": "50 - 100",
+        "sector": "Energy",
+        "status": "Planned",
+        "clean_technology": "No",
+        "clean_technology_type": "N/A",
+        "code": 1,
+        "OBJECTID": 178
+      },
+      "geometry": {
+        "x": -123.02352039431199,
+        "y": 49.141803214496605
+      }
+    },
+    {
+      "attributes": {
+        "id": "5066",
+        "company": "Ontario Power Generation",
+        "project_name": "Redevelopment of the Calabogie site",
+        "province": "Ontario",
+        "location": "Greater Madawaska",
+        "capital_cost": "137.00",
+        "capital_cost_range": "100 - 250",
+        "sector": "Energy",
+        "status": "Under Construction",
+        "clean_technology": "Yes",
+        "clean_technology_type": "Hydro",
+        "code": 11,
+        "OBJECTID": 179
+      },
+      "geometry": {
+        "x": -76.7107076610028,
+        "y": 45.303539991518605
+      }
+    },
+    {
+      "attributes": {
+        "id": "5067",
+        "company": "Ontario Power Generation",
+        "project_name": "Redevelopment of Coniston station",
+        "province": "Ontario",
+        "location": "Sudbury",
+        "capital_cost": "85.00",
+        "capital_cost_range": "50 - 100",
+        "sector": "Energy",
+        "status": "Planned",
+        "clean_technology": "Yes",
+        "clean_technology_type": "Hydro",
+        "code": 1,
+        "OBJECTID": 180
+      },
+      "geometry": {
+        "x": -80.81837312268169,
+        "y": 46.4746189873983
+      }
+    },
+    {
+      "attributes": {
+        "id": "5069",
+        "company": "Canada Nickel Company Inc.",
+        "project_name": "Crawford",
+        "province": "Ontario",
+        "location": "40 km N of Timmins",
+        "capital_cost": "2,835.00",
+        "capital_cost_range": "2,500 - 5,000",
+        "sector": "Mining",
+        "status": "Planned",
+        "clean_technology": "No",
+        "clean_technology_type": "N/A",
+        "code": 8,
+        "OBJECTID": 181
+      },
+      "geometry": {
+        "x": -81.37309458617408,
+        "y": 48.839729318971585
+      }
+    },
+    {
+      "attributes": {
+        "id": "5074",
+        "company": "New Age Metals Inc.",
+        "project_name": "River Valley Palladium",
+        "province": "Ontario",
+        "location": "30 km N of Warren",
+        "capital_cost": "268.70",
+        "capital_cost_range": "250 - 500",
+        "sector": "Mining",
+        "status": "Planned",
+        "clean_technology": "No",
+        "clean_technology_type": "N/A",
+        "code": 7,
+        "OBJECTID": 182
+      },
+      "geometry": {
+        "x": -80.27606396997152,
+        "y": 46.70591905275845
+      }
+    },
+    {
+      "attributes": {
+        "id": "5076",
+        "company": "Résolve Énergie",
+        "project_name": "Usine de production d'éthanol cellulosique",
+        "province": "Quebec",
+        "location": "Chaudière-Appalaches",
+        "capital_cost": "300.00",
+        "capital_cost_range": "250 - 500",
+        "sector": "Energy",
+        "status": "Planned",
+        "clean_technology": "Yes",
+        "clean_technology_type": "Bioenergy",
+        "code": 1,
+        "OBJECTID": 183
+      },
+      "geometry": {
+        "x": -70.61666490630381,
+        "y": 46.48334082923308
+      }
+    },
+    {
+      "attributes": {
+        "id": "5077",
+        "company": "Greenfield Global",
+        "project_name": "Agrandissement usine d'éthanol à Varennes",
+        "province": "Quebec",
+        "location": "Varennes",
+        "capital_cost": "120.00",
+        "capital_cost_range": "100 - 250",
+        "sector": "Energy",
+        "status": "Planned",
+        "clean_technology": "Yes",
+        "clean_technology_type": "Bioenergy",
+        "code": 1,
+        "OBJECTID": 184
+      },
+      "geometry": {
+        "x": -73.44098453886596,
+        "y": 45.68201108867333
+      }
+    },
+    {
+      "attributes": {
+        "id": "6016",
+        "company": "Voltarix Group",
+        "project_name": "Creekside Solar Project (Fortis Buford 538S DER Solar)",
+        "province": "Alberta",
+        "location": "Leduc County",
+        "capital_cost": "43.00",
+        "capital_cost_range": "10 - 50 ",
+        "sector": "Energy",
+        "status": "Planned",
+        "clean_technology": "Yes",
+        "clean_technology_type": "Solar",
+        "code": 1,
+        "OBJECTID": 185
+      },
+      "geometry": {
+        "x": -113.82518687368807,
+        "y": 53.24715291243408
+      }
+    },
+    {
+      "attributes": {
+        "id": "6019",
+        "company": "Skeena Resources Ltd.",
+        "project_name": "Eskay Creek Mine",
+        "province": "British Columbia",
+        "location": "Stewart",
+        "capital_cost": "713.00",
+        "capital_cost_range": "500 - 750",
+        "sector": "Mining",
+        "status": "Planned",
+        "clean_technology": "No",
+        "clean_technology_type": "N/A",
+        "code": 7,
+        "OBJECTID": 186
+      },
+      "geometry": {
+        "x": -130.50001917267323,
+        "y": 56.620004805302756
+      }
+    },
+    {
+      "attributes": {
+        "id": "6022",
+        "company": "NTPC",
+        "project_name": "Fort Providence and Kakisa Transmission Line",
+        "province": "Northwest Territories",
+        "location": "Highway 2/5 juction to Fort Providence",
+        "capital_cost": "60.00",
+        "capital_cost_range": "50 - 100",
+        "sector": "Energy",
+        "status": "Planned",
+        "clean_technology": "No",
+        "clean_technology_type": "N/A",
+        "code": 1,
+        "OBJECTID": 187
+      },
+      "geometry": {
+        "x": -117.22141212864338,
+        "y": 60.97746477996914
+      }
+    },
+    {
+      "attributes": {
+        "id": "6023",
+        "company": "STLLR Gold Inc.",
+        "project_name": "Tower Gold (formerly Garrison/Golden Highway)",
+        "province": "Ontario",
+        "location": "110 km E of Timmins",
+        "capital_cost": "1,627.00",
+        "capital_cost_range": "1,000 - 2,500",
+        "sector": "Mining",
+        "status": "Planned",
+        "clean_technology": "No",
+        "clean_technology_type": "N/A",
+        "code": 8,
+        "OBJECTID": 188
+      },
+      "geometry": {
+        "x": -79.98755408150805,
+        "y": 48.49397634441436
+      }
+    },
+    {
+      "attributes": {
+        "id": "6025",
+        "company": "Rock Tech Lithium Inc.",
+        "project_name": "Georgia Lake",
+        "province": "Ontario",
+        "location": "150 km NE of Thunder Bay",
+        "capital_cost": "249.90",
+        "capital_cost_range": "100 - 250",
+        "sector": "Mining",
+        "status": "Planned",
+        "clean_technology": "No",
+        "clean_technology_type": "N/A",
+        "code": 7,
+        "OBJECTID": 189
+      },
+      "geometry": {
+        "x": -88.03968785082911,
+        "y": 49.44541998647918
+      }
+    },
+    {
+      "attributes": {
+        "id": "6026",
+        "company": "TransAlta Corporation",
+        "project_name": "Ghost River WaterCharger Battery Energy Storage",
+        "province": "Alberta",
+        "location": "Rocky View County",
+        "capital_cost": "208.40",
+        "capital_cost_range": "100 - 250",
+        "sector": "Energy",
+        "status": "Planned",
+        "clean_technology": "Yes",
+        "clean_technology_type": "Energy Storage",
+        "code": 1,
+        "OBJECTID": 190
+      },
+      "geometry": {
+        "x": -114.70461843700394,
+        "y": 51.21778868494428
+      }
+    },
+    {
+      "attributes": {
+        "id": "6028",
+        "company": "Entropy Inc.",
+        "project_name": "Glacier Gas Plant CCS",
+        "province": "Alberta",
+        "location": "Saddle Hills County",
+        "capital_cost": "127.00",
+        "capital_cost_range": "100 - 250",
+        "sector": "Energy",
+        "status": "Under Construction",
+        "clean_technology": "Yes",
+        "clean_technology_type": "Carbon Capture and Storage",
+        "code": 11,
+        "OBJECTID": 191
+      },
+      "geometry": {
+        "x": -119.60377693245539,
+        "y": 55.559547296971765
+      }
+    },
+    {
+      "attributes": {
+        "id": "6029",
+        "company": "LNG Newfoundland and Labrador",
+        "project_name": "Grassy Point LNG",
+        "province": "Newfoundland and Labrador",
+        "location": "Grassy Point",
+        "capital_cost": "10,000.00",
+        "capital_cost_range": "10,000 +",
+        "sector": "Energy",
+        "status": "Planned",
+        "clean_technology": "No",
+        "clean_technology_type": "N/A",
+        "code": 3,
+        "OBJECTID": 192
+      },
+      "geometry": {
+        "x": -54.02714193437833,
+        "y": 47.752800932336214
+      }
+    },
+    {
+      "attributes": {
+        "id": "6031",
+        "company": "Diageo Canada Inc.",
+        "project_name": "Implantation de mesures de réduction des émissions de GES et de conversion énergétique",
+        "province": "Quebec",
+        "location": "Salaberry-de-Valleyfield",
+        "capital_cost": "94.00",
+        "capital_cost_range": "50 - 100",
+        "sector": "Energy",
+        "status": "Planned",
+        "clean_technology": "No",
+        "clean_technology_type": "N/A",
+        "code": 1,
+        "OBJECTID": 193
+      },
+      "geometry": {
+        "x": -74.12034437396946,
+        "y": 45.256783648130806
+      }
+    },
+    {
+      "attributes": {
+        "id": "6036",
+        "company": "Imperial Oil",
+        "project_name": "Kearl Oil Sand In-Pit Tailings Project",
+        "province": "Alberta",
+        "location": "Wood Buffalo",
+        "capital_cost": "750.00",
+        "capital_cost_range": "750 - 1,000",
+        "sector": "Energy",
+        "status": "Under Construction",
+        "clean_technology": "No",
+        "clean_technology_type": "N/A",
+        "code": 11,
+        "OBJECTID": 194
+      },
+      "geometry": {
+        "x": -111.16349881604737,
+        "y": 57.41143546491772
+      }
+    },
+    {
+      "attributes": {
+        "id": "6045",
+        "company": "Manitoba Hydro",
+        "project_name": "Limestone Units 1-3 & 5-10 Stator Re-Wedge",
+        "province": "Manitoba",
+        "location": "Nelson River",
+        "capital_cost": "38.60",
+        "capital_cost_range": "10 - 50 ",
+        "sector": "Energy",
+        "status": "Under Construction",
+        "clean_technology": "Yes",
+        "clean_technology_type": "Hydro",
+        "code": 11,
+        "OBJECTID": 195
+      },
+      "geometry": {
+        "x": -94.10691042372036,
+        "y": 56.50690927832008
+      }
+    },
+    {
+      "attributes": {
+        "id": "6046",
+        "company": "LNG Canada (Shell Canada Limited, PETRONAS, Korea Gas Corporation (KOGAS), Mitsubishi Corporation, and PetroChina Company Limited)",
+        "project_name": "LNG Canada Phase 2",
+        "province": "British Columbia",
+        "location": "Kitimat",
+        "capital_cost": "25,000.00",
+        "capital_cost_range": "10,000 +",
+        "sector": "Energy",
+        "status": "Planned",
+        "clean_technology": "No",
+        "clean_technology_type": "N/A",
+        "code": 3,
+        "OBJECTID": 196
+      },
+      "geometry": {
+        "x": -128.63807583162247,
+        "y": 54.08195605054043
+      }
+    },
+    {
+      "attributes": {
+        "id": "6047",
+        "company": "Manitoba Hydro",
+        "project_name": "Long Spruce Generator Protection Replacement",
+        "province": "Manitoba",
+        "location": "Nelson River",
+        "capital_cost": "22.00",
+        "capital_cost_range": "10 - 50 ",
+        "sector": "Energy",
+        "status": "Under Construction",
+        "clean_technology": "Yes",
+        "clean_technology_type": "Hydro",
+        "code": 11,
+        "OBJECTID": 197
+      },
+      "geometry": {
+        "x": -94.36921047473238,
+        "y": 56.39790924556829
+      }
+    },
+    {
+      "attributes": {
+        "id": "6048",
+        "company": "Mines Agnico Eagle ltée",
+        "project_name": "Complexe Canadian Malartic - Odyssey Nord et Sud",
+        "province": "Quebec",
+        "location": "Malartic",
+        "capital_cost": "1,769.20",
+        "capital_cost_range": "1,000 - 2,500",
+        "sector": "Mining",
+        "status": "Under Construction",
+        "clean_technology": "No",
+        "clean_technology_type": "N/A",
+        "code": 88,
+        "OBJECTID": 198
+      },
+      "geometry": {
+        "x": -78.14115341191967,
+        "y": 48.07367737435365
+      }
+    },
+    {
+      "attributes": {
+        "id": "6050",
+        "company": "Agnico Eagle",
+        "project_name": "Marban Project (prev. Marban Alliance)",
+        "province": "Quebec",
+        "location": "Val-d'Or",
+        "capital_cost": "435.10",
+        "capital_cost_range": "250 - 500",
+        "sector": "Mining",
+        "status": "Planned",
+        "clean_technology": "No",
+        "clean_technology_type": "N/A",
+        "code": 7,
+        "OBJECTID": 199
+      },
+      "geometry": {
+        "x": -77.97919336272669,
+        "y": 48.137076392014535
+      }
+    },
+    {
+      "attributes": {
+        "id": "6051",
+        "company": "Fox River Resources Corporation",
+        "project_name": "Martison",
+        "province": "Ontario",
+        "location": "70 km NNE of Hearst",
+        "capital_cost": "2,326.92",
+        "capital_cost_range": "1,000 - 2,500",
+        "sector": "Mining",
+        "status": "Planned",
+        "clean_technology": "No",
+        "clean_technology_type": "N/A",
+        "code": 8,
+        "OBJECTID": 200
+      },
+      "geometry": {
+        "x": -83.41444547529727,
+        "y": 50.31444940837888
+      }
+    },
+    {
+      "attributes": {
+        "id": "6060",
+        "company": "Sayona Nord",
+        "project_name": "Moblan",
+        "province": "Quebec",
+        "location": "Eeyou Istchee Baie-James",
+        "capital_cost": "962.00",
+        "capital_cost_range": "750 - 1,000",
+        "sector": "Mining",
+        "status": "Planned",
+        "clean_technology": "No",
+        "clean_technology_type": "N/A",
+        "code": 7,
+        "OBJECTID": 201
+      },
+      "geometry": {
+        "x": -74.83589156268846,
+        "y": 50.73935892906081
+      }
+    },
+    {
+      "attributes": {
+        "id": "6062",
+        "company": "Voltarix Group",
+        "project_name": "Moon Lake Solar Project",
+        "province": "Alberta",
+        "location": "Parkland County",
+        "capital_cost": "43.00",
+        "capital_cost_range": "10 - 50 ",
+        "sector": "Energy",
+        "status": "Under Construction",
+        "clean_technology": "Yes",
+        "clean_technology_type": "Solar",
+        "code": 11,
+        "OBJECTID": 202
+      },
+      "geometry": {
+        "x": -114.99053218644902,
+        "y": 53.42250078412357
+      }
+    },
+    {
+      "attributes": {
+        "id": "6071",
+        "company": "NeoLithica Ltd.",
+        "project_name": "Peace River Arch Lithium Project",
+        "province": "Alberta",
+        "location": "Northern Sunrise County",
+        "capital_cost": "400.00",
+        "capital_cost_range": "250 - 500",
+        "sector": "Mining",
+        "status": "Planned",
+        "clean_technology": "No",
+        "clean_technology_type": "N/A",
+        "code": 7,
+        "OBJECTID": 203
+      },
+      "geometry": {
+        "x": -116.85655362242744,
+        "y": 56.17023567984927
+      }
+    },
+    {
+      "attributes": {
+        "id": "6072",
+        "company": "Peak Renewables",
+        "project_name": "Pellet Plant",
+        "province": "British Columbia",
+        "location": "Fort Nelson",
+        "capital_cost": "29.00",
+        "capital_cost_range": "10 - 50 ",
+        "sector": "Forest",
+        "status": "Planned",
+        "clean_technology": "Yes",
+        "clean_technology_type": "Bioenergy",
+        "code": 4,
+        "OBJECTID": 204
+      },
+      "geometry": {
+        "x": -122.69740590015343,
+        "y": 58.80494569804989
+      }
+    },
+    {
+      "attributes": {
+        "id": "6081",
+        "company": "Newcrest Mining Ltd./Imperial Metals",
+        "project_name": "Red Chris Block Cave Expansion",
+        "province": "British Columbia",
+        "location": "Dease Lake",
+        "capital_cost": "2,632.00",
+        "capital_cost_range": "2,500 - 5,000",
+        "sector": "Mining",
+        "status": "Planned",
+        "clean_technology": "No",
+        "clean_technology_type": "N/A",
+        "code": 8,
+        "OBJECTID": 205
+      },
+      "geometry": {
+        "x": -129.78001962462818,
+        "y": 57.72000491119735
+      }
+    },
+    {
+      "attributes": {
+        "id": "6083",
+        "company": "Voltarix Group",
+        "project_name": "Rocktree Solar Project (Fortis Stony Plain 434S DER Solar)",
+        "province": "Alberta",
+        "location": "Parkland County",
+        "capital_cost": "40.00",
+        "capital_cost_range": "10 - 50 ",
+        "sector": "Energy",
+        "status": "Planned",
+        "clean_technology": "Yes",
+        "clean_technology_type": "Solar",
+        "code": 1,
+        "OBJECTID": 206
+      },
+      "geometry": {
+        "x": -113.91209598176626,
+        "y": 53.515094918936676
+      }
+    },
+    {
+      "attributes": {
+        "id": "6084",
+        "company": "City of Medicine Hat",
+        "project_name": "Saamis Solar Farm",
+        "province": "Alberta",
+        "location": "Medicine Hat",
+        "capital_cost": "120.00",
+        "capital_cost_range": "100 - 250",
+        "sector": "Energy",
+        "status": "Planned",
+        "clean_technology": "Yes",
+        "clean_technology_type": "Solar",
+        "code": 1,
+        "OBJECTID": 207
+      },
+      "geometry": {
+        "x": -110.70735324998958,
+        "y": 50.07068104136028
+      }
+    },
+    {
+      "attributes": {
+        "id": "6087",
+        "company": "Magna Mining Inc.",
+        "project_name": "Shakespeare",
+        "province": "Ontario",
+        "location": "Sudbury (20 km NE of Massey)",
+        "capital_cost": "232.90",
+        "capital_cost_range": "100 - 250",
+        "sector": "Mining",
+        "status": "Planned",
+        "clean_technology": "No",
+        "clean_technology_type": "N/A",
+        "code": 7,
+        "OBJECTID": 208
+      },
+      "geometry": {
+        "x": -81.85879344053731,
+        "y": 46.29198790349855
+      }
+    },
+    {
+      "attributes": {
+        "id": "6088",
+        "company": "Expander Energy",
+        "project_name": "Slave Lake Bio-Mass/Gas to Liquids Plant",
+        "province": "Alberta",
+        "location": "Lesser Slave River No.124",
+        "capital_cost": "35.00",
+        "capital_cost_range": "10 - 50 ",
+        "sector": "Energy",
+        "status": "Under Construction",
+        "clean_technology": "Yes",
+        "clean_technology_type": "Bioenergy",
+        "code": 11,
+        "OBJECTID": 209
+      },
+      "geometry": {
+        "x": -114.57518575876578,
+        "y": 55.26504493081816
+      }
+    },
+    {
+      "attributes": {
+        "id": "6090",
+        "company": "Imperial Oil Ltd.",
+        "project_name": "Strathcona Refinery Renewable Diesel Expansion",
+        "province": "Alberta",
+        "location": "Strathcona County",
+        "capital_cost": "720.00",
+        "capital_cost_range": "500 - 750",
+        "sector": "Energy",
+        "status": "Under Construction",
+        "clean_technology": "Yes",
+        "clean_technology_type": "Bioenergy",
+        "code": 11,
+        "OBJECTID": 210
+      },
+      "geometry": {
+        "x": -113.38417287374237,
+        "y": 53.546099982986796
+      }
+    },
+    {
+      "attributes": {
+        "id": "6096",
+        "company": "Troilus Gold Corp.",
+        "project_name": "Troilus",
+        "province": "Quebec",
+        "location": "Eeyou Istchee Baie-James",
+        "capital_cost": "1,074.60",
+        "capital_cost_range": "1,000 - 2,500",
+        "sector": "Mining",
+        "status": "Planned",
+        "clean_technology": "No",
+        "clean_technology_type": "N/A",
+        "code": 8,
+        "OBJECTID": 211
+      },
+      "geometry": {
+        "x": -74.46663646041492,
+        "y": 51.01113098447424
+      }
+    },
+    {
+      "attributes": {
+        "id": "6097",
+        "company": "Agnico Eagle Mines Limited",
+        "project_name": "Upper Beaver",
+        "province": "Ontario",
+        "location": "Kirkland Lake",
+        "capital_cost": "900.00",
+        "capital_cost_range": "750 - 1,000",
+        "sector": "Mining",
+        "status": "Planned",
+        "clean_technology": "No",
+        "clean_technology_type": "N/A",
+        "code": 7,
+        "OBJECTID": 212
+      },
+      "geometry": {
+        "x": -79.76800396771976,
+        "y": 48.17500930847269
+      }
+    },
+    {
+      "attributes": {
+        "id": "6098",
+        "company": "Elkem Métal Canada",
+        "project_name": "Usine de démonstration de fabrication de briquettes de biocarbone",
+        "province": "Quebec",
+        "location": "Chicoutimi",
+        "capital_cost": "46.00",
+        "capital_cost_range": "10 - 50 ",
+        "sector": "Forest",
+        "status": "Under Construction",
+        "clean_technology": "Yes",
+        "clean_technology_type": "Bioenergy",
+        "code": 44,
+        "OBJECTID": 213
+      },
+      "geometry": {
+        "x": -71.1298496143123,
+        "y": 48.41233981336846
+      }
+    },
+    {
+      "attributes": {
+        "id": "6099",
+        "company": "Nouveau monde graphite",
+        "project_name": "Matawinie - Usine pilote de production de graphite purifié",
+        "province": "Quebec",
+        "location": "Bécancour",
+        "capital_cost": "1,247.90",
+        "capital_cost_range": "1,000 - 2,500",
+        "sector": "Mining",
+        "status": "Planned",
+        "clean_technology": "No",
+        "clean_technology_type": "N/A",
+        "code": 8,
+        "OBJECTID": 214
+      },
+      "geometry": {
+        "x": -72.37303048636339,
+        "y": 46.38263069507797
+      }
+    },
+    {
+      "attributes": {
+        "id": "6100",
+        "company": "Probe Gold inc.",
+        "project_name": "Novador",
+        "province": "Quebec",
+        "location": "Val-d'Or",
+        "capital_cost": "602.20",
+        "capital_cost_range": "500 - 750",
+        "sector": "Mining",
+        "status": "Planned",
+        "clean_technology": "No",
+        "clean_technology_type": "N/A",
+        "code": 7,
+        "OBJECTID": 215
+      },
+      "geometry": {
+        "x": -77.5007962027899,
+        "y": 48.15003741677859
+      }
+    },
+    {
+      "attributes": {
+        "id": "6101",
+        "company": "Ville de Québec",
+        "project_name": "Projet de valorisation de la vapeur de l'incinérateur pour le CHU de Québec - Université Laval",
+        "province": "Quebec",
+        "location": "Ville de Québec",
+        "capital_cost": "43.80",
+        "capital_cost_range": "10 - 50 ",
+        "sector": "Energy",
+        "status": "Planned",
+        "clean_technology": "Yes",
+        "clean_technology_type": "Other",
+        "code": 1,
+        "OBJECTID": 216
+      },
+      "geometry": {
+        "x": -71.20330093275318,
+        "y": 46.83470946667822
+      }
+    },
+    {
+      "attributes": {
+        "id": "6102",
+        "company": "Galleon Gold Corp.",
+        "project_name": "West Cache",
+        "province": "Ontario",
+        "location": "15 km WSW of Timmins",
+        "capital_cost": "150.00",
+        "capital_cost_range": "100 - 250",
+        "sector": "Mining",
+        "status": "Planned",
+        "clean_technology": "No",
+        "clean_technology_type": "N/A",
+        "code": 7,
+        "OBJECTID": 217
+      },
+      "geometry": {
+        "x": -81.48394457153434,
+        "y": 48.41809825125291
+      }
+    },
+    {
+      "attributes": {
+        "id": "7003",
+        "company": "Rio Tinto Group",
+        "project_name": "Jonquiere Refinery",
+        "province": "Quebec",
+        "location": "Jonquiere",
+        "capital_cost": "1,400.00",
+        "capital_cost_range": "1,000 - 2,500",
+        "sector": "Mining",
+        "status": "Planned",
+        "clean_technology": "No",
+        "clean_technology_type": "N/A",
+        "code": 8,
+        "OBJECTID": 218
+      },
+      "geometry": {
+        "x": -71.16200104331601,
+        "y": 48.42900972758014
+      }
+    },
+    {
+      "attributes": {
+        "id": "7026",
+        "company": "ENMAX Energy Corp.",
+        "project_name": "Enmax Substation No. 1",
+        "province": "Alberta",
+        "location": "Calgary",
+        "capital_cost": "207.00",
+        "capital_cost_range": "100 - 250",
+        "sector": "Energy",
+        "status": "Under Construction",
+        "clean_technology": "No",
+        "clean_technology_type": "N/A",
+        "code": 11,
+        "OBJECTID": 219
+      },
+      "geometry": {
+        "x": -114.08001425483637,
+        "y": 51.04532474470257
+      }
+    },
+    {
+      "attributes": {
+        "id": "7035",
+        "company": "Green Impact Partners (In partnership with Carbon Clean Energy and PCL Construction)",
+        "project_name": "Future Energy Park Renewable Natural Gas and Ethanol Project",
+        "province": "Alberta",
+        "location": "Calgary",
+        "capital_cost": "1,500.00",
+        "capital_cost_range": "1,000 - 2,500",
+        "sector": "Energy",
+        "status": "Planned",
+        "clean_technology": "Yes",
+        "clean_technology_type": "Bioenergy",
+        "code": 2,
+        "OBJECTID": 220
+      },
+      "geometry": {
+        "x": -113.91401420907387,
+        "y": 51.010139761953205
+      }
+    },
+    {
+      "attributes": {
+        "id": "7040",
+        "company": "Heidelberg Materials",
+        "project_name": "Heidelberg Materials Carbon Capture Utilization and Storage Hub",
+        "province": "Alberta",
+        "location": "Edmonton",
+        "capital_cost": "1,360.00",
+        "capital_cost_range": "1,000 - 2,500",
+        "sector": "Energy",
+        "status": "Planned",
+        "clean_technology": "Yes",
+        "clean_technology_type": "Carbon Capture and Storage",
+        "code": 2,
+        "OBJECTID": 221
+      },
+      "geometry": {
+        "x": -113.60601493535256,
+        "y": 53.57980695822925
+      }
+    },
+    {
+      "attributes": {
+        "id": "7042",
+        "company": "Kiwetinohk Energy Corp",
+        "project_name": "Homestead Solar Project",
+        "province": "Alberta",
+        "location": "Willow Creek No. 26",
+        "capital_cost": "600.00",
+        "capital_cost_range": "500 - 750",
+        "sector": "Energy",
+        "status": "Planned",
+        "clean_technology": "Yes",
+        "clean_technology_type": "Solar",
+        "code": 1,
+        "OBJECTID": 222
+      },
+      "geometry": {
+        "x": -113.44601383107721,
+        "y": 49.98142074177492
+      }
+    },
+    {
+      "attributes": {
+        "id": "7047",
+        "company": "Northland Power",
+        "project_name": "Jurassic Solar and Battery Storage",
+        "province": "Alberta",
+        "location": "Cypress County",
+        "capital_cost": "500.00",
+        "capital_cost_range": "500 - 750",
+        "sector": "Energy",
+        "status": "Under Construction",
+        "clean_technology": "Yes",
+        "clean_technology_type": "Solar",
+        "code": 11,
+        "OBJECTID": 223
+      },
+      "geometry": {
+        "x": -111.11601349770832,
+        "y": 50.66321104513456
+      }
+    },
+    {
+      "attributes": {
+        "id": "7057",
+        "company": "Northland Power Luna I GP Inc",
+        "project_name": "Luna Solar+ Project",
+        "province": "Alberta",
+        "location": "Newell County",
+        "capital_cost": "700.00",
+        "capital_cost_range": "500 - 750",
+        "sector": "Energy",
+        "status": "Planned",
+        "clean_technology": "Yes",
+        "clean_technology_type": "Solar",
+        "code": 1,
+        "OBJECTID": 224
+      },
+      "geometry": {
+        "x": -112.23601373213037,
+        "y": 50.60377491848504
+      }
+    },
+    {
+      "attributes": {
+        "id": "7063",
+        "company": "Uniboard",
+        "project_name": "Mill modernisation",
+        "province": "Quebec",
+        "location": "Val-d'Or",
+        "capital_cost": "310.00",
+        "capital_cost_range": "250 - 500",
+        "sector": "Forest",
+        "status": "Under Construction",
+        "clean_technology": "No",
+        "clean_technology_type": "N/A",
+        "code": 44,
+        "OBJECTID": 225
+      },
+      "geometry": {
+        "x": -77.79680329659247,
+        "y": 48.09870939623464
+      }
+    },
+    {
+      "attributes": {
+        "id": "7066",
+        "company": "Discovery Silver Corp.",
+        "project_name": "Porcupine Complex (Pamour)",
+        "province": "Ontario",
+        "location": "8 km NE of South Porcupine, Ontario",
+        "capital_cost": "314.20",
+        "capital_cost_range": "250 - 500",
+        "sector": "Mining",
+        "status": "Planned",
+        "clean_technology": "No",
+        "clean_technology_type": "N/A",
+        "code": 7,
+        "OBJECTID": 226
+      },
+      "geometry": {
+        "x": -81.1204964620404,
+        "y": 48.52226228649562
+      }
+    },
+    {
+      "attributes": {
+        "id": "7069",
+        "company": "The Pathways Alliance",
+        "project_name": "Pathways Alliance Carbon Capture Storage Hub (Phase 1)",
+        "province": "Alberta",
+        "location": "Improvement District No. 349|Wood Buffalo|Lac la Biche County|Improvement District No. 24 Wood Buffalo|Bonnyville No. 87",
+        "capital_cost": "16,500.00",
+        "capital_cost_range": "10,000 +",
+        "sector": "Energy",
+        "status": "Planned",
+        "clean_technology": "Yes",
+        "clean_technology_type": "Carbon Capture and Storage",
+        "code": 3,
+        "OBJECTID": 227
+      },
+      "geometry": {
+        "x": -112.28501642926246,
+        "y": 58.15284035767626
+      }
+    },
+    {
+      "attributes": {
+        "id": "7073",
+        "company": "Manitoba Hydro",
+        "project_name": "Pointe du Bois Renewable Energy Project",
+        "province": "Manitoba",
+        "location": "Wpg River",
+        "capital_cost": "308.40",
+        "capital_cost_range": "250 - 500",
+        "sector": "Energy",
+        "status": "Under Construction",
+        "clean_technology": "Yes",
+        "clean_technology_type": "Hydro",
+        "code": 11,
+        "OBJECTID": 228
+      },
+      "geometry": {
+        "x": -95.55000931596169,
+        "y": 50.30000851434925
+      }
+    },
+    {
+      "attributes": {
+        "id": "7077",
+        "company": "SAF + Consortium",
+        "project_name": "SAF Consortium",
+        "province": "Quebec",
+        "location": "Montreal",
+        "capital_cost": "200.00",
+        "capital_cost_range": "100 - 250",
+        "sector": "Energy",
+        "status": "Planned",
+        "clean_technology": "Yes",
+        "clean_technology_type": "Bioenergy",
+        "code": 1,
+        "OBJECTID": 229
+      },
+      "geometry": {
+        "x": -73.60407836987785,
+        "y": 45.597554774103884
+      }
+    },
+    {
+      "attributes": {
+        "id": "7079",
+        "company": "Invenergy",
+        "project_name": "Skinners Pond Wind Energy Centre",
+        "province": "Prince Edward Island",
+        "location": "Sherbrooke; Tignish",
+        "capital_cost": "85.00",
+        "capital_cost_range": "50 - 100",
+        "sector": "Energy",
+        "status": "Planned",
+        "clean_technology": "Yes",
+        "clean_technology_type": "Wind",
+        "code": 1,
+        "OBJECTID": 230
+      },
+      "geometry": {
+        "x": -63.77014007164625,
+        "y": 46.42192268375068
+      }
+    },
+    {
+      "attributes": {
+        "id": "7081",
+        "company": "ABO Wind Canada Ltd.",
+        "project_name": "Stettler Solar and Battery Storage Project",
+        "province": "Alberta",
+        "location": "Stettler County No. 6",
+        "capital_cost": "160.00",
+        "capital_cost_range": "100 - 250",
+        "sector": "Energy",
+        "status": "Planned",
+        "clean_technology": "Yes",
+        "clean_technology_type": "Solar",
+        "code": 1,
+        "OBJECTID": 231
+      },
+      "geometry": {
+        "x": -112.75601433198032,
+        "y": 52.29043997702485
+      }
+    },
+    {
+      "attributes": {
+        "id": "7086",
+        "company": "Énergir/WM Québec",
+        "project_name": "WM Sainte-Sophie Landfill RNG Facility",
+        "province": "Quebec",
+        "location": "Saint-Sophie",
+        "capital_cost": "200.00",
+        "capital_cost_range": "100 - 250",
+        "sector": "Energy",
+        "status": "Planned",
+        "clean_technology": "Yes",
+        "clean_technology_type": "Bioenergy",
+        "code": 1,
+        "OBJECTID": 232
+      },
+      "geometry": {
+        "x": -73.94108478705101,
+        "y": 45.84605120020925
+      }
+    },
+    {
+      "attributes": {
+        "id": "8001",
+        "company": "Renewable Energy Systems Canada Inc.",
+        "project_name": "Enterprise Solar Project",
+        "province": "Alberta",
+        "location": "Vulcan County",
+        "capital_cost": "175.00",
+        "capital_cost_range": "100 - 250",
+        "sector": "Energy",
+        "status": "Planned",
+        "clean_technology": "Yes",
+        "clean_technology_type": "Solar",
+        "code": 1,
+        "OBJECTID": 233
+      },
+      "geometry": {
+        "x": -113.35782491617891,
+        "y": 50.37388877900198
+      }
+    },
+    {
+      "attributes": {
+        "id": "8004",
+        "company": "Federation Group",
+        "project_name": "Marguerite Lake Compressed Air Energy Storage",
+        "province": "Alberta",
+        "location": "Bonnyville No. 87",
+        "capital_cost": "500.00",
+        "capital_cost_range": "500 - 750",
+        "sector": "Energy",
+        "status": "Planned",
+        "clean_technology": "Yes",
+        "clean_technology_type": "Energy Storage",
+        "code": 1,
+        "OBJECTID": 234
+      },
+      "geometry": {
+        "x": -110.80400462793247,
+        "y": 54.58571435205573
+      }
+    },
+    {
+      "attributes": {
+        "id": "8006",
+        "company": "METLEN Energy & Metals",
+        "project_name": "Sunnynook Solar Project",
+        "province": "Alberta",
+        "location": "Special Area No. 2",
+        "capital_cost": "385.00",
+        "capital_cost_range": "250 - 500",
+        "sector": "Energy",
+        "status": "Under Construction",
+        "clean_technology": "Yes",
+        "clean_technology_type": "Solar",
+        "code": 11,
+        "OBJECTID": 235
+      },
+      "geometry": {
+        "x": -111.55785977985856,
+        "y": 51.325488045728534
+      }
+    },
+    {
+      "attributes": {
+        "id": "8007",
+        "company": "MYTILINEOS Energy & Metals",
+        "project_name": "Dolcy Solar Project",
+        "province": "Alberta",
+        "location": "Wainwright No. 61",
+        "capital_cost": "275.00",
+        "capital_cost_range": "250 - 500",
+        "sector": "Energy",
+        "status": "Planned",
+        "clean_technology": "Yes",
+        "clean_technology_type": "Solar",
+        "code": 1,
+        "OBJECTID": 236
+      },
+      "geometry": {
+        "x": -110.47290292641775,
+        "y": 52.68557526410013
+      }
+    },
+    {
+      "attributes": {
+        "id": "8008",
+        "company": "Northstar Clean Technologies",
+        "project_name": "Asphalt Shingle Reprocessing Facility",
+        "province": "Alberta",
+        "location": "Rocky View County",
+        "capital_cost": "15.00",
+        "capital_cost_range": "10 - 50 ",
+        "sector": "Energy",
+        "status": "Under Construction",
+        "clean_technology": "Yes",
+        "clean_technology_type": "Other",
+        "code": 11,
+        "OBJECTID": 237
+      },
+      "geometry": {
+        "x": -113.90162320322803,
+        "y": 50.99367376151539
+      }
+    },
+    {
+      "attributes": {
+        "id": "8009",
+        "company": "Peace Energy Cooperative",
+        "project_name": "Peace River Energy Project",
+        "province": "Alberta",
+        "location": "Peace River",
+        "capital_cost": "11.00",
+        "capital_cost_range": "10 - 50 ",
+        "sector": "Energy",
+        "status": "Under Construction",
+        "clean_technology": "Yes",
+        "clean_technology_type": "Solar",
+        "code": 11,
+        "OBJECTID": 238
+      },
+      "geometry": {
+        "x": -117.35159675881134,
+        "y": 56.24325961802046
+      }
+    },
+    {
+      "attributes": {
+        "id": "8010",
+        "company": "ATCO",
+        "project_name": "Forty Mile Solar Farm",
+        "province": "Alberta",
+        "location": "Forty Mile County No. 8",
+        "capital_cost": "400.00",
+        "capital_cost_range": "250 - 500",
+        "sector": "Energy",
+        "status": "Planned",
+        "clean_technology": "Yes",
+        "clean_technology_type": "Solar",
+        "code": 1,
+        "OBJECTID": 239
+      },
+      "geometry": {
+        "x": -111.27160428155803,
+        "y": 49.696514952160506
+      }
+    },
+    {
+      "attributes": {
+        "id": "8013",
+        "company": "Kineticor Resource Corp.",
+        "project_name": "Greenlight Electricity Centre",
+        "province": "Alberta",
+        "location": "Sturgeon County",
+        "capital_cost": "4,500.00",
+        "capital_cost_range": "2,500 - 5,000",
+        "sector": "Energy",
+        "status": "Planned",
+        "clean_technology": "No",
+        "clean_technology_type": "N/A",
+        "code": 2,
+        "OBJECTID": 240
+      },
+      "geometry": {
+        "x": -113.17863492462718,
+        "y": 53.828815024705335
+      }
+    },
+    {
+      "attributes": {
+        "id": "8017",
+        "company": "Gibson Energy & Varme Energy JV",
+        "project_name": "Heartland Waste to Power Project",
+        "province": "Alberta",
+        "location": "Strathcona County",
+        "capital_cost": "300.00",
+        "capital_cost_range": "250 - 500",
+        "sector": "Energy",
+        "status": "Planned",
+        "clean_technology": "Yes",
+        "clean_technology_type": "Carbon Capture and Storage",
+        "code": 1,
+        "OBJECTID": 241
+      },
+      "geometry": {
+        "x": -113.04027587325821,
+        "y": 53.775940037341286
+      }
+    },
+    {
+      "attributes": {
+        "id": "8021",
+        "company": "Horizon New Energy",
+        "project_name": "Aira Solar Project",
+        "province": "Alberta",
+        "location": "Forty Mile County No. 8",
+        "capital_cost": "700.00",
+        "capital_cost_range": "500 - 750",
+        "sector": "Energy",
+        "status": "Under Construction",
+        "clean_technology": "Yes",
+        "clean_technology_type": "Solar",
+        "code": 11,
+        "OBJECTID": 242
+      },
+      "geometry": {
+        "x": -110.93400418104007,
+        "y": 49.593546980098836
+      }
+    },
+    {
+      "attributes": {
+        "id": "8022",
+        "company": "hep Energy",
+        "project_name": "Alderson Solar Power Project",
+        "province": "Alberta",
+        "location": "Cypress County",
+        "capital_cost": "150.00",
+        "capital_cost_range": "100 - 250",
+        "sector": "Energy",
+        "status": "Under Construction",
+        "clean_technology": "Yes",
+        "clean_technology_type": "Solar",
+        "code": 11,
+        "OBJECTID": 243
+      },
+      "geometry": {
+        "x": -111.36066847007169,
+        "y": 50.35223699524816
+      }
+    },
+    {
+      "attributes": {
+        "id": "8024",
+        "company": "Skyline Clean Energy Fund",
+        "project_name": "Bassano 435S DER Solar",
+        "province": "Alberta",
+        "location": "Newell County",
+        "capital_cost": "15.00",
+        "capital_cost_range": "10 - 50 ",
+        "sector": "Energy",
+        "status": "Planned",
+        "clean_technology": "Yes",
+        "clean_technology_type": "Solar",
+        "code": 1,
+        "OBJECTID": 244
+      },
+      "geometry": {
+        "x": -112.31131976780539,
+        "y": 50.6740259163967
+      }
+    },
+    {
+      "attributes": {
+        "id": "8025",
+        "company": "ENGIE Development Canada LP",
+        "project_name": "Buffalo Trail North Wind Project",
+        "province": "Alberta",
+        "location": "Cypress County",
+        "capital_cost": "200.00",
+        "capital_cost_range": "100 - 250",
+        "sector": "Energy",
+        "status": "Planned",
+        "clean_technology": "Yes",
+        "clean_technology_type": "Wind",
+        "code": 1,
+        "OBJECTID": 245
+      },
+      "geometry": {
+        "x": -110.32929810639786,
+        "y": 49.84235606340341
+      }
+    },
+    {
+      "attributes": {
+        "id": "8029",
+        "company": "Renewable Energy Systems Canada Inc.",
+        "project_name": "Nova Solar Project",
+        "province": "Alberta",
+        "location": "Wheatland County",
+        "capital_cost": "225.00",
+        "capital_cost_range": "100 - 250",
+        "sector": "Energy",
+        "status": "Planned",
+        "clean_technology": "Yes",
+        "clean_technology_type": "Bioenergy",
+        "code": 1,
+        "OBJECTID": 246
+      },
+      "geometry": {
+        "x": -113.52506107992372,
+        "y": 50.84036279377887
+      }
+    },
+    {
+      "attributes": {
+        "id": "8037",
+        "company": "Varme Energy",
+        "project_name": "Innisfail Waste to Energy Project",
+        "province": "Alberta",
+        "location": "Innisfail",
+        "capital_cost": "200.00",
+        "capital_cost_range": "100 - 250",
+        "sector": "Energy",
+        "status": "Planned",
+        "clean_technology": "Yes",
+        "clean_technology_type": "Bioenergy",
+        "code": 1,
+        "OBJECTID": 247
+      },
+      "geometry": {
+        "x": -113.97490751757867,
+        "y": 52.01528981949161
+      }
+    },
+    {
+      "attributes": {
+        "id": "8042",
+        "company": "Canadian Natural Resources Ltd. (CNRL)",
+        "project_name": "Naphtha Recovery Unit Tailings Treatment Project",
+        "province": "Alberta",
+        "location": "Wood Buffalo",
+        "capital_cost": "350.00",
+        "capital_cost_range": "250 - 500",
+        "sector": "Energy",
+        "status": "Under Construction",
+        "clean_technology": "No",
+        "clean_technology_type": "N/A",
+        "code": 11,
+        "OBJECTID": 248
+      },
+      "geometry": {
+        "x": -111.84100795950293,
+        "y": 57.34739237729774
+      }
+    },
+    {
+      "attributes": {
+        "id": "8043",
+        "company": "EDF EN Canada",
+        "project_name": "Pe-Na-Koyim Wind Project",
+        "province": "Alberta",
+        "location": "Blood 148",
+        "capital_cost": "425.00",
+        "capital_cost_range": "250 - 500",
+        "sector": "Energy",
+        "status": "Planned",
+        "clean_technology": "Yes",
+        "clean_technology_type": "Wind",
+        "code": 1,
+        "OBJECTID": 249
+      },
+      "geometry": {
+        "x": -113.12142762346306,
+        "y": 49.44702573738304
+      }
+    },
+    {
+      "attributes": {
+        "id": "8046",
+        "company": "Mondi Group plc",
+        "project_name": "Hinton Pulp Mill Expansion",
+        "province": "Alberta",
+        "location": "Hinton",
+        "capital_cost": "584.00",
+        "capital_cost_range": "500 - 750",
+        "sector": "Forest",
+        "status": "Planned",
+        "clean_technology": "No",
+        "clean_technology_type": "N/A",
+        "code": 4,
+        "OBJECTID": 250
+      },
+      "geometry": {
+        "x": -117.56900772060479,
+        "y": 53.41460346784832
+      }
+    },
+    {
+      "attributes": {
+        "id": "8047",
+        "company": "Ulkatcho Energy Corporation",
+        "project_name": "Anahim Lake Solar Project",
+        "province": "British Columbia",
+        "location": "Anahim Lake",
+        "capital_cost": "30.00",
+        "capital_cost_range": "10 - 50 ",
+        "sector": "Energy",
+        "status": "Under Construction",
+        "clean_technology": "Yes",
+        "clean_technology_type": "Solar",
+        "code": 11,
+        "OBJECTID": 251
+      },
+      "geometry": {
+        "x": -125.30183675686074,
+        "y": 52.46187545796873
+      }
+    },
+    {
+      "attributes": {
+        "id": "8075",
+        "company": "Glencore PLC",
+        "project_name": "Fording River Castle Expansion",
+        "province": "British Columbia",
+        "location": "Elkford",
+        "capital_cost": "2,290.00",
+        "capital_cost_range": "1,000 - 2,500",
+        "sector": "Mining",
+        "status": "Planned",
+        "clean_technology": "No",
+        "clean_technology_type": "N/A",
+        "code": 8,
+        "OBJECTID": 252
+      },
+      "geometry": {
+        "x": -114.86001418450607,
+        "y": 50.20000659980213
+      }
+    },
+    {
+      "attributes": {
+        "id": "8078",
+        "company": "FPX Nickel Corp.",
+        "project_name": "Baptiste Nickel (Decar)",
+        "province": "British Columbia",
+        "location": "Sparwood",
+        "capital_cost": "3,000.00",
+        "capital_cost_range": "2,500 - 5,000",
+        "sector": "Mining",
+        "status": "Planned",
+        "clean_technology": "No",
+        "clean_technology_type": "N/A",
+        "code": 8,
+        "OBJECTID": 253
+      },
+      "geometry": {
+        "x": -114.73001404727104,
+        "y": 49.780006587167634
+      }
+    },
+    {
+      "attributes": {
+        "id": "8081",
+        "company": "Defence Metals Corp.",
+        "project_name": "Wicheeda",
+        "province": "British Columbia",
+        "location": "McLeod Lake",
+        "capital_cost": "2,017.00",
+        "capital_cost_range": "1,000 - 2,500",
+        "sector": "Mining",
+        "status": "Planned",
+        "clean_technology": "No",
+        "clean_technology_type": "N/A",
+        "code": 8,
+        "OBJECTID": 254
+      },
+      "geometry": {
+        "x": -122.09913698740097,
+        "y": 54.53141593534503
+      }
+    },
+    {
+      "attributes": {
+        "id": "8088",
+        "company": "Atlas Salt",
+        "project_name": "Great Atlantic Salt Project",
+        "province": "Newfoundland and Labrador",
+        "location": "St. Georges",
+        "capital_cost": "480.00",
+        "capital_cost_range": "250 - 500",
+        "sector": "Mining",
+        "status": "Planned",
+        "clean_technology": "No",
+        "clean_technology_type": "N/A",
+        "code": 7,
+        "OBJECTID": 255
+      },
+      "geometry": {
+        "x": -58.52899654437788,
+        "y": 48.40201001327269
+      }
+    },
+    {
+      "attributes": {
+        "id": "8093",
+        "company": "Torchlight / Town of New Glasgow",
+        "project_name": "District Energy System",
+        "province": "Nova Scotia",
+        "location": "New Glasgow",
+        "capital_cost": "175.00",
+        "capital_cost_range": "100 - 250",
+        "sector": "Forest",
+        "status": "Planned",
+        "clean_technology": "Yes",
+        "clean_technology_type": "Bioenergy",
+        "code": 4,
+        "OBJECTID": 256
+      },
+      "geometry": {
+        "x": -62.64499791018769,
+        "y": 45.58820948183215
+      }
+    },
+    {
+      "attributes": {
+        "id": "8095",
+        "company": "Canadian Gypsum Company Inc. (CGC)",
+        "project_name": "Little Narrows Gypsum",
+        "province": "Nova Scotia",
+        "location": "Victoria County",
+        "capital_cost": "104.00",
+        "capital_cost_range": "100 - 250",
+        "sector": "Mining",
+        "status": "Planned",
+        "clean_technology": "No",
+        "clean_technology_type": "N/A",
+        "code": 7,
+        "OBJECTID": 257
+      },
+      "geometry": {
+        "x": -60.958165338070145,
+        "y": 46.0013105820406
+      }
+    },
+    {
+      "attributes": {
+        "id": "8098",
+        "company": "SWEB and Glooscap First Nation",
+        "project_name": "Weavers Mountain Wind Farm",
+        "province": "Nova Scotia",
+        "location": "Beaver Meadow, NS",
+        "capital_cost": "225.00",
+        "capital_cost_range": "100 - 250",
+        "sector": "Energy",
+        "status": "Under Construction",
+        "clean_technology": "Yes",
+        "clean_technology_type": "Wind",
+        "code": 11,
+        "OBJECTID": 258
+      },
+      "geometry": {
+        "x": -62.17849274444202,
+        "y": 45.52644247857685
+      }
+    },
+    {
+      "attributes": {
+        "id": "8100",
+        "company": "Natural Forces and WMA",
+        "project_name": "Benjamin Mills Wind Project",
+        "province": "Nova Scotia",
+        "location": "Dalmouth, Nova Scotia",
+        "capital_cost": "68.00",
+        "capital_cost_range": "50 - 100",
+        "sector": "Energy",
+        "status": "Under Construction",
+        "clean_technology": "Yes",
+        "clean_technology_type": "Wind",
+        "code": 11,
+        "OBJECTID": 259
+      },
+      "geometry": {
+        "x": -64.24824743366972,
+        "y": 44.92060532934184
+      }
+    },
+    {
+      "attributes": {
+        "id": "8101",
+        "company": "Elemental and Sipekne'katik",
+        "project_name": "Higgins Mountain Wind Farm",
+        "province": "Nova Scotia",
+        "location": "Wentworth, NS",
+        "capital_cost": "250.00",
+        "capital_cost_range": "250 - 500",
+        "sector": "Energy",
+        "status": "Under Construction",
+        "clean_technology": "Yes",
+        "clean_technology_type": "Wind",
+        "code": 11,
+        "OBJECTID": 260
+      },
+      "geometry": {
+        "x": -63.60783123985326,
+        "y": 45.55120445602968
+      }
+    },
+    {
+      "attributes": {
+        "id": "8107",
+        "company": "Ontario Power Generation",
+        "project_name": "Sir Adam Beck Complex Refurbishment",
+        "province": "Ontario",
+        "location": "Niagara Falls",
+        "capital_cost": "1,000.00",
+        "capital_cost_range": "1,000 - 2,500",
+        "sector": "Energy",
+        "status": "Planned",
+        "clean_technology": "Yes",
+        "clean_technology_type": "Hydro",
+        "code": 2,
+        "OBJECTID": 261
+      },
+      "geometry": {
+        "x": -79.04442323243475,
+        "y": 43.14910851148513
+      }
+    },
+    {
+      "attributes": {
+        "id": "8108",
+        "company": "Ontario Power Generation",
+        "project_name": "R.H. Saunders Refurbishment",
+        "province": "Ontario",
+        "location": "Cornwall",
+        "capital_cost": "600.00",
+        "capital_cost_range": "500 - 750",
+        "sector": "Energy",
+        "status": "Planned",
+        "clean_technology": "Yes",
+        "clean_technology_type": "Hydro",
+        "code": 1,
+        "OBJECTID": 262
+      },
+      "geometry": {
+        "x": -74.78765200244551,
+        "y": 45.00962902123348
+      }
+    },
+    {
+      "attributes": {
+        "id": "8109",
+        "company": "Hagersville Battery Storage Inc. (Boralex Inc.)",
+        "project_name": "Hagersville Battery Energy Storage Park",
+        "province": "Ontario",
+        "location": "Hagersville",
+        "capital_cost": "538.00",
+        "capital_cost_range": "500 - 750",
+        "sector": "Energy",
+        "status": "Planned",
+        "clean_technology": "Yes",
+        "clean_technology_type": "Energy Storage",
+        "code": 1,
+        "OBJECTID": 263
+      },
+      "geometry": {
+        "x": -80.12000355542577,
+        "y": 42.930008422745985
+      }
+    },
+    {
+      "attributes": {
+        "id": "8111",
+        "company": "Tilbury Battery Storage Inc. ( Boralex Inc.)",
+        "project_name": "Tilbury Battery Storage",
+        "province": "Ontario",
+        "location": "Lakeshore",
+        "capital_cost": "172.00",
+        "capital_cost_range": "100 - 250",
+        "sector": "Energy",
+        "status": "Under Construction",
+        "clean_technology": "Yes",
+        "clean_technology_type": "Energy Storage",
+        "code": 11,
+        "OBJECTID": 264
+      },
+      "geometry": {
+        "x": -82.43000421722917,
+        "y": 42.28000819610947
+      }
+    },
+    {
+      "attributes": {
+        "id": "8112",
+        "company": "Capital Power Corporation",
+        "project_name": "York – Battery Energy Storage System",
+        "province": "Ontario",
+        "location": "King",
+        "capital_cost": "352.00",
+        "capital_cost_range": "250 - 500",
+        "sector": "Energy",
+        "status": "Under Construction",
+        "clean_technology": "Yes",
+        "clean_technology_type": "Energy Storage",
+        "code": 11,
+        "OBJECTID": 265
+      },
+      "geometry": {
+        "x": -79.5300034689153,
+        "y": 44.08000865305886
+      }
+    },
+    {
+      "attributes": {
+        "id": "8115",
+        "company": "Potentia Renewables Inc.",
+        "project_name": "Skyview 2 Battery Energy Storage System",
+        "province": "Ontario",
+        "location": "Edwardsburgh-Cardinal",
+        "capital_cost": "750.00",
+        "capital_cost_range": "750 - 1,000",
+        "sector": "Energy",
+        "status": "Planned",
+        "clean_technology": "Yes",
+        "clean_technology_type": "Energy Storage",
+        "code": 1,
+        "OBJECTID": 266
+      },
+      "geometry": {
+        "x": -76.84013260635508,
+        "y": 44.14855878536593
+      }
+    },
+    {
+      "attributes": {
+        "id": "8116",
+        "company": "Wahgoshig Solar FIT5 LP",
+        "project_name": "Almonte BESS 2",
+        "province": "Ontario",
+        "location": "Mississippi Mills",
+        "capital_cost": "29.00",
+        "capital_cost_range": "10 - 50 ",
+        "sector": "Energy",
+        "status": "Under Construction",
+        "clean_technology": "Yes",
+        "clean_technology_type": "Energy Storage",
+        "code": 11,
+        "OBJECTID": 267
+      },
+      "geometry": {
+        "x": -76.17348847476067,
+        "y": 45.19775099665911
+      }
+    },
+    {
+      "attributes": {
+        "id": "8119",
+        "company": "Brookfield Renewable Power Inc. Evolugen",
+        "project_name": "Fitzroy South March BESS",
+        "province": "Ontario",
+        "location": "Ottawa",
+        "capital_cost": "650.00",
+        "capital_cost_range": "500 - 750",
+        "sector": "Energy",
+        "status": "Planned",
+        "clean_technology": "Yes",
+        "clean_technology_type": "Energy Storage",
+        "code": 1,
+        "OBJECTID": 268
+      },
+      "geometry": {
+        "x": -76.21521251147493,
+        "y": 45.44589903736743
+      }
+    },
+    {
+      "attributes": {
+        "id": "8124",
+        "company": "Trailroad BESS Inc. Evolugen",
+        "project_name": "Trail Road BESS",
+        "province": "Ontario",
+        "location": "Ottawa",
+        "capital_cost": "350.00",
+        "capital_cost_range": "250 - 500",
+        "sector": "Energy",
+        "status": "Planned",
+        "clean_technology": "Yes",
+        "clean_technology_type": "Energy Storage",
+        "code": 1,
+        "OBJECTID": 269
+      },
+      "geometry": {
+        "x": -75.75485233820912,
+        "y": 45.21372901650265
+      }
+    },
+    {
+      "attributes": {
+        "id": "8128",
+        "company": "Ontario Power Generation",
+        "project_name": "Pickering Refubrishment Project",
+        "province": "Ontario",
+        "location": "Pickering",
+        "capital_cost": "6,200.00",
+        "capital_cost_range": "5,000 - 10,000",
+        "sector": "Energy",
+        "status": "Planned",
+        "clean_technology": "Yes",
+        "clean_technology_type": "Nuclear",
+        "code": 3,
+        "OBJECTID": 270
+      },
+      "geometry": {
+        "x": -79.06620329514541,
+        "y": 43.80990862687256
+      }
+    },
+    {
+      "attributes": {
+        "id": "8215",
+        "company": "Évolys Québec inc.",
+        "project_name": "Conversion de l'usine pour production de biocharbon",
+        "province": "Quebec",
+        "location": "Thurso (Gatineau)",
+        "capital_cost": "96.00",
+        "capital_cost_range": "50 - 100",
+        "sector": "Forest",
+        "status": "Under Construction",
+        "clean_technology": "Yes",
+        "clean_technology_type": "Bioenergy",
+        "code": 44,
+        "OBJECTID": 271
+      },
+      "geometry": {
+        "x": -75.25678020639363,
+        "y": 45.598724103732835
+      }
+    },
+    {
+      "attributes": {
+        "id": "8216",
+        "company": "Domtar",
+        "project_name": "Amélioration de la compétitivité de l'usine",
+        "province": "Quebec",
+        "location": "Windsor",
+        "capital_cost": "56.40",
+        "capital_cost_range": "50 - 100",
+        "sector": "Forest",
+        "status": "Under Construction",
+        "clean_technology": "No",
+        "clean_technology_type": "N/A",
+        "code": 44,
+        "OBJECTID": 272
+      },
+      "geometry": {
+        "x": -71.97861810340387,
+        "y": 45.564354223913256
+      }
+    },
+    {
+      "attributes": {
+        "id": "8217",
+        "company": "Lauzon - Planchers de bois exclusifs inc.",
+        "project_name": "Modernisation et achats de nouveaux équipements",
+        "province": "Quebec",
+        "location": "Thurso",
+        "capital_cost": "30.10",
+        "capital_cost_range": "10 - 50 ",
+        "sector": "Forest",
+        "status": "Under Construction",
+        "clean_technology": "No",
+        "clean_technology_type": "N/A",
+        "code": 44,
+        "OBJECTID": 273
+      },
+      "geometry": {
+        "x": -75.24989220528525,
+        "y": 45.600349104295915
+      }
+    },
+    {
+      "attributes": {
+        "id": "8218",
+        "company": "Mirage inc.",
+        "project_name": "Projets d'investissements 2022-2026",
+        "province": "Quebec",
+        "location": "Saint-Georges-de-Beauce",
+        "capital_cost": "57.10",
+        "capital_cost_range": "50 - 100",
+        "sector": "Forest",
+        "status": "Under Construction",
+        "clean_technology": "No",
+        "clean_technology_type": "N/A",
+        "code": 44,
+        "OBJECTID": 274
+      },
+      "geometry": {
+        "x": -70.65701069487685,
+        "y": 46.13619936703415
+      }
+    },
+    {
+      "attributes": {
+        "id": "8268",
+        "company": "Eldorado Gold Québec",
+        "project_name": "Lamaque - Lower Triangle",
+        "province": "Quebec",
+        "location": "Val-d'Or",
+        "capital_cost": "118.40",
+        "capital_cost_range": "100 - 250",
+        "sector": "Mining",
+        "status": "Planned",
+        "clean_technology": "No",
+        "clean_technology_type": "N/A",
+        "code": 7,
+        "OBJECTID": 275
+      },
+      "geometry": {
+        "x": -77.75305028229918,
+        "y": 48.09300339721942
+      }
+    },
+    {
+      "attributes": {
+        "id": "8302",
+        "company": "BHP",
+        "project_name": "Jansen",
+        "province": "Saskatchewan",
+        "location": "Jansen",
+        "capital_cost": "6,650.00",
+        "capital_cost_range": "5,000 - 10,000",
+        "sector": "Mining",
+        "status": "Under Construction",
+        "clean_technology": "No",
+        "clean_technology_type": "N/A",
+        "code": 99,
+        "OBJECTID": 276
+      },
+      "geometry": {
+        "x": -104.69001224070671,
+        "y": 51.85000782071534
+      }
+    },
+    {
+      "attributes": {
+        "id": "8303",
+        "company": "Arizona Lithium Limited",
+        "project_name": "Prairie Lithium Project",
+        "province": "Saskatchewan",
+        "location": "40 km west of Estevan",
+        "capital_cost": "454.00",
+        "capital_cost_range": "250 - 500",
+        "sector": "Mining",
+        "status": "Under Construction",
+        "clean_technology": "No",
+        "clean_technology_type": "N/A",
+        "code": 77,
+        "OBJECTID": 277
+      },
+      "geometry": {
+        "x": -103.97656137713915,
+        "y": 49.04463762214189
+      }
+    },
+    {
+      "attributes": {
+        "id": "8305",
+        "company": "Grounded Lithium Corp. and Denison",
+        "project_name": "Kindersley Lithium Project",
+        "province": "Saskatchewan",
+        "location": "30 km north of Kindersley",
+        "capital_cost": "447.32",
+        "capital_cost_range": "250 - 500",
+        "sector": "Mining",
+        "status": "Planned",
+        "clean_technology": "No",
+        "clean_technology_type": "N/A",
+        "code": 7,
+        "OBJECTID": 278
+      },
+      "geometry": {
+        "x": -109.16845726435655,
+        "y": 51.47436831853739
+      }
+    },
+    {
+      "attributes": {
+        "id": "8306",
+        "company": "Denison Mines Corp.",
+        "project_name": "Wheeler River - Gryphon",
+        "province": "Saskatchewan",
+        "location": "270 km ENE of La Loche",
+        "capital_cost": "737.00",
+        "capital_cost_range": "500 - 750",
+        "sector": "Mining",
+        "status": "Planned",
+        "clean_technology": "No",
+        "clean_technology_type": "N/A",
+        "code": 7,
+        "OBJECTID": 279
+      },
+      "geometry": {
+        "x": -105.41001430673987,
+        "y": 57.53000816844571
+      }
+    },
+    {
+      "attributes": {
+        "id": "8319",
+        "company": "Covenant Energy Ltd.",
+        "project_name": "Covenant Energy  Renewable Diesel Facility",
+        "province": "Saskatchewan",
+        "location": "Lloydminster",
+        "capital_cost": "920.00",
+        "capital_cost_range": "750 - 1,000",
+        "sector": "Energy",
+        "status": "Planned",
+        "clean_technology": "Yes",
+        "clean_technology_type": "Bioenergy",
+        "code": 1,
+        "OBJECTID": 280
+      },
+      "geometry": {
+        "x": -109.98372702277987,
+        "y": 53.29464695644856
+      }
+    },
+    {
+      "attributes": {
+        "id": "8328",
+        "company": "Manitoba Hydro",
+        "project_name": "Slave Falls 7 Bay Sluiceway Concrete Res",
+        "province": "Manitoba",
+        "location": "Wpg River",
+        "capital_cost": "84.30",
+        "capital_cost_range": "50 - 100",
+        "sector": "Energy",
+        "status": "Under Construction",
+        "clean_technology": "Yes",
+        "clean_technology_type": "Hydro",
+        "code": 11,
+        "OBJECTID": 281
+      },
+      "geometry": {
+        "x": -95.56800930504849,
+        "y": 50.22200850338435
+      }
+    },
+    {
+      "attributes": {
+        "id": "8329",
+        "company": "Manitoba Hydro",
+        "project_name": "Dauphin Vermillion 230kV Stn Capacity In",
+        "province": "Manitoba",
+        "location": "Dauphin",
+        "capital_cost": "21.90",
+        "capital_cost_range": "10 - 50 ",
+        "sector": "Energy",
+        "status": "Under Construction",
+        "clean_technology": "Yes",
+        "clean_technology_type": "Hydro",
+        "code": 11,
+        "OBJECTID": 282
+      },
+      "geometry": {
+        "x": -100.04901080101858,
+        "y": 51.149008208168205
+      }
+    },
+    {
+      "attributes": {
+        "id": "9012",
+        "company": "O'Leary Ventures",
+        "project_name": "Wonder Valley AI Data Centre Park (Phase 1)",
+        "province": "Alberta",
+        "location": "Greenview No. 16",
+        "capital_cost": "16,620.00",
+        "capital_cost_range": "10,000 +",
+        "sector": "Energy",
+        "status": "Planned",
+        "clean_technology": "No",
+        "clean_technology_type": "N/A",
+        "code": 3,
+        "OBJECTID": 283
+      },
+      "geometry": {
+        "x": -118.68336645342089,
+        "y": 54.811932389186026
+      }
+    },
+    {
+      "attributes": {
+        "id": "9068",
+        "company": "Kruger",
+        "project_name": "Kruger Kamloops Pulp Mill Upgrade",
+        "province": "British Columbia",
+        "location": "Kamloops",
+        "capital_cost": "32.00",
+        "capital_cost_range": "10 - 50 ",
+        "sector": "Forest",
+        "status": "Planned",
+        "clean_technology": "No",
+        "clean_technology_type": "N/A",
+        "code": 4,
+        "OBJECTID": 284
+      },
+      "geometry": {
+        "x": -120.40606948624327,
+        "y": 50.69099402886109
+      }
+    },
+    {
+      "attributes": {
+        "id": "9069",
+        "company": "Meager Creek Development Corporation (https://meagercreek.ca/)",
+        "project_name": "Meager Creek Geothermal Project",
+        "province": "British Columbia",
+        "location": "Whistler",
+        "capital_cost": "100.00",
+        "capital_cost_range": "100 - 250",
+        "sector": "Energy",
+        "status": "Planned",
+        "clean_technology": "Yes",
+        "clean_technology_type": "Geothermal",
+        "code": 1,
+        "OBJECTID": 285
+      },
+      "geometry": {
+        "x": -123.45882586761996,
+        "y": 50.57870562402451
+      }
+    },
+    {
+      "attributes": {
+        "id": "9077",
+        "company": "Ecoener Energie Canada Inc. (Ecoener, Lheidli T'enneh)",
+        "project_name": "Nilhts'i Ecoener Project ",
+        "province": "British Columbia",
+        "location": "Hixon",
+        "capital_cost": "425.00",
+        "capital_cost_range": "250 - 500",
+        "sector": "Energy",
+        "status": "Planned",
+        "clean_technology": "Yes",
+        "clean_technology_type": "Wind",
+        "code": 1,
+        "OBJECTID": 286
+      },
+      "geometry": {
+        "x": -122.33631121760547,
+        "y": 53.430879068945806
+      }
+    },
+    {
+      "attributes": {
+        "id": "9153",
+        "company": "Rock Tech Lithium Inc.",
+        "project_name": "Lithium Hydroxide Refinery",
+        "province": "Ontario",
+        "location": "Red Rock",
+        "capital_cost": "1,600.00",
+        "capital_cost_range": "1,000 - 2,500",
+        "sector": "Mining",
+        "status": "Planned",
+        "clean_technology": "No",
+        "clean_technology_type": "N/A",
+        "code": 8,
+        "OBJECTID": 287
+      },
+      "geometry": {
+        "x": -88.25960684002187,
+        "y": 48.94650890309402
+      }
+    },
+    {
+      "attributes": {
+        "id": "9155",
+        "company": "Capital Power Corporation",
+        "project_name": "Goreway BESS",
+        "province": "Ontario",
+        "location": "Brampton",
+        "capital_cost": "161.00",
+        "capital_cost_range": "100 - 250",
+        "sector": "Energy",
+        "status": "Planned",
+        "clean_technology": "Yes",
+        "clean_technology_type": "Energy Storage",
+        "code": 1,
+        "OBJECTID": 288
+      },
+      "geometry": {
+        "x": -79.67939073370556,
+        "y": 43.74641338974536
+      }
+    },
+    {
+      "attributes": {
+        "id": "9156",
+        "company": "Kinross Gold Corp.",
+        "project_name": "Great Bear",
+        "province": "Ontario",
+        "location": "130 km NNW of Dryden",
+        "capital_cost": "1,943.20",
+        "capital_cost_range": "1,000 - 2,500",
+        "sector": "Mining",
+        "status": "Planned",
+        "clean_technology": "No",
+        "clean_technology_type": "N/A",
+        "code": 8,
+        "OBJECTID": 289
+      },
+      "geometry": {
+        "x": -93.61716384823941,
+        "y": 50.85737374072946
+      }
+    },
+    {
+      "attributes": {
+        "id": "9158",
+        "company": "Vale Canada Ltd.",
+        "project_name": "Stobie",
+        "province": "Ontario",
+        "location": "Sudbury, Blezard Township",
+        "capital_cost": "205.00",
+        "capital_cost_range": "100 - 250",
+        "sector": "Mining",
+        "status": "Under Construction",
+        "clean_technology": "No",
+        "clean_technology_type": "N/A",
+        "code": 77,
+        "OBJECTID": 290
+      },
+      "geometry": {
+        "x": -80.99349418830795,
+        "y": 46.54039898881382
+      }
+    },
+    {
+      "attributes": {
+        "id": "9170",
+        "company": "Kruger, Mantel Capture Inc.",
+        "project_name": "Kruger Wayagamack - Demonstration CCUS",
+        "province": "Quebec",
+        "location": "Trois-Rivières",
+        "capital_cost": "24.00",
+        "capital_cost_range": "10 - 50 ",
+        "sector": "Forest",
+        "status": "Planned",
+        "clean_technology": "No",
+        "clean_technology_type": "N/A",
+        "code": 4,
+        "OBJECTID": 291
+      },
+      "geometry": {
+        "x": -72.51984153483136,
+        "y": 46.35853323797983
+      }
+    },
+    {
+      "attributes": {
+        "id": "9176",
+        "company": "Patriot Battery Metals Inc.",
+        "project_name": "Shaakichiuwaanaan",
+        "province": "Quebec",
+        "location": "Eeyou Istchee Baie-James",
+        "capital_cost": "1,373.50",
+        "capital_cost_range": "1,000 - 2,500",
+        "sector": "Mining",
+        "status": "Planned",
+        "clean_technology": "No",
+        "clean_technology_type": "N/A",
+        "code": 8,
+        "OBJECTID": 292
+      },
+      "geometry": {
+        "x": -73.89710255296305,
+        "y": 53.53961035327812
+      }
+    },
+    {
+      "attributes": {
+        "id": "9194",
+        "company": "Saskatchewan Mining and Minerals Inc.",
+        "project_name": "Sulphate of Potash production upgrade",
+        "province": "Saskatchewan",
+        "location": "Chaplin SK",
+        "capital_cost": "300.00",
+        "capital_cost_range": "250 - 500",
+        "sector": "Mining",
+        "status": "Under Construction",
+        "clean_technology": "No",
+        "clean_technology_type": "N/A",
+        "code": 77,
+        "OBJECTID": 293
+      },
+      "geometry": {
+        "x": -106.66937938508543,
+        "y": 50.454127493338916
+      }
+    },
+    {
+      "attributes": {
+        "id": "9209",
+        "company": "Yukon Energy Corporation",
+        "project_name": "Mayo hydro faciltity upgrades",
+        "province": "Yukon",
+        "location": "Mayo",
+        "capital_cost": "200.00",
+        "capital_cost_range": "100 - 250",
+        "sector": "Energy",
+        "status": "Planned",
+        "clean_technology": "Yes",
+        "clean_technology_type": "Hydro",
+        "code": 1,
+        "OBJECTID": 294
+      },
+      "geometry": {
+        "x": -135.92850429038748,
+        "y": 63.6329138445514
+      }
+    },
+    {
+      "attributes": {
+        "id": "9210",
+        "company": "Copper Niisüü LP (White River First Nation Corporation)",
+        "project_name": "Saa Sè Solar Beaver Creek",
+        "province": "Yukon",
+        "location": "Beaver Creek",
+        "capital_cost": "19.00",
+        "capital_cost_range": "10 - 50 ",
+        "sector": "Energy",
+        "status": "Under Construction",
+        "clean_technology": "Yes",
+        "clean_technology_type": "Solar",
+        "code": 11,
+        "OBJECTID": 295
+      },
+      "geometry": {
+        "x": -140.89192369089943,
+        "y": 62.38390306188757
+      }
+    },
+    {
+      "attributes": {
+        "id": "9211",
+        "company": "First Kaska, (Liard First Nation Economic Development Corporation)",
+        "project_name": "Sādę Solar Watson Lake",
+        "province": "Yukon",
+        "location": "Watson Lake",
+        "capital_cost": "30.00",
+        "capital_cost_range": "10 - 50 ",
+        "sector": "Energy",
+        "status": "Under Construction",
+        "clean_technology": "Yes",
+        "clean_technology_type": "Solar",
+        "code": 11,
+        "OBJECTID": 296
+      },
+      "geometry": {
+        "x": -128.701620786436,
+        "y": 60.06400506802452
+      }
+    }
+  ]
+}

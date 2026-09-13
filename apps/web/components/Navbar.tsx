@@ -15,7 +15,8 @@ import {
   Search,
   Languages,
   Activity,
-  Landmark
+  Landmark,
+  Target
 } from "lucide-react";
 
 export default function Navbar() {
@@ -25,6 +26,7 @@ export default function Navbar() {
   const navItems = [
     { href: "/briefing", label: lang === "en" ? "PM Briefing" : "Mémo PM", icon: Landmark, badge: "CABINET" },
     { href: "/", label: lang === "en" ? "Capital Radar" : "Radar du capital", icon: Radar },
+    { href: "/planning", label: lang === "en" ? "Planning" : "Planification", icon: Target },
     { href: "/projects", label: lang === "en" ? "Projects" : "Projets", icon: FolderGit2 },
     { href: "/map", label: lang === "en" ? "Geospatial Map" : "Carte géospatiale", icon: MapPin },
     { href: "/capital", label: lang === "en" ? "Capital Stack" : "Plafond de capital", icon: Layers },

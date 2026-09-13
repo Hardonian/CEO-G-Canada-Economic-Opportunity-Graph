@@ -42,7 +42,10 @@
         "Defence & Arctic",
         "Transportation & Ports",
         "Industrial & Manufacturing",
-        "Housing-Enabling Infrastructure"
+        "Housing-Enabling Infrastructure",
+        "Mining & Metals",
+        "Energy & Fuels",
+        "Forestry & Bioeconomy"
       ]
     },
     "subsector": {

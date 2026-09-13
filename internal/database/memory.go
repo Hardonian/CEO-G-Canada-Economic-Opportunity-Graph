@@ -54,6 +54,19 @@ func (m *MemoryStore) SaveProject(ctx context.Context, p *domain.Project) error 
 			p.CreatedAt = existing.CreatedAt
 		}
 		p.EvidenceIDs = mergeStrings(existing.EvidenceIDs, p.EvidenceIDs)
+		// Preserve useful source facts when a newer source is deliberately
+		// silent. Zero coordinates and UNKNOWN capital are absence, not an
+		// instruction to erase a value reported by another source.
+		if p.Latitude == 0 && p.Longitude == 0 && (existing.Latitude != 0 || existing.Longitude != 0) {
+			p.Latitude = existing.Latitude
+			p.Longitude = existing.Longitude
+		}
+		if p.CapexCAD == 0 && p.CapexStatus == domain.ConfidenceUnknown && existing.CapexCAD > 0 {
+			p.CapexCAD = existing.CapexCAD
+			p.CapexStatus = existing.CapexStatus
+		}
+		p.ExternalIDs = mergeStringMap(existing.ExternalIDs, p.ExternalIDs)
+		p.Metadata = mergeMetadata(existing.Metadata, p.Metadata)
 	}
 	m.projects[p.ID] = p
 	return nil
@@ -594,4 +607,32 @@ func mergeStrings(left, right []string) []string {
 		}
 	}
 	return result
+}
+
+func mergeStringMap(left, right map[string]string) map[string]string {
+	if len(left) == 0 && len(right) == 0 {
+		return nil
+	}
+	merged := make(map[string]string, len(left)+len(right))
+	for key, value := range left {
+		merged[key] = value
+	}
+	for key, value := range right {
+		merged[key] = value
+	}
+	return merged
+}
+
+func mergeMetadata(left, right map[string]interface{}) map[string]interface{} {
+	if len(left) == 0 && len(right) == 0 {
+		return nil
+	}
+	merged := make(map[string]interface{}, len(left)+len(right))
+	for key, value := range left {
+		merged[key] = value
+	}
+	for key, value := range right {
+		merged[key] = value
+	}
+	return merged
 }

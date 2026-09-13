@@ -6,7 +6,10 @@ export type Sector =
   | "Defence & Arctic"
   | "Transportation & Ports"
   | "Industrial & Manufacturing"
-  | "Housing-Enabling Infrastructure";
+  | "Housing-Enabling Infrastructure"
+  | "Mining & Metals"
+  | "Energy & Fuels"
+  | "Forestry & Bioeconomy";
 
 export type LifecycleStage =
   | "DISCOVERED"
@@ -36,12 +39,13 @@ export interface Project {
   subsector: string;
   province: string;
   location_name: string;
-  latitude: number;
-  longitude: number;
+  latitude: number | null;
+  longitude: number | null;
   current_stage: LifecycleStage;
   capex_cad: number;
   proponent_id?: string;
-  confidence: "VERIFIED" | "SUPPORTED" | "INFERRED" | "CONFLICTED" | "UNKNOWN" | "STALE";
+  capex_status?: "VERIFIED" | "SUPPORTED" | "REPORTED" | "INFERRED" | "CONFLICTED" | "UNKNOWN" | "STALE" | "RETRACTED";
+  confidence: "VERIFIED" | "SUPPORTED" | "REPORTED" | "INFERRED" | "CONFLICTED" | "UNKNOWN" | "STALE" | "RETRACTED";
   scores?: Record<string, number>;
   last_meaningful_update: string;
 }
@@ -104,6 +108,8 @@ export interface RadarStats {
   accelerating_projects_count: number;
   stalled_projects_count: number;
   active_procurements_count: number;
+  unknown_capex_projects?: number;
+  data_status?: "HEALTHY" | "STALE" | "PARTIAL" | "DEGRADED" | "UNAVAILABLE";
   sector_breakdown: Record<string, number>;
   province_breakdown: Record<string, number>;
 }

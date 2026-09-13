@@ -19,6 +19,22 @@ import {
   Radio
 } from "lucide-react";
 import { FALLBACK_PROJECTS } from "@/lib/data";
+import type { Project } from "@/lib/types";
+
+type MappableProject = Project & { latitude: number; longitude: number };
+
+function hasCoordinates(project: Project): project is MappableProject {
+  return (
+    typeof project.latitude === "number" &&
+    typeof project.longitude === "number" &&
+    Number.isFinite(project.latitude) &&
+    Number.isFinite(project.longitude) &&
+    project.latitude >= 40 &&
+    project.latitude <= 84 &&
+    project.longitude >= -142 &&
+    project.longitude <= -50
+  );
+}
 
 export default function MapPage() {
   const [selectedSector, setSelectedSector] = useState("ALL");
@@ -43,6 +59,8 @@ export default function MapPage() {
     if (selectedStage !== "ALL" && p.current_stage !== selectedStage) return false;
     return true;
   });
+
+  const mappableProjects = filtered.filter(hasCoordinates);
 
   const totalFilteredCapex = filtered.reduce((acc, p) => acc + p.capex_cad, 0);
 
@@ -71,8 +89,8 @@ export default function MapPage() {
             National Economic <span className="text-aurora">Infrastructure Map</span>
           </h1>
           <p className="text-xs sm:text-sm text-text-muted mt-1.5 max-w-3xl leading-relaxed">
-            Visualizing <span className="text-aurora font-semibold">${(totalFilteredCapex / 1e9).toFixed(2)}B CAD</span> across {filtered.length} verified nation-building assets: 
-            clean baseload nuclear reactors, high-voltage Arctic transmission, critical mineral extraction camps, and sovereign AI compute clusters.
+            Reviewing <span className="text-aurora font-semibold">${(totalFilteredCapex / 1e9).toFixed(2)}B CAD</span> across {filtered.length} source-linked assets.
+            The map plots only records with published coordinates; {mappableProjects.length} are available in this offline snapshot.
           </p>
         </div>
 
@@ -186,7 +204,7 @@ export default function MapPage() {
             {corridors.map((c, idx) => {
               const fromP = FALLBACK_PROJECTS.find(p => p.id === c.from);
               const toP = FALLBACK_PROJECTS.find(p => p.id === c.to);
-              if (!fromP || !toP) return null;
+              if (!fromP || !toP || !hasCoordinates(fromP) || !hasCoordinates(toP)) return null;
 
               const x1 = 150 + ((fromP.longitude + 130) / 65) * 700;
               const y1 = 550 - ((fromP.latitude - 42) / 33) * 450;
@@ -210,7 +228,7 @@ export default function MapPage() {
             })}
 
             {/* Project Nodes on Canvas */}
-            {filtered.map((p) => {
+            {mappableProjects.map((p) => {
               // Map coordinates: Lat (42 to 75), Long (-130 to -65) -> Canvas (1000 x 650)
               const x = 150 + ((p.longitude + 130) / 65) * 700;
               const y = 550 - ((p.latitude - 42) / 33) * 450;
@@ -276,6 +294,12 @@ export default function MapPage() {
                 </g>
               );
             })}
+
+            {mappableProjects.length === 0 ? (
+              <text x="500" y="330" textAnchor="middle" fill="#94A3B8" fontSize="13" fontFamily="monospace">
+                No published coordinates in the offline reviewed snapshot
+              </text>
+            ) : null}
           </svg>
         </div>
 
@@ -309,7 +333,7 @@ export default function MapPage() {
               <div className="p-3 rounded-xl bg-surface border border-borderSubtle">
                 <div className="text-[10px] text-text-subtle uppercase">Reported CAPEX</div>
                 <div className="text-base font-black text-aurora mt-0.5 font-tabular">
-                  ${(activeProject.capex_cad / 1e9).toFixed(2)}B CAD
+                  {activeProject.capex_cad > 0 ? `$${(activeProject.capex_cad / 1e9).toFixed(2)}B CAD` : "UNKNOWN"}
                 </div>
               </div>
               <div className="p-3 rounded-xl bg-surface border border-borderSubtle">
@@ -324,7 +348,7 @@ export default function MapPage() {
             <div className="space-y-2 pt-1">
               <div className="text-[10px] font-mono text-text-subtle uppercase flex justify-between">
                 <span>Buildability & Readiness</span>
-                <span className="text-aurora font-bold">{activeProject.scores?.buildability.toFixed(0)}/100</span>
+                <span className="text-aurora font-bold">{(activeProject.scores?.buildability ?? 0).toFixed(0)}/100</span>
               </div>
               <div className="w-full bg-surface h-2 rounded-full overflow-hidden border border-borderSubtle">
                 <div 
@@ -335,12 +359,12 @@ export default function MapPage() {
 
               <div className="text-[10px] font-mono text-text-subtle uppercase flex justify-between pt-1">
                 <span>National Strategicity</span>
-                <span className="text-gold font-bold">{activeProject.scores?.strategicity.toFixed(0)}/100</span>
+                <span className="text-gold font-bold">{activeProject.scores?.strategicity == null ? "NOT SCORED" : `${activeProject.scores.strategicity.toFixed(0)}/100`}</span>
               </div>
               <div className="w-full bg-surface h-2 rounded-full overflow-hidden border border-borderSubtle">
                 <div 
                   className="bg-gold h-full rounded-full transition-all duration-500" 
-                  style={{ width: `${activeProject.scores?.strategicity || 75}%` }}
+                  style={{ width: `${activeProject.scores?.strategicity ?? 0}%` }}
                 ></div>
               </div>
             </div>
@@ -349,7 +373,9 @@ export default function MapPage() {
             <div className="p-3 rounded-xl bg-surface/50 border border-borderSubtle text-[11px] font-mono space-y-1">
               <div className="text-text-subtle uppercase text-[9px]">Geospatial Footprint</div>
               <div className="text-text-muted">
-                Lat: {activeProject.latitude.toFixed(4)}° N, Long: {activeProject.longitude.toFixed(4)}° W
+                {hasCoordinates(activeProject)
+                  ? `Lat: ${activeProject.latitude.toFixed(4)}° N, Long: ${activeProject.longitude.toFixed(4)}° W`
+                  : "Coordinates not published in the reviewed source record"}
               </div>
               <div className="text-[10px] text-aurora-mint flex items-center gap-1 pt-1">
                 <ShieldCheck className="h-3 w-3" /> Anchored in CEGS 0.1 Cryptographic Graph

@@ -88,14 +88,17 @@ const (
 type Sector string
 
 const (
-	SectorCriticalMinerals Sector = "Critical Minerals"
-	SectorNuclearEnergy    Sector = "Nuclear & Clean Power"
-	SectorCleanEnergy      Sector = "Clean Energy & Grid"
-	SectorAICompute        Sector = "AI Compute & Data Centres"
-	SectorDefenceArctic    Sector = "Defence & Arctic"
-	SectorTransportation   Sector = "Transportation & Ports"
-	SectorIndustrial       Sector = "Industrial & Manufacturing"
-	SectorHousingInfra     Sector = "Housing-Enabling Infrastructure"
+	SectorCriticalMinerals   Sector = "Critical Minerals"
+	SectorNuclearEnergy      Sector = "Nuclear & Clean Power"
+	SectorCleanEnergy        Sector = "Clean Energy & Grid"
+	SectorAICompute          Sector = "AI Compute & Data Centres"
+	SectorDefenceArctic      Sector = "Defence & Arctic"
+	SectorTransportation     Sector = "Transportation & Ports"
+	SectorIndustrial         Sector = "Industrial & Manufacturing"
+	SectorHousingInfra       Sector = "Housing-Enabling Infrastructure"
+	SectorMiningMetals       Sector = "Mining & Metals"
+	SectorEnergyFuels        Sector = "Energy & Fuels"
+	SectorForestryBioeconomy Sector = "Forestry & Bioeconomy"
 )
 
 // RequirementClass differentiates inferred dependencies from confirmed procurement.
