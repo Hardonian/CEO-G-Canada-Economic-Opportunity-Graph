@@ -311,6 +311,15 @@ func (m *MemoryStore) SaveScore(ctx context.Context, s *domain.ProjectScore) err
 			p.Scores = make(map[string]float64)
 		}
 		p.Scores[s.ScoreType] = s.ScoreValue
+		updated := false
+		for i, detail := range p.ScoreDetails {
+			if detail.ScoreType == s.ScoreType {
+				p.ScoreDetails[i] = s
+				updated = true
+				break
+			}
+		}
+		if !updated { p.ScoreDetails = append(p.ScoreDetails, s) }
 	}
 	return nil
 }

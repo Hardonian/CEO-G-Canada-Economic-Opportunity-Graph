@@ -147,8 +147,8 @@ func (b *ProjectExportBundle) ToMarkdown() string {
 
 	sb.WriteString("## Deterministic Scores\n\n")
 	sb.WriteString("| Dimension | Score (0-100) |\n| :--- | :--- |\n")
-	for k, v := range b.Scores {
-		sb.WriteString(fmt.Sprintf("| %s | %.1f |\n", strings.Title(k), v))
+		for k, v := range b.Scores {
+			sb.WriteString(fmt.Sprintf("| %s | %.1f |\n", title(k), v))
 	}
 	sb.WriteString("\n")
 
@@ -209,6 +209,7 @@ func ToGeoJSON(projects []*domain.Project) ([]byte, error) {
 	}
 
 	for _, p := range projects {
+		if p.Latitude == 0 && p.Longitude == 0 { continue }
 		feat := Feature{
 			Type: "Feature",
 			Geometry: map[string]interface{}{
@@ -237,22 +238,20 @@ func ToCSV(projects []*domain.Project) (string, error) {
 	var sb strings.Builder
 	w := csv.NewWriter(&sb)
 
-	headers := []string{"ID", "Slug", "Name", "Sector", "Subsector", "Province", "Location", "Stage", "CapexCAD", "Buildability", "Investability", "Supplierability", "Strategicity", "Confidence"}
+	headers := []string{"ID", "Slug", "Name", "Sector", "Subsector", "Province", "Location", "Stage", "CapexCAD", "CapexStatus", "Buildability", "BuildabilityCoverage", "Confidence"}
 	if err := w.Write(headers); err != nil {
 		return "", err
 	}
 
 	for _, p := range projects {
 		bScore := 0.0
-		iScore := 0.0
-		supScore := 0.0
-		stratScore := 0.0
 		if p.Scores != nil {
 			bScore = p.Scores["buildability"]
-			iScore = p.Scores["investability"]
-			supScore = p.Scores["supplierability"]
-			stratScore = p.Scores["strategicity"]
 		}
+		capex := ""
+		if p.CapexCAD > 0 && p.CapexStatus != domain.ConfidenceUnknown { capex = fmt.Sprintf("%d", p.CapexCAD) }
+		coverage := ""
+		for _, detail := range p.ScoreDetails { if detail.ScoreType == "buildability" { coverage = fmt.Sprintf("%.1f", detail.Coverage) } }
 
 		row := []string{
 			p.ID,
@@ -263,11 +262,10 @@ func ToCSV(projects []*domain.Project) (string, error) {
 			p.Province,
 			p.LocationName,
 			string(p.CurrentStage),
-			fmt.Sprintf("%d", p.CapexCAD),
+			capex,
+			string(p.CapexStatus),
 			fmt.Sprintf("%.1f", bScore),
-			fmt.Sprintf("%.1f", iScore),
-			fmt.Sprintf("%.1f", supScore),
-			fmt.Sprintf("%.1f", stratScore),
+			coverage,
 			string(p.Confidence),
 		}
 		if err := w.Write(row); err != nil {
@@ -277,6 +275,12 @@ func ToCSV(projects []*domain.Project) (string, error) {
 
 	w.Flush()
 	return sb.String(), nil
+}
+
+func title(value string) string {
+	parts := strings.Fields(strings.ReplaceAll(value, "_", " "))
+	for i, part := range parts { if part != "" { parts[i] = strings.ToUpper(part[:1]) + part[1:] } }
+	return strings.Join(parts, " ")
 }
 
 // ToCEGSExport converts a project bundle to canonical CEGS Project format.
