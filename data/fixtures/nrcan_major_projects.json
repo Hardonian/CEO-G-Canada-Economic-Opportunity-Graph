@@ -1,0 +1,32 @@
+[
+  {
+    "nrcan_id": "MP-2026-0811",
+    "project_name": "Oneida Energy Storage Project",
+    "proponent_name": "Oneida Energy Storage LP (Six Nations of the Grand River & Northland Power)",
+    "province": "ON",
+    "latitude": 42.8833,
+    "longitude": -80.0500,
+    "sector": "Clean Energy & Grid",
+    "subsector": "Battery Storage Facility",
+    "stage": "CONSTRUCTION",
+    "capex_cad": 450000000,
+    "cib_financing_cad": 170000000,
+    "nrcan_grant_cad": 50000000,
+    "announcement_date": "2023-02-10T12:00:00Z",
+    "summary": "250 MW / 1,000 MWh utility-scale battery storage facility developed in 50/50 partnership with Six Nations of the Grand River Development Corporation."
+  },
+  {
+    "nrcan_id": "MP-2026-0944",
+    "project_name": "Sudbury Clean Nickel Expansion & Sinter Plant Modernization",
+    "proponent_name": "Vale Base Metals",
+    "province": "ON",
+    "latitude": 46.4900,
+    "longitude": -80.9900,
+    "sector": "Critical Minerals",
+    "subsector": "Nickel & Copper Processing",
+    "stage": "FEASIBILITY",
+    "capex_cad": 1800000000,
+    "announcement_date": "2024-05-14T09:00:00Z",
+    "summary": "Expansion of underground nickel mining and processing in the Sudbury Basin targeting EV battery grade refined nickel."
+  }
+]

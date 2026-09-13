@@ -1,0 +1,28 @@
+[
+  {
+    "tender_id": "WS394827101",
+    "title": "Engineering and Environmental Monitoring Services for Arctic Deep-Water Facilities",
+    "buyer": "Department of National Defence / PSPC",
+    "buyer_type": "Federal",
+    "status": "Active RFP",
+    "publication_date": "2026-08-01T12:00:00Z",
+    "closing_date": "2026-10-30T14:00:00Z",
+    "estimated_cad": 45000000,
+    "source_url": "https://canadabuys.canada.ca/en/tender-opportunities/notice/WS394827101",
+    "categories": ["Civil Engineering", "Arctic Infrastructure", "Environmental Surveillance"],
+    "linked_project_slug": "nanisivik-naval-facility-expansion"
+  },
+  {
+    "tender_id": "WS401829384",
+    "title": "Turnkey High-Voltage Substation Equipment for Nuclear Interconnect",
+    "buyer": "Ontario Power Generation Inc.",
+    "buyer_type": "Crown",
+    "status": "RFI",
+    "publication_date": "2026-07-15T09:30:00Z",
+    "closing_date": "2026-11-15T16:00:00Z",
+    "estimated_cad": 85000000,
+    "source_url": "https://canadabuys.canada.ca/en/tender-opportunities/notice/WS401829384",
+    "categories": ["High Voltage Electrical", "Nuclear Components", "Substations"],
+    "linked_project_slug": "darlington-smr"
+  }
+]

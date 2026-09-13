@@ -1,9 +1,5 @@
 package domain
 
-import (
-	"time"
-)
-
 // LifecycleStage represents the official lifecycle progression of a Canadian major project.
 type LifecycleStage string
 

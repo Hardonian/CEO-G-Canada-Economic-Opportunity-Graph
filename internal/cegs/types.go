@@ -4,8 +4,6 @@ import (
 	"fmt"
 	"strings"
 	"time"
-
-	"github.com/Hardonian/CEO-G-Canada-Economic-Opportunity-Graph/internal/domain"
 )
 
 const SpecVersion = "0.1"

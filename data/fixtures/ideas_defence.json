@@ -1,0 +1,17 @@
+[
+  {
+    "challenge_id": "IDEAS-CF-2026-04",
+    "title": "Arctic All-Weather Over-The-Horizon Sensor and Northern Runway Stabilization",
+    "publisher": "Department of National Defence / Innovation for Defence Excellence and Security (IDEaS)",
+    "province": "NU",
+    "location": "Resolute Bay and Nanisivik",
+    "latitude": 74.6975,
+    "longitude": -94.8297,
+    "sector": "Defence & Arctic",
+    "subsector": "Arctic Surveillance & Strategic Basing",
+    "stage": "PROCUREMENT",
+    "capex_cad": 750000000,
+    "source_url": "https://www.canada.ca/en/department-national-defence/programs/defence-ideas.html",
+    "summary": "Rapid deployment of resilient permafrost thermosyphon runway infrastructure, secure satellite communication uplinks, and autonomous coastal radar sensors."
+  }
+]
