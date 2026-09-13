@@ -17,32 +17,34 @@ var (
 
 // MemoryStore provides a thread-safe in-memory implementation of Store.
 type MemoryStore struct {
-	mu            sync.RWMutex
-	projects      map[string]*domain.Project
-	entities      map[string]*domain.Entity
-	events        map[string]*domain.Event
-	relationships map[string]*domain.Relationship
-	scores        map[string][]*domain.ProjectScore // projectID -> list of scores
-	procurements  map[string]*domain.Procurement
-	capitalItems  map[string]*domain.CapitalItem
-	signals       map[string]*domain.Signal
-	opportunities map[string]*domain.Opportunity
-	evidence      map[string]*domain.Evidence
+	mu             sync.RWMutex
+	projects       map[string]*domain.Project
+	entities       map[string]*domain.Entity
+	events         map[string]*domain.Event
+	relationships  map[string]*domain.Relationship
+	scores         map[string][]*domain.ProjectScore // projectID -> list of scores
+	procurements   map[string]*domain.Procurement
+	capitalItems   map[string]*domain.CapitalItem
+	signals        map[string]*domain.Signal
+	opportunities  map[string]*domain.Opportunity
+	evidence       map[string]*domain.Evidence
+	slugIndex      map[string]string                 // slug -> project ID
+	entityNameIndex map[string]string               // normalized name -> entity ID
 }
 
 // NewMemoryStore initializes an empty in-memory repository.
 func NewMemoryStore() *MemoryStore {
 	return &MemoryStore{
-		projects:      make(map[string]*domain.Project),
-		entities:      make(map[string]*domain.Entity),
-		events:        make(map[string]*domain.Event),
-		relationships: make(map[string]*domain.Relationship),
-		scores:        make(map[string][]*domain.ProjectScore),
-		procurements:  make(map[string]*domain.Procurement),
-		capitalItems:  make(map[string]*domain.CapitalItem),
-		signals:       make(map[string]*domain.Signal),
-		opportunities: make(map[string]*domain.Opportunity),
-		evidence:      make(map[string]*domain.Evidence),
+		projects:       make(map[string]*domain.Project),
+		entities:       make(map[string]*domain.Entity),
+		events:         make(map[string]*domain.Event),
+		relationships:  make(map[string]*domain.Relationship),
+		scores:         make(map[string][]*domain.ProjectScore),
+		procurements:   make(map[string]*domain.Procurement),
+		capitalItems:   make(map[string]*domain.CapitalItem),
+		signals:        make(map[string]*domain.Signal),
+		opportunities:  make(map[string]*domain.Opportunity),
+		evidence:       make(map[string]*domain.Evidence),
 	}
 }
 
@@ -54,9 +56,6 @@ func (m *MemoryStore) SaveProject(ctx context.Context, p *domain.Project) error 
 			p.CreatedAt = existing.CreatedAt
 		}
 		p.EvidenceIDs = mergeStrings(existing.EvidenceIDs, p.EvidenceIDs)
-		// Preserve useful source facts when a newer source is deliberately
-		// silent. Zero coordinates and UNKNOWN capital are absence, not an
-		// instruction to erase a value reported by another source.
 		if p.Latitude == 0 && p.Longitude == 0 && (existing.Latitude != 0 || existing.Longitude != 0) {
 			p.Latitude = existing.Latitude
 			p.Longitude = existing.Longitude
@@ -69,6 +68,11 @@ func (m *MemoryStore) SaveProject(ctx context.Context, p *domain.Project) error 
 		p.Metadata = mergeMetadata(existing.Metadata, p.Metadata)
 	}
 	m.projects[p.ID] = p
+	// Keep slug index consistent.
+	if m.slugIndex == nil {
+		m.slugIndex = make(map[string]string, len(m.projects))
+	}
+	m.slugIndex[p.Slug] = p.ID
 	return nil
 }
 
@@ -85,6 +89,15 @@ func (m *MemoryStore) GetProject(ctx context.Context, id string) (*domain.Projec
 func (m *MemoryStore) GetProjectBySlug(ctx context.Context, slug string) (*domain.Project, error) {
 	m.mu.RLock()
 	defer m.mu.RUnlock()
+	if m.slugIndex == nil {
+		m.ensureSlugIndexLocked()
+	}
+	if id, ok := m.slugIndex[slug]; ok {
+		if p, ok := m.projects[id]; ok {
+			return p, nil
+		}
+	}
+	// Fallback for any projects not captured by the index yet.
 	for _, p := range m.projects {
 		if p.Slug == slug {
 			return p, nil
@@ -127,7 +140,6 @@ func (m *MemoryStore) ListProjects(ctx context.Context, filter ProjectFilter) ([
 
 	total := len(result)
 
-	// Sort results
 	sort.Slice(result, func(i, j int) bool {
 		switch filter.SortBy {
 		case "capex":
@@ -166,12 +178,11 @@ func (m *MemoryStore) ListProjects(ctx context.Context, filter ProjectFilter) ([
 				return invI < invJ
 			}
 			return invI > invJ
-		default: // default: updated / last meaningful update desc
+		default:
 			return result[i].LastMeaningfulUpdate.After(result[j].LastMeaningfulUpdate)
 		}
 	})
 
-	// Pagination
 	offset := filter.Offset
 	if offset < 0 {
 		offset = 0
@@ -196,6 +207,16 @@ func (m *MemoryStore) SaveEntity(ctx context.Context, e *domain.Entity) error {
 	m.mu.Lock()
 	defer m.mu.Unlock()
 	m.entities[e.ID] = e
+	// Keep entity name index consistent.
+	if m.entityNameIndex == nil {
+		m.entityNameIndex = make(map[string]string, len(m.entities))
+	}
+	for _, name := range entityNames(e) {
+		key := domain.NormalizeLookupName(name)
+		if key != "" {
+			m.entityNameIndex[key] = e.ID
+		}
+	}
 	return nil
 }
 
@@ -212,6 +233,17 @@ func (m *MemoryStore) GetEntity(ctx context.Context, id string) (*domain.Entity,
 func (m *MemoryStore) FindEntityByLegalOrAlias(ctx context.Context, name string) (*domain.Entity, error) {
 	m.mu.RLock()
 	defer m.mu.RUnlock()
+	if m.entityNameIndex == nil {
+		m.ensureEntityNameIndexLocked()
+	}
+	key := domain.NormalizeLookupName(name)
+	if id, ok := m.entityNameIndex[key]; ok {
+		if e, ok := m.entities[id]; ok {
+			return e, nil
+		}
+	}
+	// Fallback linear scan for entities whose names were added before
+	// the index was built.
 	norm := strings.ToLower(strings.TrimSpace(name))
 	for _, e := range m.entities {
 		if strings.ToLower(e.LegalName) == norm || strings.ToLower(e.CommonName) == norm {
@@ -318,7 +350,6 @@ func (m *MemoryStore) SaveScore(ctx context.Context, s *domain.ProjectScore) err
 	}
 	m.scores[s.ProjectID] = append(m.scores[s.ProjectID], s)
 
-	// Also update the project's fast-lookup map
 	if p, ok := m.projects[s.ProjectID]; ok {
 		if p.Scores == nil {
 			p.Scores = make(map[string]float64)
@@ -637,4 +668,14 @@ func mergeMetadata(left, right map[string]interface{}) map[string]interface{} {
 		merged[key] = value
 	}
 	return merged
+}
+
+func entityNames(entity *domain.Entity) []string {
+	if entity == nil {
+		return nil
+	}
+	names := make([]string, 0, 2+len(entity.Aliases))
+	names = append(names, entity.LegalName, entity.CommonName)
+	names = append(names, entity.Aliases...)
+	return names
 }
