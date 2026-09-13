@@ -147,7 +147,7 @@ func NewClient(options ClientOptions) *Client {
 		Transport: transport,
 		Timeout:   timeout,
 		CheckRedirect: func(request *http.Request, via []*http.Request) error {
-			if len(via) >= maxRedirects {
+			if len(via) > maxRedirects {
 				return fmt.Errorf("stopped after %d redirects", maxRedirects)
 			}
 			_, _, err := policy.Validate(request.Context(), request.URL.String())
@@ -158,6 +158,14 @@ func NewClient(options ClientOptions) *Client {
 		},
 	}
 	return client
+}
+
+// CloseIdleConnections releases pooled sockets. Long-lived processes normally
+// keep them; tests and controlled shutdown paths can close them explicitly.
+func (c *Client) CloseIdleConnections() {
+	if c != nil && c.httpClient != nil {
+		c.httpClient.CloseIdleConnections()
+	}
 }
 
 // Validate performs the same destination validation used before requests and

@@ -47,7 +47,7 @@ CEGS defines **economic truth and provenance**. It is intentionally decoupled fr
 
 ## Schemas & Vocabularies
 
-* [`/schemas`](schemas/): Normative JSON Schemas (Draft 2020-12) for `entity`, `project`, `organization`, `location`, `event`, `relationship`, `evidence`, `capital-event`, `procurement`, `program`, `opportunity`, `score`, `signal`, and `dataset-manifest`.
+* [`/schemas`](schemas/): Normative JSON Schemas (Draft 2020-12) for `entity`, `project`, `organization`, `location`, `event`, `relationship`, `evidence`, `source`, `capital-event`, `procurement`, `program`, `opportunity`, `score`, `signal`, and `dataset-manifest`.
 * [`/vocab`](vocab/): Machine-readable authoritative vocabularies for sectors, project stages, relationship types, event types, evidence states, and source classifications.
 * [`/examples`](examples/): Valid canonical JSON examples illustrating representative Canadian projects, organizations, events, and dataset manifests.
 * [`/rfcs`](rfcs/): Architectural Decision Records and formal Requests for Comments governing the standard.

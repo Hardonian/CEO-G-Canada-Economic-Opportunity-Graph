@@ -25,7 +25,7 @@ Every root CEGS JSON resource must encapsulate its payload within the standard e
 ### Required Envelope Fields:
 - `cegs` (string, required): Specification version identifier (e.g. `"0.1"`).
 - `id` (string, required): Globally unique, stable CEGS identifier adhering to URI syntax.
-- `type` (string, required): CEGS object type (`project`, `organization`, `event`, `relationship`, `evidence`, `capital_item`, `procurement`, `program`, `opportunity`, `score`, `signal`, `manifest`).
+- `type` (string, required): CEGS object type (`project`, `organization`, `event`, `relationship`, `evidence`, `source`, `capital_item`, `procurement`, `program`, `opportunity`, `score`, `signal`, `manifest`).
 - `canonical_name` (string, required): Standard human-readable name in Canadian English (with optional French official alias).
 - `jurisdiction` (string, required): ISO 3166-1/2 code (e.g. `"CA"`, `"CA:ON"`, `"CA:BC"`, `"CA:QC"`).
 - `created_at` (string, required): RFC 3339 UTC timestamp of initial recording.
@@ -160,3 +160,17 @@ Cryptographic provenance record:
 - `content_hash`: Cryptographic SHA-256 hash of the raw document snapshot.
 - `retrieval_timestamp`: UTC timestamp of fetch.
 - `confidence`: Semantic confidence rating.
+
+### 6.6 Source Resource
+
+Represents public metadata for a catalogue, dataset, distribution, API, feed, repository, document, or web page:
+
+- `source_kind`: Position in the publisher → catalogue → dataset → resource hierarchy.
+- `canonical_url`: Public HTTP(S) identity; credentials and private request configuration are never exported.
+- `source_family` and `access_method`: Protocol and retrieval semantics.
+- `authority_tier`: Publisher/source authority from 1–5. Tier 5 is a discovery lead and cannot establish canonical Evidence.
+- `lifecycle`: Review/activation state, kept distinct from `health`.
+- `health`: Latest measured operating condition; `UNKNOWN` until an access check has occurred.
+- `incremental_capabilities`: Public protocol capabilities such as ETag, Last-Modified, cursor, delta, or change feed.
+
+See CEGS-RFC-0007. Registration, testing, approval, activation, and health MUST NOT be inferred from one another.

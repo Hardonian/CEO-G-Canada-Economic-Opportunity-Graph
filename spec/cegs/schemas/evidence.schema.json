@@ -20,6 +20,10 @@
       "enum": ["VERIFIED", "SUPPORTED", "REPORTED", "INFERRED", "CONFLICTED", "UNKNOWN", "STALE", "RETRACTED"]
     },
     "extraction_method": { "type": "string" },
-    "raw_snippet": { "type": "string" }
+    "raw_snippet": { "type": "string" },
+    "extensions": {
+      "type": "object",
+      "description": "Namespaced implementation extensions, including optional versioned public-data lineage."
+    }
   }
 }

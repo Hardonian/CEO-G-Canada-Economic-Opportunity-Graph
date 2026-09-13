@@ -169,6 +169,34 @@ func TestDomainToCEGSRoundtrip(t *testing.T) {
 	}
 }
 
+func TestEvidenceExportPreservesVersionedDataLineage(t *testing.T) {
+	evidence := &domain.Evidence{
+		ID:                 "evidence-42",
+		SourceURL:          "https://example.gc.ca/dataset/42",
+		Publisher:          "Example public authority",
+		SourceTier:         domain.SourceTier1,
+		ContentHash:        "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+		SourceID:           "source-42",
+		SourceVersionID:    "version-7",
+		SourceRecordID:     "row-9",
+		Locator:            "row=9",
+		ParserVersion:      "csv-v2",
+		MappingVersion:     "project-v3",
+		PipelineVersion:    "ingestion-v4",
+		Confidence:         domain.ConfidenceVerified,
+		ExtractionMethod:   "deterministic_adapter",
+		RetrievalTimestamp: time.Now().UTC(),
+	}
+	exported := cegs.ToCEGSEvidence(evidence)
+	lineage, ok := exported.Extensions["ca.opengraph.public_data_lineage"].(map[string]interface{})
+	if !ok {
+		t.Fatalf("missing lineage extension: %#v", exported.Extensions)
+	}
+	if lineage["source_version_id"] != "version-7" || lineage["mapping_version"] != "project-v3" {
+		t.Fatalf("lineage was not preserved: %#v", lineage)
+	}
+}
+
 func TestSpecExamples(t *testing.T) {
 	exampleFiles := []string{
 		"../../spec/cegs/examples/project.json",

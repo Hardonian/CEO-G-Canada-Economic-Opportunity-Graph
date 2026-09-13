@@ -20,7 +20,9 @@ func ToCEGSProject(p *domain.Project, evidenceIDs []string) *Project {
 		proponents = append(proponents, FormatID("org", "ca", p.Proponent.ID))
 	}
 	for i, evidenceID := range evidenceIDs {
-		if !strings.HasPrefix(evidenceID, "cegs:") { evidenceIDs[i] = FormatID("evidence", "ca", evidenceID) }
+		if !strings.HasPrefix(evidenceID, "cegs:") {
+			evidenceIDs[i] = FormatID("evidence", "ca", evidenceID)
+		}
 	}
 
 	ext := make(map[string]interface{})
@@ -144,6 +146,24 @@ func ToCEGSEvent(ev *domain.Event, projectSlug string) *Event {
 // ToCEGSEvidence converts an internal Evidence into a CEGS Evidence.
 func ToCEGSEvidence(ev *domain.Evidence) *Evidence {
 	evID := FormatID("evidence", "ca", ev.ID)
+	lineage := make(map[string]interface{})
+	for key, value := range map[string]string{
+		"source_id":         ev.SourceID,
+		"source_version_id": ev.SourceVersionID,
+		"source_record_id":  ev.SourceRecordID,
+		"locator":           ev.Locator,
+		"parser_version":    ev.ParserVersion,
+		"mapping_version":   ev.MappingVersion,
+		"pipeline_version":  ev.PipelineVersion,
+	} {
+		if value != "" {
+			lineage[key] = value
+		}
+	}
+	extensions := make(map[string]interface{})
+	if len(lineage) > 0 {
+		extensions["ca.opengraph.public_data_lineage"] = lineage
+	}
 
 	return &Evidence{
 		CEGS:               SpecVersion,
@@ -159,6 +179,7 @@ func ToCEGSEvidence(ev *domain.Evidence) *Evidence {
 		Confidence:         string(ev.Confidence),
 		ExtractionMethod:   ev.ExtractionMethod,
 		RawSnippet:         ev.RawSnippet,
+		Extensions:         extensions,
 	}
 }
 

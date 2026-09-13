@@ -6,6 +6,7 @@ import { useState } from "react";
 import {
   Activity,
   Cpu,
+  Database,
   FileCode2,
   FolderGit2,
   Landmark,
@@ -30,6 +31,7 @@ export default function Navbar() {
     { href: "/map", label: lang === "en" ? "Geospatial Map" : "Carte géospatiale", icon: MapPin },
     { href: "/capital", label: lang === "en" ? "Capital Stack" : "Structure du capital", icon: Layers },
     { href: "/procurement", label: lang === "en" ? "Procurement" : "Approvisionnement", icon: Activity },
+    { href: "/sources", label: lang === "en" ? "Public Data" : "Données publiques", icon: Database },
     { href: "/ai-sovereignty", label: lang === "en" ? "AI Sovereignty" : "Souveraineté IA", icon: Cpu },
     { href: "/cegs", label: lang === "en" ? "CEGS Standard" : "Norme CEGS", icon: FileCode2, badge: "0.1" },
   ];

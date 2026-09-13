@@ -18,31 +18,34 @@ type Evidence struct {
 	ContentHash        string          `json:"content_hash"`         // SHA-256
 	HashScope          string          `json:"hash_scope,omitempty"` // raw_document or normalized_source_record
 	SourceClass        string          `json:"source_class,omitempty"`
+	SourceID           string          `json:"source_id,omitempty"`
+	SourceVersionID    string          `json:"source_version_id,omitempty"`
 	SourceRecordID     string          `json:"source_record_id,omitempty"`
 	Locator            string          `json:"locator,omitempty"`
 	PipelineVersion    string          `json:"pipeline_version,omitempty"`
 	ParserVersion      string          `json:"parser_version,omitempty"`
+	MappingVersion     string          `json:"mapping_version,omitempty"`
 	RawSnippet         string          `json:"raw_snippet,omitempty"`
 }
 
 // Entity represents an organization (company, government body, First Nation, regulator, investor, supplier).
 type Entity struct {
-	ID            string            `json:"id"`
-	Slug          string            `json:"slug"`
-	LegalName     string            `json:"legal_name"`
-	CommonName    string            `json:"common_name"`
-	Aliases       []string          `json:"aliases"`
-	EntityType    string            `json:"entity_type"`  // Corporation, CrownCorp, FirstNation, GovernmentAgency, Investor, Utility, Supplier
-	Jurisdiction  string            `json:"jurisdiction"` // CA, ON, BC, QC, AB, etc.
-	Website       string            `json:"website,omitempty"`
-	Identifiers   map[string]string `json:"identifiers,omitempty"` // NEBN, Ticker, LEI
-	Description   string            `json:"description,omitempty"`
-	AISovereignty *AISovereignty    `json:"ai_sovereignty,omitempty"`
-	EvidenceID    string            `json:"evidence_id,omitempty"`
-	Evidence      *Evidence         `json:"evidence,omitempty"`
+	ID            string                 `json:"id"`
+	Slug          string                 `json:"slug"`
+	LegalName     string                 `json:"legal_name"`
+	CommonName    string                 `json:"common_name"`
+	Aliases       []string               `json:"aliases"`
+	EntityType    string                 `json:"entity_type"`  // Corporation, CrownCorp, FirstNation, GovernmentAgency, Investor, Utility, Supplier
+	Jurisdiction  string                 `json:"jurisdiction"` // CA, ON, BC, QC, AB, etc.
+	Website       string                 `json:"website,omitempty"`
+	Identifiers   map[string]string      `json:"identifiers,omitempty"` // NEBN, Ticker, LEI
+	Description   string                 `json:"description,omitempty"`
+	AISovereignty *AISovereignty         `json:"ai_sovereignty,omitempty"`
+	EvidenceID    string                 `json:"evidence_id,omitempty"`
+	Evidence      *Evidence              `json:"evidence,omitempty"`
 	Metadata      map[string]interface{} `json:"metadata,omitempty"`
-	CreatedAt     time.Time         `json:"created_at"`
-	UpdatedAt     time.Time         `json:"updated_at"`
+	CreatedAt     time.Time              `json:"created_at"`
+	UpdatedAt     time.Time              `json:"updated_at"`
 }
 
 // Project is the central economic graph object.
@@ -143,23 +146,23 @@ type CapitalItem struct {
 
 // Procurement records public and private tenders and requests.
 type Procurement struct {
-	ID               string           `json:"id"`
-	TenderID         string           `json:"tender_id"`
-	ProjectID        string           `json:"project_id,omitempty"` // Linked parent project if verified/derived
-	ProjectName      string           `json:"project_name,omitempty"`
-	Title            string           `json:"title"`
-	Stage            string           `json:"stage"` // RFI, RFQ, RFP, Standing Offer, Awarded
-	ClosingDate      *time.Time       `json:"closing_date,omitempty"`
-	EstimatedCAD     int64            `json:"estimated_cad,omitempty"`
-	Buyer            string           `json:"buyer"`
-	BuyerType        string           `json:"buyer_type"` // Federal, Provincial, Crown, Municipal, Private
-	SourceURL        string           `json:"source_url"`
-	Categories       []string         `json:"categories"`
-	RequirementClass RequirementClass `json:"requirement_class"` // CONFIRMED, DERIVED
-	EvidenceID       string           `json:"evidence_id"`
-	Evidence         *Evidence        `json:"evidence,omitempty"`
+	ID               string                 `json:"id"`
+	TenderID         string                 `json:"tender_id"`
+	ProjectID        string                 `json:"project_id,omitempty"` // Linked parent project if verified/derived
+	ProjectName      string                 `json:"project_name,omitempty"`
+	Title            string                 `json:"title"`
+	Stage            string                 `json:"stage"` // RFI, RFQ, RFP, Standing Offer, Awarded
+	ClosingDate      *time.Time             `json:"closing_date,omitempty"`
+	EstimatedCAD     int64                  `json:"estimated_cad,omitempty"`
+	Buyer            string                 `json:"buyer"`
+	BuyerType        string                 `json:"buyer_type"` // Federal, Provincial, Crown, Municipal, Private
+	SourceURL        string                 `json:"source_url"`
+	Categories       []string               `json:"categories"`
+	RequirementClass RequirementClass       `json:"requirement_class"` // CONFIRMED, DERIVED
+	EvidenceID       string                 `json:"evidence_id"`
+	Evidence         *Evidence              `json:"evidence,omitempty"`
 	Metadata         map[string]interface{} `json:"metadata,omitempty"`
-	CreatedAt        time.Time        `json:"created_at"`
+	CreatedAt        time.Time              `json:"created_at"`
 }
 
 // Opportunity represents an inferred or confirmed downstream demand.

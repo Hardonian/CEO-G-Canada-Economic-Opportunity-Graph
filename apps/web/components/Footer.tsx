@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Database, ExternalLink, ShieldCheck } from "lucide-react";
+import { Database, ShieldCheck } from "lucide-react";
 
 const footerLinkClass =
   "rounded-sm text-text-muted underline decoration-border underline-offset-4 transition-colors hover:text-text-main hover:decoration-aurora";
@@ -54,6 +54,8 @@ export default function Footer() {
               <li><Link href="/map" className={footerLinkClass}>Geospatial Infrastructure Map</Link></li>
               <li><Link href="/capital" className={footerLinkClass}>Canadian Capital Stack</Link></li>
               <li><Link href="/procurement" className={footerLinkClass}>Procurement Pipeline</Link></li>
+              <li><Link href="/sources" className={footerLinkClass}>Public Data Explorer</Link></li>
+              <li><Link href="/apis" className={footerLinkClass}>Public API Directory</Link></li>
               <li><Link href="/ai-sovereignty" className={footerLinkClass}>AI Sovereignty Index</Link></li>
             </ul>
           </nav>
@@ -66,19 +68,8 @@ export default function Footer() {
               <li><Link href="/cegs" className={footerLinkClass}>CEGS specification v0.1</Link></li>
               <li><Link href="/cegs/adopt" className={footerLinkClass}>Adoption Guide</Link></li>
               <li><Link href="/methodology" className={footerLinkClass}>Scoring Methodology</Link></li>
-              <li>
-                <a
-                  href="http://localhost:8080/api/v1/cegs/export"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className={`${footerLinkClass} inline-flex items-center gap-1`}
-                >
-                  Live CEGS JSON export
-                  <ExternalLink aria-hidden="true" className="h-3 w-3" />
-                  <span className="sr-only">(opens in a new tab)</span>
-                </a>
-              </li>
-              <li><Link href="/admin" className={footerLinkClass}>Source Health Telemetry</Link></li>
+              <li><Link href="/apis" className={footerLinkClass}>Registered Public APIs</Link></li>
+              <li><Link href="/admin" className={footerLinkClass}>Public Data Mesh Status</Link></li>
             </ul>
           </nav>
 

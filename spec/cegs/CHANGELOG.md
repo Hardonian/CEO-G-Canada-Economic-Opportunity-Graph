@@ -6,6 +6,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ---
 
+## [0.1.2] - 2026-09-13
+
+### Added
+- Additive public `source` resource and source-family vocabulary for catalogue, dataset, resource, API, feed, repository, document, and web-page metadata.
+- CEGS-RFC-0007 defining lifecycle/health separation, Tier 5 lead-only authority, and namespaced versioned Evidence lineage.
+- Optional Evidence extensions for source, version, record locator, parser, mapping, and pipeline reproducibility identifiers.
+
 ## [0.1.1] - 2026-09-13
 
 ### Added
