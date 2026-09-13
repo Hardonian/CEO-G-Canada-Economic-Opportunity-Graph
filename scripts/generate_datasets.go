@@ -9,6 +9,7 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
+	"sort"
 	"time"
 
 	"github.com/Hardonian/CEO-G-Canada-Economic-Opportunity-Graph/adapters"
@@ -39,6 +40,9 @@ func main() {
 	must(err)
 	events, err := store.ListRecentEvents(ctx, 1000)
 	must(err)
+	sort.Slice(projects, func(i, j int) bool { return projects[i].ID < projects[j].ID })
+	sort.Slice(entities, func(i, j int) bool { return entities[i].ID < entities[j].ID })
+	sort.Slice(events, func(i, j int) bool { return events[i].ID < events[j].ID })
 
 	evidenceByID := make(map[string]*domain.Evidence)
 	var scores []*domain.ProjectScore
@@ -54,6 +58,8 @@ func main() {
 	}
 	var evidence []*domain.Evidence
 	for _, item := range evidenceByID { evidence = append(evidence, item) }
+	sort.Slice(evidence, func(i, j int) bool { return evidence[i].ID < evidence[j].ID })
+	sort.Slice(scores, func(i, j int) bool { return scores[i].ID < scores[j].ID })
 
 	var cegsProjects []*cegs.Project
 	for _, project := range projects { cegsProjects = append(cegsProjects, cegs.ToCEGSProject(project, project.EvidenceIDs)) }
