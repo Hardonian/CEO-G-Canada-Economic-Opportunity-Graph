@@ -14,7 +14,8 @@ import {
   BookOpen, 
   Search,
   Languages,
-  Activity
+  Activity,
+  Landmark
 } from "lucide-react";
 
 export default function Navbar() {
@@ -22,6 +23,7 @@ export default function Navbar() {
   const [lang, setLang] = useState<"en" | "fr">("en");
 
   const navItems = [
+    { href: "/briefing", label: lang === "en" ? "PM Briefing" : "Mémo PM", icon: Landmark, badge: "CABINET" },
     { href: "/", label: lang === "en" ? "Capital Radar" : "Radar du capital", icon: Radar },
     { href: "/projects", label: lang === "en" ? "Projects" : "Projets", icon: FolderGit2 },
     { href: "/map", label: lang === "en" ? "Geospatial Map" : "Carte géospatiale", icon: MapPin },
@@ -29,7 +31,6 @@ export default function Navbar() {
     { href: "/procurement", label: lang === "en" ? "Procurement" : "Approvisionnement", icon: Activity },
     { href: "/ai-sovereignty", label: lang === "en" ? "AI Sovereignty" : "Souveraineté IA", icon: Cpu },
     { href: "/cegs", label: "CEGS Standard", icon: FileCode2, badge: "0.1" },
-    { href: "/methodology", label: lang === "en" ? "Methodology" : "Méthodologie", icon: BookOpen },
   ];
 
   return (
@@ -39,10 +40,10 @@ export default function Navbar() {
         <div className="flex items-center gap-3">
           <span className="inline-flex items-center gap-1.5 text-aurora font-medium tracking-wide">
             <span className="h-2 w-2 rounded-full bg-aurora shadow-[0_0_8px_#00F5A0] animate-pulse"></span>
-            LIVE CAPITAL RADAR
+            NATIONAL CAPITAL COMMAND
           </span>
           <span className="hidden sm:inline text-border">|</span>
-          <span className="hidden sm:inline text-text-muted">Tracking $11.02B CAD in Strategic Assets & Downstream Supply Chains</span>
+          <span className="hidden sm:inline text-text-muted">Tracking $16.32B CAD Across 10 Strategic Assets & Downstream Supply Chains</span>
         </div>
         <div className="flex items-center gap-3">
           <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded bg-card text-aurora-mint border border-primary/30 text-[10px] font-mono shadow-sm">
