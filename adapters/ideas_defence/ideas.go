@@ -4,13 +4,12 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"os"
 	"strings"
 	"time"
 
 	"github.com/Hardonian/CEO-G-Canada-Economic-Opportunity-Graph/adapters"
 	"github.com/Hardonian/CEO-G-Canada-Economic-Opportunity-Graph/internal/domain"
-	"github.com/google/uuid"
+	"github.com/Hardonian/CEO-G-Canada-Economic-Opportunity-Graph/internal/identity"
 )
 
 type rawIDEaSRecord struct {
@@ -43,7 +42,8 @@ func NewIDEaSAdapter(fixturePath string) *IDEaSAdapter {
 		health: adapters.SourceHealth{
 			AdapterName: "ideas_defence_arctic",
 			Tier:        domain.SourceTier1,
-			Status:      "HEALTHY",
+			Status:      "UNKNOWN",
+			Mode:        "CURATED_SNAPSHOT",
 		},
 	}
 }
@@ -62,7 +62,7 @@ func (a *IDEaSAdapter) Health() *adapters.SourceHealth {
 
 func (a *IDEaSAdapter) Fetch(ctx context.Context) ([]byte, error) {
 	a.health.LastAttempt = time.Now()
-	data, err := os.ReadFile(a.fixturePath)
+	data, err := adapters.ReadBoundedFile(a.fixturePath, adapters.MaxFixtureBytes)
 	if err != nil {
 		a.health.Status = "DEGRADED"
 		a.health.LastError = err.Error()
@@ -80,7 +80,6 @@ func (a *IDEaSAdapter) Parse(data []byte) (*adapters.IngestionResult, error) {
 		return nil, fmt.Errorf("failed to parse IDEaS JSON: %w", err)
 	}
 
-	hash := adapters.HashDocument(data)
 	res := &adapters.IngestionResult{}
 
 	a.health.DocumentsSeen = len(records)
@@ -91,9 +90,13 @@ func (a *IDEaSAdapter) Parse(data []byte) (*adapters.IngestionResult, error) {
 		if len(slug) > 60 {
 			slug = slug[:60]
 		}
-		projID := uuid.New().String()
-		evID := uuid.New().String()
-		now := time.Now()
+		projID := identity.StableID("project", "ideas", rec.ChallengeID)
+		recordHash, err := adapters.HashRecord(rec)
+		if err != nil {
+			return nil, fmt.Errorf("hash IDEaS record %q: %w", rec.ChallengeID, err)
+		}
+		evID := identity.StableID("evidence", "ideas", rec.ChallengeID+":"+recordHash)
+		now := time.Now().UTC()
 
 		evidence := &domain.Evidence{
 			ID:                 evID,
@@ -103,7 +106,11 @@ func (a *IDEaSAdapter) Parse(data []byte) (*adapters.IngestionResult, error) {
 			RetrievalTimestamp: now,
 			Confidence:         domain.ConfidenceVerified,
 			ExtractionMethod:   "dnd_ideas_challenge_adapter",
-			ContentHash:        hash,
+			ContentHash:        recordHash,
+			HashScope:          "normalized_source_record",
+			SourceClass:        "GOVERNMENT_PROGRAM",
+			SourceRecordID:     rec.ChallengeID,
+			ParserVersion:      "ideas-v1",
 			RawSnippet:         rec.Summary,
 		}
 

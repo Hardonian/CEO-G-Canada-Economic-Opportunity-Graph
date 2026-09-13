@@ -4,12 +4,11 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"os"
 	"time"
 
 	"github.com/Hardonian/CEO-G-Canada-Economic-Opportunity-Graph/adapters"
 	"github.com/Hardonian/CEO-G-Canada-Economic-Opportunity-Graph/internal/domain"
-	"github.com/google/uuid"
+	"github.com/Hardonian/CEO-G-Canada-Economic-Opportunity-Graph/internal/identity"
 )
 
 type rawCanadaBuysTender struct {
@@ -40,7 +39,8 @@ func NewCanadaBuysAdapter(fixturePath string) *CanadaBuysAdapter {
 		health: adapters.SourceHealth{
 			AdapterName: "canadabuys_procurement",
 			Tier:        domain.SourceTier1,
-			Status:      "HEALTHY",
+			Status:      "UNKNOWN",
+			Mode:        "CURATED_SNAPSHOT",
 		},
 	}
 }
@@ -59,7 +59,7 @@ func (a *CanadaBuysAdapter) Health() *adapters.SourceHealth {
 
 func (a *CanadaBuysAdapter) Fetch(ctx context.Context) ([]byte, error) {
 	a.health.LastAttempt = time.Now()
-	data, err := os.ReadFile(a.fixturePath)
+	data, err := adapters.ReadBoundedFile(a.fixturePath, adapters.MaxFixtureBytes)
 	if err != nil {
 		a.health.Status = "DEGRADED"
 		a.health.LastError = err.Error()
@@ -77,15 +77,18 @@ func (a *CanadaBuysAdapter) Parse(data []byte) (*adapters.IngestionResult, error
 		return nil, fmt.Errorf("failed to parse CanadaBuys JSON: %w", err)
 	}
 
-	hash := adapters.HashDocument(data)
 	res := &adapters.IngestionResult{}
 
 	a.health.DocumentsSeen = len(records)
 	a.health.DocumentsChanged = len(records)
 
 	for _, rec := range records {
-		evID := uuid.New().String()
-		now := time.Now()
+		now := time.Now().UTC()
+		recordHash, err := adapters.HashRecord(rec)
+		if err != nil {
+			return nil, fmt.Errorf("hash CanadaBuys tender %q: %w", rec.TenderID, err)
+		}
+		evID := identity.StableID("evidence", "canadabuys", rec.TenderID+":"+recordHash)
 
 		evidence := &domain.Evidence{
 			ID:                 evID,
@@ -95,7 +98,11 @@ func (a *CanadaBuysAdapter) Parse(data []byte) (*adapters.IngestionResult, error
 			RetrievalTimestamp: now,
 			Confidence:         domain.ConfidenceVerified,
 			ExtractionMethod:   "official_canadabuys_api",
-			ContentHash:        hash,
+			ContentHash:        recordHash,
+			HashScope:          "normalized_source_record",
+			SourceClass:        "GOVERNMENT_PROCUREMENT",
+			SourceRecordID:     rec.TenderID,
+			ParserVersion:      "canadabuys-v1",
 			RawSnippet:         rec.Title,
 		}
 
@@ -107,7 +114,7 @@ func (a *CanadaBuysAdapter) Parse(data []byte) (*adapters.IngestionResult, error
 		}
 
 		proc := &domain.Procurement{
-			ID:               uuid.New().String(),
+			ID:               identity.StableID("procurement", "canadabuys", rec.TenderID),
 			TenderID:         rec.TenderID,
 			Title:            rec.Title,
 			Stage:            rec.Status,

@@ -4,13 +4,12 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"os"
 	"strings"
 	"time"
 
 	"github.com/Hardonian/CEO-G-Canada-Economic-Opportunity-Graph/adapters"
 	"github.com/Hardonian/CEO-G-Canada-Economic-Opportunity-Graph/internal/domain"
-	"github.com/google/uuid"
+	"github.com/Hardonian/CEO-G-Canada-Economic-Opportunity-Graph/internal/identity"
 )
 
 type rawIAACProject struct {
@@ -45,7 +44,8 @@ func NewIAACAdapter(fixturePath string) *IAACAdapter {
 		health: adapters.SourceHealth{
 			AdapterName: "iaac_registry",
 			Tier:        domain.SourceTier1,
-			Status:      "HEALTHY",
+			Status:      "UNKNOWN",
+			Mode:        "CURATED_SNAPSHOT",
 		},
 	}
 }
@@ -64,7 +64,7 @@ func (a *IAACAdapter) Health() *adapters.SourceHealth {
 
 func (a *IAACAdapter) Fetch(ctx context.Context) ([]byte, error) {
 	a.health.LastAttempt = time.Now()
-	data, err := os.ReadFile(a.fixturePath)
+	data, err := adapters.ReadBoundedFile(a.fixturePath, adapters.MaxFixtureBytes)
 	if err != nil {
 		a.health.Status = "DEGRADED"
 		a.health.LastError = err.Error()
@@ -82,7 +82,6 @@ func (a *IAACAdapter) Parse(data []byte) (*adapters.IngestionResult, error) {
 		return nil, fmt.Errorf("failed to parse IAAC JSON: %w", err)
 	}
 
-	hash := adapters.HashDocument(data)
 	res := &adapters.IngestionResult{}
 
 	a.health.DocumentsSeen = len(records)
@@ -92,11 +91,15 @@ func (a *IAACAdapter) Parse(data []byte) (*adapters.IngestionResult, error) {
 		slug := strings.ToLower(strings.ReplaceAll(rec.ProjectName, " ", "-"))
 		propSlug := strings.ToLower(strings.ReplaceAll(rec.ProponentName, " ", "-"))
 
-		propID := uuid.New().String()
-		projID := uuid.New().String()
-		evID := uuid.New().String()
+		propID := identity.StableID("entity", "iaac", propSlug)
+		projID := identity.StableID("project", "iaac", rec.RegistryID)
+		recordHash, err := adapters.HashRecord(rec)
+		if err != nil {
+			return nil, fmt.Errorf("hash IAAC registry record %q: %w", rec.RegistryID, err)
+		}
+		evID := identity.StableID("evidence", "iaac", rec.RegistryID+":"+recordHash)
 
-		now := time.Now()
+		now := time.Now().UTC()
 
 		evidence := &domain.Evidence{
 			ID:                 evID,
@@ -106,7 +109,11 @@ func (a *IAACAdapter) Parse(data []byte) (*adapters.IngestionResult, error) {
 			RetrievalTimestamp: now,
 			Confidence:         domain.ConfidenceVerified,
 			ExtractionMethod:   "official_iaac_json_adapter",
-			ContentHash:        hash,
+			ContentHash:        recordHash,
+			HashScope:          "normalized_source_record",
+			SourceClass:        "REGULATOR_REGISTRY",
+			SourceRecordID:     rec.RegistryID,
+			ParserVersion:      "iaac-v1",
 			RawSnippet:         rec.Summary,
 		}
 
@@ -159,7 +166,7 @@ func (a *IAACAdapter) Parse(data []byte) (*adapters.IngestionResult, error) {
 		}
 
 		event := &domain.Event{
-			ID:          uuid.New().String(),
+			ID:          identity.StableID("event", "iaac", rec.RegistryID+":"+rec.LastRegistryUpdate+":"+rec.CurrentStatus),
 			ProjectID:   projID,
 			EventType:   "regulatory.impact_assessment_filing",
 			EventDate:   now,
@@ -172,7 +179,7 @@ func (a *IAACAdapter) Parse(data []byte) (*adapters.IngestionResult, error) {
 		}
 
 		rel := &domain.Relationship{
-			ID:             uuid.New().String(),
+			ID:             identity.StableID("relationship", "iaac", rec.RegistryID+":proponent:"+propID),
 			ProjectID:      projID,
 			SourceEntityID: propID,
 			TargetEntityID: propID,

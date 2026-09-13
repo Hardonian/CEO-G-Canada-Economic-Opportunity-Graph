@@ -4,13 +4,12 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"os"
 	"strings"
 	"time"
 
 	"github.com/Hardonian/CEO-G-Canada-Economic-Opportunity-Graph/adapters"
 	"github.com/Hardonian/CEO-G-Canada-Economic-Opportunity-Graph/internal/domain"
-	"github.com/google/uuid"
+	"github.com/Hardonian/CEO-G-Canada-Economic-Opportunity-Graph/internal/identity"
 )
 
 type rawCERFacility struct {
@@ -42,7 +41,8 @@ func NewCERAdapter(fixturePath string) *CERAdapter {
 		health: adapters.SourceHealth{
 			AdapterName: "cer_facilities",
 			Tier:        domain.SourceTier1,
-			Status:      "HEALTHY",
+			Status:      "UNKNOWN",
+			Mode:        "CURATED_SNAPSHOT",
 		},
 	}
 }
@@ -61,7 +61,7 @@ func (a *CERAdapter) Health() *adapters.SourceHealth {
 
 func (a *CERAdapter) Fetch(ctx context.Context) ([]byte, error) {
 	a.health.LastAttempt = time.Now()
-	data, err := os.ReadFile(a.fixturePath)
+	data, err := adapters.ReadBoundedFile(a.fixturePath, adapters.MaxFixtureBytes)
 	if err != nil {
 		a.health.Status = "DEGRADED"
 		a.health.LastError = err.Error()
@@ -79,7 +79,6 @@ func (a *CERAdapter) Parse(data []byte) (*adapters.IngestionResult, error) {
 		return nil, fmt.Errorf("failed to parse CER JSON: %w", err)
 	}
 
-	hash := adapters.HashDocument(data)
 	res := &adapters.IngestionResult{}
 
 	a.health.DocumentsSeen = len(records)
@@ -89,10 +88,14 @@ func (a *CERAdapter) Parse(data []byte) (*adapters.IngestionResult, error) {
 		slug := strings.ToLower(strings.ReplaceAll(rec.FacilityName, " ", "-"))
 		propSlug := strings.ToLower(strings.ReplaceAll(rec.ProponentName, " ", "-"))
 
-		propID := uuid.New().String()
-		projID := uuid.New().String()
-		evID := uuid.New().String()
-		now := time.Now()
+		propID := identity.StableID("entity", "cer", propSlug)
+		projID := identity.StableID("project", "cer", rec.FilingID+":"+slug)
+		recordHash, err := adapters.HashRecord(rec)
+		if err != nil {
+			return nil, fmt.Errorf("hash CER filing %q: %w", rec.FilingID, err)
+		}
+		evID := identity.StableID("evidence", "cer", rec.FilingID+":"+recordHash)
+		now := time.Now().UTC()
 
 		evidence := &domain.Evidence{
 			ID:                 evID,
@@ -102,7 +105,11 @@ func (a *CERAdapter) Parse(data []byte) (*adapters.IngestionResult, error) {
 			RetrievalTimestamp: now,
 			Confidence:         domain.ConfidenceVerified,
 			ExtractionMethod:   "cer_regulatory_filing_adapter",
-			ContentHash:        hash,
+			ContentHash:        recordHash,
+			HashScope:          "normalized_source_record",
+			SourceClass:        "REGULATOR_FILING",
+			SourceRecordID:     rec.FilingID,
+			ParserVersion:      "cer-v1",
 			RawSnippet:         rec.Summary,
 		}
 

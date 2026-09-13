@@ -78,7 +78,6 @@ func (p *Pipeline) Run(ctx context.Context) (*IngestionReport, error) {
 			report.SourceHealths = append(report.SourceHealths, adp.Health())
 			continue
 		}
-		p.lastHashes[adp.Name()] = hash
 
 		parsed, err := adp.Parse(raw)
 		if err != nil {
@@ -200,6 +199,13 @@ func (p *Pipeline) Run(ctx context.Context) (*IngestionReport, error) {
 			}
 			report.CapitalItemsIngested++
 		}
+
+		// Advance the last-known-good payload only after parsing and every
+		// source-owned graph mutation have succeeded. Advancing it before
+		// Parse would poison the checkpoint: an unchanged malformed payload
+		// would be skipped on the next run and incorrectly counted as a
+		// successful source check.
+		p.lastHashes[adp.Name()] = hash
 
 		report.SourceHealths = append(report.SourceHealths, adp.Health())
 	}
