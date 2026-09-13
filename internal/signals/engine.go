@@ -2,22 +2,23 @@ package signals
 
 import (
 	"fmt"
+	"sort"
 	"time"
 
 	"github.com/Hardonian/CEO-G-Canada-Economic-Opportunity-Graph/internal/domain"
-	"github.com/google/uuid"
+	"github.com/Hardonian/CEO-G-Canada-Economic-Opportunity-Graph/internal/identity"
 )
 
 // MomentumReport computes short-, medium-, and long-term activity velocities for a project.
 type MomentumReport struct {
-	ProjectID   string    `json:"project_id"`
-	ProjectName string    `json:"project_name"`
-	Momentum7d  float64   `json:"momentum_7d"`  // -1.0 to +1.0
-	Momentum30d float64   `json:"momentum_30d"` // -1.0 to +1.0
-	Momentum90d float64   `json:"momentum_90d"` // -1.0 to +1.0
-	SignalCount int       `json:"signal_count"`
+	ProjectID   string           `json:"project_id"`
+	ProjectName string           `json:"project_name"`
+	Momentum7d  float64          `json:"momentum_7d"`  // -1.0 to +1.0
+	Momentum30d float64          `json:"momentum_30d"` // -1.0 to +1.0
+	Momentum90d float64          `json:"momentum_90d"` // -1.0 to +1.0
+	SignalCount int              `json:"signal_count"`
 	Signals     []*domain.Signal `json:"signals"`
-	Velocity    string    `json:"velocity"`     // "ACCELERATING", "STEADY", "DECELERATING", "STALLED"
+	Velocity    string           `json:"velocity"` // "ACCELERATING", "STEADY", "DECELERATING", "STALLED"
 }
 
 // DetectSignals inspects project history and produces typed economic signals.
@@ -29,7 +30,7 @@ func DetectSignals(project *domain.Project, events []*domain.Event, capital []*d
 		if ev.NewStage != nil && ev.PreviousStage != nil {
 			if *ev.NewStage == domain.StageFID || *ev.NewStage == domain.StageConstruction {
 				signals = append(signals, &domain.Signal{
-					ID:            uuid.New().String(),
+					ID:            identity.StableID("signal", "momentum-v1", ev.ID+":"+string(domain.SignalConstructionSignal)),
 					ProjectID:     project.ID,
 					ProjectName:   project.Name,
 					Type:          domain.SignalConstructionSignal,
@@ -43,7 +44,7 @@ func DetectSignals(project *domain.Project, events []*domain.Event, capital []*d
 				})
 			} else if *ev.NewStage == domain.StagePermitting || *ev.NewStage == domain.StageEnvironmentalReview {
 				signals = append(signals, &domain.Signal{
-					ID:            uuid.New().String(),
+					ID:            identity.StableID("signal", "momentum-v1", ev.ID+":"+string(domain.SignalRegulatoryProgress)),
 					ProjectID:     project.ID,
 					ProjectName:   project.Name,
 					Type:          domain.SignalRegulatoryProgress,
@@ -60,15 +61,15 @@ func DetectSignals(project *domain.Project, events []*domain.Event, capital []*d
 
 		if ev.EventType == "indigenous_agreement" || ev.EventType == "impact_benefit_agreement" {
 			signals = append(signals, &domain.Signal{
-				ID:            uuid.New().String(),
-				ProjectID:     project.ID,
-				ProjectName:   project.Name,
-				Type:          domain.SignalIndigenousPartnership,
-				Timestamp:     ev.EventDate,
-				Magnitude:     0.88,
-				Confidence:    0.95,
-				Description:   fmt.Sprintf("Indigenous economic partnership or mutual benefit agreement confirmed: %s", ev.Title),
-				EvidenceID:    ev.EvidenceID,
+				ID:          identity.StableID("signal", "momentum-v1", ev.ID+":"+string(domain.SignalIndigenousPartnership)),
+				ProjectID:   project.ID,
+				ProjectName: project.Name,
+				Type:        domain.SignalIndigenousPartnership,
+				Timestamp:   ev.EventDate,
+				Magnitude:   0.88,
+				Confidence:  0.95,
+				Description: fmt.Sprintf("Indigenous economic partnership or mutual benefit agreement confirmed: %s", ev.Title),
+				EvidenceID:  ev.EvidenceID,
 			})
 		}
 	}
@@ -77,7 +78,7 @@ func DetectSignals(project *domain.Project, events []*domain.Event, capital []*d
 	for _, c := range capital {
 		if c.Status == domain.CapitalCommitted || c.Status == domain.CapitalClosed {
 			signals = append(signals, &domain.Signal{
-				ID:          uuid.New().String(),
+				ID:          identity.StableID("signal", "momentum-v1", c.ID+":"+string(domain.SignalFinancingAcceleration)),
 				ProjectID:   project.ID,
 				ProjectName: project.Name,
 				Type:        domain.SignalFinancingAcceleration,
@@ -93,12 +94,19 @@ func DetectSignals(project *domain.Project, events []*domain.Event, capital []*d
 
 	// 3. Procurement acceleration
 	if len(procurements) > 0 {
+		sorted := append([]*domain.Procurement(nil), procurements...)
+		sort.Slice(sorted, func(i, j int) bool { return sorted[i].CreatedAt.Before(sorted[j].CreatedAt) })
+		latest := sorted[len(sorted)-1]
+		var ids string
+		for _, procurement := range sorted {
+			ids += procurement.ID + ":"
+		}
 		signals = append(signals, &domain.Signal{
-			ID:          uuid.New().String(),
+			ID:          identity.StableID("signal", "momentum-v1", project.ID+":"+ids),
 			ProjectID:   project.ID,
 			ProjectName: project.Name,
 			Type:        domain.SignalProcurementAcceleration,
-			Timestamp:   time.Now(),
+			Timestamp:   latest.CreatedAt,
 			Magnitude:   0.75,
 			Confidence:  0.90,
 			Description: fmt.Sprintf("Active procurement pipeline: %d tender notices published.", len(procurements)),

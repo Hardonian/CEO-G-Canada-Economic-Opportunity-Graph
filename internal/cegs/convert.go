@@ -13,16 +13,34 @@ func ToCEGSProject(p *domain.Project, evidenceIDs []string) *Project {
 		jur = "ca:" + strings.ToLower(p.Province)
 	}
 
-	cegsID := FormatID("project", jur, p.Slug)
+	cegsID := FormatID("project", jur, p.ID)
 
 	var proponents []string
 	if p.Proponent != nil {
-		proponents = append(proponents, FormatID("org", "ca", p.Proponent.Slug))
+		proponents = append(proponents, FormatID("org", "ca", p.Proponent.ID))
+	}
+	for i, evidenceID := range evidenceIDs {
+		if !strings.HasPrefix(evidenceID, "cegs:") { evidenceIDs[i] = FormatID("evidence", "ca", evidenceID) }
 	}
 
 	ext := make(map[string]interface{})
 	if p.Scores != nil {
 		ext["ca.opengraph.scores"] = p.Scores
+	}
+
+	amountType := "unknown"
+	if p.CapexCAD > 0 {
+		if p.CapexStatus == domain.ConfidenceReported || p.CapexStatus == domain.ConfidenceVerified || p.CapexStatus == domain.ConfidenceSupported {
+			amountType = "reported"
+		}
+		if p.CapexStatus == domain.ConfidenceInferred {
+			amountType = "estimated"
+		}
+	}
+	location := Location{Name: p.LocationName, Province: p.Province}
+	if p.Latitude != 0 || p.Longitude != 0 {
+		lat, lon := p.Latitude, p.Longitude
+		location.Latitude, location.Longitude = &lat, &lon
 	}
 
 	return &Project{
@@ -44,15 +62,10 @@ func ToCEGSProject(p *domain.Project, evidenceIDs []string) *Project {
 		Capex: Monetary{
 			Amount:     p.CapexCAD,
 			Currency:   "CAD",
-			AmountType: "reported",
+			AmountType: amountType,
 		},
-		Proponents: proponents,
-		Location: Location{
-			Name:      p.LocationName,
-			Province:  p.Province,
-			Latitude:  p.Latitude,
-			Longitude: p.Longitude,
-		},
+		Proponents:   proponents,
+		Location:     location,
 		SourceStatus: string(p.Confidence),
 	}
 }

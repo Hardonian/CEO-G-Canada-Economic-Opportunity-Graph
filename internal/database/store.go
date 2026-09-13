@@ -9,31 +9,31 @@ import (
 
 // ProjectFilter holds query criteria for project searches.
 type ProjectFilter struct {
-	Sector       string
-	Province     string
-	Stage        string
-	MinCapexCAD  int64
-	Search       string
-	SortBy       string // capex, name, buildability, investability, updated
-	SortDir      string // asc, desc
-	Limit        int
-	Offset       int
-	IsSynthetic  *bool
+	Sector      string
+	Province    string
+	Stage       string
+	MinCapexCAD int64
+	Search      string
+	SortBy      string // capex, name, buildability, investability, updated
+	SortDir     string // asc, desc
+	Limit       int
+	Offset      int
+	IsSynthetic *bool
 }
 
 // RadarStats provides aggregate metrics for the Canada Capital Radar.
 type RadarStats struct {
-	TotalProjects             int              `json:"total_projects"`
-	TotalCapexCAD             int64            `json:"total_capex_cad"`
-	CapitalMovingWeekCAD      int64            `json:"capital_moving_week_cad"`
-	AcceleratingProjectsCount int              `json:"accelerating_projects_count"`
-	StalledProjectsCount      int              `json:"stalled_projects_count"`
-	ActiveProcurementsCount   int              `json:"active_procurements_count"`
-	SectorBreakdown           map[string]int64 `json:"sector_breakdown"`
-	ProvinceBreakdown         map[string]int64 `json:"province_breakdown"`
-	UnknownCapexProjects      int              `json:"unknown_capex_projects"`
+	TotalProjects             int                       `json:"total_projects"`
+	TotalCapexCAD             int64                     `json:"total_capex_cad"`
+	CapitalMovingWeekCAD      int64                     `json:"capital_moving_week_cad"`
+	AcceleratingProjectsCount int                       `json:"accelerating_projects_count"`
+	StalledProjectsCount      int                       `json:"stalled_projects_count"`
+	ActiveProcurementsCount   int                       `json:"active_procurements_count"`
+	SectorBreakdown           map[string]int64          `json:"sector_breakdown"`
+	ProvinceBreakdown         map[string]int64          `json:"province_breakdown"`
+	UnknownCapexProjects      int                       `json:"unknown_capex_projects"`
 	DataStatus                domain.IntelligenceStatus `json:"data_status"`
-	GeneratedAt               time.Time        `json:"generated_at"`
+	GeneratedAt               time.Time                 `json:"generated_at"`
 }
 
 // Store defines persistence operations for CanadaOpportunityGraph.

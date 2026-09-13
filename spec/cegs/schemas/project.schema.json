@@ -51,6 +51,7 @@
     "stage": {
       "type": "string",
       "enum": [
+		"UNKNOWN",
         "DISCOVERED",
         "ANNOUNCED",
         "REFERRED",

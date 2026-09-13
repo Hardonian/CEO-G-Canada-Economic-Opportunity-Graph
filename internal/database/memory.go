@@ -539,7 +539,9 @@ func (m *MemoryStore) GetRadarStats(ctx context.Context) (*RadarStats, error) {
 	accelerating := make(map[string]bool)
 	stalled := make(map[string]bool)
 	for _, signal := range m.signals {
-		if !signal.Timestamp.After(weekAgo) { continue }
+		if !signal.Timestamp.After(weekAgo) {
+			continue
+		}
 		switch signal.Type {
 		case domain.SignalTimelineSlip, domain.SignalProjectDelay, domain.SignalPoliticalSupportLoss:
 			stalled[signal.ProjectID] = true
@@ -561,7 +563,9 @@ func (m *MemoryStore) GetRadarStats(ctx context.Context) (*RadarStats, error) {
 			stats.ActiveProcurementsCount++
 		}
 	}
-	if stats.UnknownCapexProjects > 0 { stats.DataStatus = domain.StatusPartial }
+	if stats.UnknownCapexProjects > 0 {
+		stats.DataStatus = domain.StatusPartial
+	}
 	return stats, nil
 }
 
@@ -570,8 +574,12 @@ func mergeStrings(left, right []string) []string {
 	result := make([]string, 0, len(left)+len(right))
 	for _, values := range [][]string{left, right} {
 		for _, value := range values {
-			if value == "" { continue }
-			if _, ok := seen[value]; ok { continue }
+			if value == "" {
+				continue
+			}
+			if _, ok := seen[value]; ok {
+				continue
+			}
 			seen[value] = struct{}{}
 			result = append(result, value)
 		}

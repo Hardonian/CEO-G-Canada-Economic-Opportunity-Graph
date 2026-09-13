@@ -14,8 +14,8 @@ type Evidence struct {
 	PublicationDate    *time.Time      `json:"publication_date,omitempty"`
 	EffectiveDate      *time.Time      `json:"effective_date,omitempty"`
 	Confidence         ConfidenceLevel `json:"confidence"`
-	ExtractionMethod   string          `json:"extraction_method"` // e.g., "deterministic_adapter", "official_api"
-	ContentHash        string          `json:"content_hash"`      // SHA-256
+	ExtractionMethod   string          `json:"extraction_method"`    // e.g., "deterministic_adapter", "official_api"
+	ContentHash        string          `json:"content_hash"`         // SHA-256
 	HashScope          string          `json:"hash_scope,omitempty"` // raw_document or normalized_source_record
 	SourceClass        string          `json:"source_class,omitempty"`
 	SourceRecordID     string          `json:"source_record_id,omitempty"`
@@ -27,21 +27,21 @@ type Evidence struct {
 
 // Entity represents an organization (company, government body, First Nation, regulator, investor, supplier).
 type Entity struct {
-	ID             string            `json:"id"`
-	Slug           string            `json:"slug"`
-	LegalName      string            `json:"legal_name"`
-	CommonName     string            `json:"common_name"`
-	Aliases        []string          `json:"aliases"`
-	EntityType     string            `json:"entity_type"` // Corporation, CrownCorp, FirstNation, GovernmentAgency, Investor, Utility, Supplier
-	Jurisdiction   string            `json:"jurisdiction"` // CA, ON, BC, QC, AB, etc.
-	Website        string            `json:"website,omitempty"`
-	Identifiers    map[string]string `json:"identifiers,omitempty"` // NEBN, Ticker, LEI
-	Description    string            `json:"description,omitempty"`
-	AISovereignty  *AISovereignty    `json:"ai_sovereignty,omitempty"`
-	EvidenceID     string            `json:"evidence_id,omitempty"`
-	Evidence       *Evidence         `json:"evidence,omitempty"`
-	CreatedAt      time.Time         `json:"created_at"`
-	UpdatedAt      time.Time         `json:"updated_at"`
+	ID            string            `json:"id"`
+	Slug          string            `json:"slug"`
+	LegalName     string            `json:"legal_name"`
+	CommonName    string            `json:"common_name"`
+	Aliases       []string          `json:"aliases"`
+	EntityType    string            `json:"entity_type"`  // Corporation, CrownCorp, FirstNation, GovernmentAgency, Investor, Utility, Supplier
+	Jurisdiction  string            `json:"jurisdiction"` // CA, ON, BC, QC, AB, etc.
+	Website       string            `json:"website,omitempty"`
+	Identifiers   map[string]string `json:"identifiers,omitempty"` // NEBN, Ticker, LEI
+	Description   string            `json:"description,omitempty"`
+	AISovereignty *AISovereignty    `json:"ai_sovereignty,omitempty"`
+	EvidenceID    string            `json:"evidence_id,omitempty"`
+	Evidence      *Evidence         `json:"evidence,omitempty"`
+	CreatedAt     time.Time         `json:"created_at"`
+	UpdatedAt     time.Time         `json:"updated_at"`
 }
 
 // Project is the central economic graph object.
@@ -107,21 +107,21 @@ type Relationship struct {
 
 // ProjectScore represents a versioned, deterministic score with factor breakdown.
 type ProjectScore struct {
-	ID           string             `json:"id"`
-	ProjectID    string             `json:"project_id"`
-	ScoreType    string             `json:"score_type"` // buildability, investability, supplierability, strategicity
-	ScoreValue   float64            `json:"score_value"` // 0-100
-	ScoreVersion string             `json:"score_version"` // e.g. "buildability-v1.0"
-	Factors      map[string]float64 `json:"factors"`
-	UnknownFactors []string         `json:"unknown_factors,omitempty"`
-	Coverage       float64          `json:"coverage"`
-	Confidence     ConfidenceLevel  `json:"confidence"`
-	InputHash      string           `json:"input_hash"`
-	PreviousValue  *float64         `json:"previous_value,omitempty"`
-	Movement       *float64         `json:"movement,omitempty"`
-	MovementReasons []string        `json:"movement_reasons,omitempty"`
-	Explanation  string             `json:"explanation"`
-	CalculatedAt time.Time          `json:"calculated_at"`
+	ID              string             `json:"id"`
+	ProjectID       string             `json:"project_id"`
+	ScoreType       string             `json:"score_type"`    // buildability, investability, supplierability, strategicity
+	ScoreValue      float64            `json:"score_value"`   // 0-100
+	ScoreVersion    string             `json:"score_version"` // e.g. "buildability-v1.0"
+	Factors         map[string]float64 `json:"factors"`
+	UnknownFactors  []string           `json:"unknown_factors,omitempty"`
+	Coverage        float64            `json:"coverage"`
+	Confidence      ConfidenceLevel    `json:"confidence"`
+	InputHash       string             `json:"input_hash"`
+	PreviousValue   *float64           `json:"previous_value,omitempty"`
+	Movement        *float64           `json:"movement,omitempty"`
+	MovementReasons []string           `json:"movement_reasons,omitempty"`
+	Explanation     string             `json:"explanation"`
+	CalculatedAt    time.Time          `json:"calculated_at"`
 }
 
 // CapitalItem records categorized, non-blended capital events.
@@ -168,7 +168,7 @@ type Opportunity struct {
 	Title            string           `json:"title"`
 	Sector           Sector           `json:"sector"`
 	RequirementClass RequirementClass `json:"requirement_class"` // CONFIRMED, DERIVED, SPECULATIVE
-	Category         string           `json:"category"` // engineering, electrical, environmental, etc.
+	Category         string           `json:"category"`          // engineering, electrical, environmental, etc.
 	EstimatedCAD     int64            `json:"estimated_cad,omitempty"`
 	EstimateStatus   ConfidenceLevel  `json:"estimate_status"`
 	Description      string           `json:"description"`
@@ -183,7 +183,7 @@ type Signal struct {
 	ProjectName   string     `json:"project_name"`
 	Type          SignalType `json:"type"`
 	Timestamp     time.Time  `json:"timestamp"`
-	Magnitude     float64    `json:"magnitude"` // 0.0 - 1.0
+	Magnitude     float64    `json:"magnitude"`  // 0.0 - 1.0
 	Confidence    float64    `json:"confidence"` // 0.0 - 1.0
 	PreviousState string     `json:"previous_state,omitempty"`
 	NewState      string     `json:"new_state,omitempty"`
@@ -194,7 +194,7 @@ type Signal struct {
 // AISovereignty models evaluation criteria for the Canadian AI Sovereignty Index.
 type AISovereignty struct {
 	ScoreVersion      string             `json:"score_version"`
-	OverallScore      float64            `json:"overall_score"` // 0-100
+	OverallScore      float64            `json:"overall_score"`  // 0-100
 	DataResidency     float64            `json:"data_residency"` // 0-10
 	ComputeResidency  float64            `json:"compute_residency"`
 	CanadianOwnership float64            `json:"canadian_ownership"`

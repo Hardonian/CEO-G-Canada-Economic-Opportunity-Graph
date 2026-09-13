@@ -154,14 +154,15 @@ func TestDomainToCEGSRoundtrip(t *testing.T) {
 		Longitude:    -80.05,
 		CurrentStage: domain.StageConstruction,
 		CapexCAD:     450000000,
+		CapexStatus:  domain.ConfidenceReported,
 		Confidence:   domain.ConfidenceVerified,
 		CreatedAt:    time.Now(),
 		UpdatedAt:    time.Now(),
 	}
 
 	cegsProj := cegs.ToCEGSProject(proj, []string{"cegs:evidence:ca:iaac-filing"})
-	if cegsProj.ID != "cegs:project:ca:on:ontario-grid-battery" {
-		t.Errorf("expected ID 'cegs:project:ca:on:ontario-grid-battery', got '%s'", cegsProj.ID)
+	if cegsProj.ID != "cegs:project:ca:on:proj-123" {
+		t.Errorf("expected stable ID 'cegs:project:ca:on:proj-123', got '%s'", cegsProj.ID)
 	}
 	if cegsProj.Capex.Amount != 450000000 {
 		t.Errorf("expected capex amount 450000000, got %d", cegsProj.Capex.Amount)

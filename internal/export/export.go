@@ -5,6 +5,7 @@ import (
 	"encoding/csv"
 	"encoding/json"
 	"fmt"
+	"sort"
 	"strings"
 	"time"
 
@@ -20,6 +21,8 @@ type ProjectExportBundle struct {
 	Events        []*domain.Event        `json:"events"`
 	CapitalItems  []*domain.CapitalItem  `json:"capital_items"`
 	Procurements  []*domain.Procurement  `json:"procurements"`
+	Relationships []*domain.Relationship `json:"relationships"`
+	ScoreHistory  []*domain.ProjectScore `json:"score_history"`
 	Opportunities []*domain.Opportunity  `json:"opportunities"`
 	Evidence      []*domain.Evidence     `json:"evidence"`
 	ExportedAt    time.Time              `json:"exported_at"`
@@ -29,13 +32,41 @@ type ProjectExportBundle struct {
 func ExportProjectBundle(ctx context.Context, store database.Store, projectID string) (*ProjectExportBundle, error) {
 	proj, err := store.GetProject(ctx, projectID)
 	if err != nil {
+		proj, err = store.GetProjectBySlug(ctx, projectID)
+		if err != nil {
+			return nil, err
+		}
+	}
+	projectID = proj.ID
+
+	events, err := store.ListEventsByProject(ctx, projectID)
+	if err != nil {
 		return nil, err
 	}
-
-	events, _ := store.ListEventsByProject(ctx, projectID)
-	capital, _ := store.ListCapitalItemsByProject(ctx, projectID)
-	opps, _ := store.ListOpportunitiesByProject(ctx, projectID)
-	scores, _ := store.GetLatestScores(ctx, projectID)
+	capital, err := store.ListCapitalItemsByProject(ctx, projectID)
+	if err != nil {
+		return nil, err
+	}
+	procs, err := store.ListProcurementsByProject(ctx, projectID)
+	if err != nil {
+		return nil, err
+	}
+	relationships, err := store.ListRelationshipsByProject(ctx, projectID)
+	if err != nil {
+		return nil, err
+	}
+	opps, err := store.ListOpportunitiesByProject(ctx, projectID)
+	if err != nil {
+		return nil, err
+	}
+	scores, err := store.GetLatestScores(ctx, projectID)
+	if err != nil {
+		return nil, err
+	}
+	scoreHistory, err := store.ListScoreHistory(ctx, projectID, "")
+	if err != nil {
+		return nil, err
+	}
 
 	scoreMap := make(map[string]float64)
 	for k, v := range scores {
@@ -43,6 +74,11 @@ func ExportProjectBundle(ctx context.Context, store database.Store, projectID st
 	}
 
 	evidenceMap := make(map[string]*domain.Evidence)
+	for _, evidenceID := range proj.EvidenceIDs {
+		if e, err := store.GetEvidence(ctx, evidenceID); err == nil && e != nil {
+			evidenceMap[e.ID] = e
+		}
+	}
 	for _, ev := range events {
 		if ev.EvidenceID != "" {
 			if e, err := store.GetEvidence(ctx, ev.EvidenceID); err == nil && e != nil {
@@ -57,17 +93,35 @@ func ExportProjectBundle(ctx context.Context, store database.Store, projectID st
 			}
 		}
 	}
+	for _, procurement := range procs {
+		if procurement.EvidenceID != "" {
+			if e, err := store.GetEvidence(ctx, procurement.EvidenceID); err == nil && e != nil {
+				evidenceMap[e.ID] = e
+			}
+		}
+	}
+	for _, relationship := range relationships {
+		if relationship.EvidenceID != "" {
+			if e, err := store.GetEvidence(ctx, relationship.EvidenceID); err == nil && e != nil {
+				evidenceMap[e.ID] = e
+			}
+		}
+	}
 
 	var evidenceList []*domain.Evidence
 	for _, e := range evidenceMap {
 		evidenceList = append(evidenceList, e)
 	}
+	sort.Slice(evidenceList, func(i, j int) bool { return evidenceList[i].ID < evidenceList[j].ID })
 
 	return &ProjectExportBundle{
 		Project:       proj,
 		Scores:        scoreMap,
 		Events:        events,
 		CapitalItems:  capital,
+		Procurements:  procs,
+		Relationships: relationships,
+		ScoreHistory:  scoreHistory,
 		Opportunities: opps,
 		Evidence:      evidenceList,
 		ExportedAt:    time.Now(),
@@ -81,8 +135,12 @@ func (b *ProjectExportBundle) ToMarkdown() string {
 
 	sb.WriteString(fmt.Sprintf("# %s\n\n", p.Name))
 	sb.WriteString(fmt.Sprintf("**Sector:** %s | **Subsector:** %s | **Province:** %s\n", p.Sector, p.Subsector, p.Province))
-	sb.WriteString(fmt.Sprintf("**Current Stage:** `%s` | **Reported CAPEX:** $%d CAD\n", p.CurrentStage, p.CapexCAD))
-	sb.WriteString(fmt.Sprintf("**Location:** %s (Lat: %.4f, Long: %.4f)\n\n", p.LocationName, p.Latitude, p.Longitude))
+	capex := "UNKNOWN"
+	if p.CapexCAD > 0 && p.CapexStatus != domain.ConfidenceUnknown {
+		capex = fmt.Sprintf("$%d CAD (%s)", p.CapexCAD, p.CapexStatus)
+	}
+	sb.WriteString(fmt.Sprintf("**Current Stage:** `%s` | **CAPEX:** %s\n", p.CurrentStage, capex))
+	sb.WriteString(fmt.Sprintf("**Location:** %s\n\n", p.LocationName))
 
 	sb.WriteString("## Executive Summary\n\n")
 	sb.WriteString(p.Summary + "\n\n")
@@ -107,7 +165,11 @@ func (b *ProjectExportBundle) ToMarkdown() string {
 		sb.WriteString("## Downstream Procurement & Supply-Chain Opportunities\n\n")
 		sb.WriteString("| Requirement Class | Category | Title | Est. CAD |\n| :--- | :--- | :--- | :--- |\n")
 		for _, o := range b.Opportunities {
-			sb.WriteString(fmt.Sprintf("| `%s` | %s | %s | $%d |\n", o.RequirementClass, o.Category, o.Title, o.EstimatedCAD))
+			estimate := "UNKNOWN"
+			if o.EstimateStatus != domain.ConfidenceUnknown && o.EstimatedCAD > 0 {
+				estimate = fmt.Sprintf("$%d", o.EstimatedCAD)
+			}
+			sb.WriteString(fmt.Sprintf("| `%s` | %s | %s | %s |\n", o.RequirementClass, o.Category, o.Title, estimate))
 		}
 		sb.WriteString("\n")
 	}

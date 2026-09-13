@@ -1,7 +1,10 @@
 package main
 
 import (
+	"bytes"
 	"context"
+	"crypto/sha256"
+	"encoding/hex"
 	"encoding/json"
 	"fmt"
 	"os"
@@ -12,95 +15,131 @@ import (
 	"github.com/Hardonian/CEO-G-Canada-Economic-Opportunity-Graph/adapters/official"
 	"github.com/Hardonian/CEO-G-Canada-Economic-Opportunity-Graph/internal/cegs"
 	"github.com/Hardonian/CEO-G-Canada-Economic-Opportunity-Graph/internal/database"
+	"github.com/Hardonian/CEO-G-Canada-Economic-Opportunity-Graph/internal/domain"
+	graphExport "github.com/Hardonian/CEO-G-Canada-Economic-Opportunity-Graph/internal/export"
 	"github.com/Hardonian/CEO-G-Canada-Economic-Opportunity-Graph/internal/ingestion"
 )
 
+const (
+	datasetVersion = "2026-09-12.1"
+	datasetTime    = "2026-09-12T00:00:00Z"
+)
+
 func main() {
-	fmt.Println("[INFO] Generating public datasets and CEGS snapshots...")
+	fmt.Println("[INFO] Generating reviewed public datasets and CEGS snapshots...")
 	store := database.NewMemoryStore()
-
-	adapterList := []adapters.Adapter{
-		official.NewAdapter("data/fixtures/official_records.json"),
-	}
-
-	pipeline := ingestion.NewPipeline(store, adapterList)
+	pipeline := ingestion.NewPipeline(store, []adapters.Adapter{official.NewAdapter("data/fixtures/official_records.json")})
 	ctx := context.Background()
-	rep, err := pipeline.Run(ctx)
-	if err != nil {
-		fmt.Printf("[ERROR] Pipeline run error: %v\n", err)
-		os.Exit(1)
+	report, err := pipeline.Run(ctx)
+	must(err)
+
+	projects, _, err := store.ListProjects(ctx, database.ProjectFilter{Limit: 1000})
+	must(err)
+	entities, err := store.ListEntities(ctx)
+	must(err)
+	events, err := store.ListRecentEvents(ctx, 1000)
+	must(err)
+
+	evidenceByID := make(map[string]*domain.Evidence)
+	var scores []*domain.ProjectScore
+	for _, project := range projects {
+		for _, evidenceID := range project.EvidenceIDs {
+			evidence, err := store.GetEvidence(ctx, evidenceID)
+			must(err)
+			evidenceByID[evidence.ID] = evidence
+		}
+		history, err := store.ListScoreHistory(ctx, project.ID, "")
+		must(err)
+		scores = append(scores, history...)
 	}
+	var evidence []*domain.Evidence
+	for _, item := range evidenceByID { evidence = append(evidence, item) }
 
-	_ = os.MkdirAll("data/public", 0755)
-	_ = os.MkdirAll("data/cegs", 0755)
-
-	projects, _, _ := store.ListProjects(ctx, database.ProjectFilter{Limit: 1000})
-	entities, _ := store.ListEntities(ctx)
-	events, _ := store.ListRecentEvents(ctx, 1000)
-
-	// 1. Write data/public JSONL files
-	writeJSONL("data/public/projects.jsonl", projects)
-	writeJSONL("data/public/entities.jsonl", entities)
-	writeJSONL("data/public/events.jsonl", events)
-
-	// 2. Write data/cegs JSONL files (CEGS-compliant standard)
 	var cegsProjects []*cegs.Project
-	for _, p := range projects {
-		cegsProjects = append(cegsProjects, cegs.ToCEGSProject(p, nil))
-	}
-	writeJSONL("data/cegs/projects.jsonl", cegsProjects)
-
+	for _, project := range projects { cegsProjects = append(cegsProjects, cegs.ToCEGSProject(project, project.EvidenceIDs)) }
 	var cegsOrgs []*cegs.Organization
-	for _, e := range entities {
-		cegsOrgs = append(cegsOrgs, cegs.ToCEGSOrganization(e))
-	}
-	writeJSONL("data/cegs/organizations.jsonl", cegsOrgs)
-
+	for _, entity := range entities { cegsOrgs = append(cegsOrgs, cegs.ToCEGSOrganization(entity)) }
 	var cegsEvents []*cegs.Event
-	for _, ev := range events {
-		cegsEvents = append(cegsEvents, cegs.ToCEGSEvent(ev, "major-project"))
-	}
-	writeJSONL("data/cegs/events.jsonl", cegsEvents)
+	for _, event := range events { cegsEvents = append(cegsEvents, cegs.ToCEGSEvent(event, event.ProjectID)) }
+	var cegsEvidence []*cegs.Evidence
+	for _, item := range evidence { cegsEvidence = append(cegsEvidence, cegs.ToCEGSEvidence(item)) }
 
-	// 3. Write data/cegs/manifest.json
-	manifest := map[string]interface{}{
-		"cegs":        cegs.SpecVersion,
-		"id":          "cegs:manifest:ca:v0-1-snapshot",
-		"type":        "manifest",
-		"dataset_id":  "cegs-canada-national-v0-1",
-		"title":       "CEGS Canonical National Economic Snapshot — v0.1",
-		"publisher":   "CanadaOpportunityGraph Consortium",
-		"license":     "CC-BY-4.0",
-		"generated_at": time.Now().Format(time.RFC3339),
-		"record_counts": map[string]int{
-			"projects":      len(projects),
-			"organizations": len(entities),
-			"events":        len(events),
-		},
-		"jurisdictions": []string{"CA", "CA:ON", "CA:QC", "CA:BC", "CA:NU"},
-	}
-	manBytes, _ := json.MarshalIndent(manifest, "", "  ")
-	_ = os.WriteFile("data/cegs/manifest.json", manBytes, 0644)
+	files := map[string][]byte{}
+	files["public/projects.jsonl"] = mustJSONL(projects)
+	files["public/entities.jsonl"] = mustJSONL(entities)
+	files["public/events.jsonl"] = mustJSONL(events)
+	files["public/evidence.jsonl"] = mustJSONL(evidence)
+	files["public/scores.jsonl"] = mustJSONL(scores)
+	files["cegs/projects.jsonl"] = mustJSONL(cegsProjects)
+	files["cegs/organizations.jsonl"] = mustJSONL(cegsOrgs)
+	files["cegs/events.jsonl"] = mustJSONL(cegsEvents)
+	files["cegs/evidence.jsonl"] = mustJSONL(cegsEvidence)
+	csvData, err := graphExport.ToCSV(projects); must(err)
+	files["public/projects.csv"] = []byte(csvData)
+	geoJSON, err := graphExport.ToGeoJSON(projects); must(err)
+	files["public/projects.geojson"] = append(geoJSON, '\n')
 
-	fmt.Printf("[INFO] Snapshots created successfully: %d projects, %d entities in data/public & data/cegs (duration: %v)\n",
-		rep.ProjectsIngested, rep.EntitiesResolved, rep.Duration)
+	checksums := make(map[string]string, len(files))
+	for name, data := range files { checksums[name] = checksum(data) }
+	generatedAt, err := time.Parse(time.RFC3339, datasetTime); must(err)
+	manifest := map[string]any{
+		"cegs": cegs.SpecVersion,
+		"id": "cegs:manifest:ca:" + datasetVersion,
+		"type": "manifest",
+		"dataset_id": "cegs-canada-reviewed-primary-sources",
+		"dataset_version": datasetVersion,
+		"title": "CEGS reviewed Canadian economic project snapshot",
+		"description": "A deliberately narrow snapshot of records supported by linked primary public sources; it is not a complete census of Canadian projects.",
+		"publisher": "CanadaOpportunityGraph",
+		"license": "LicenseRef-COG-Generated-Data",
+		"generated_at": generatedAt.Format(time.RFC3339),
+		"record_counts": map[string]int{"projects": len(projects), "organizations": len(entities), "events": len(events), "evidence": len(evidence), "scores": len(scores)},
+		"jurisdictions": []string{"CA", "CA:ON", "CA:QC"},
+		"checksums_sha256": checksums,
+		"coverage_note": "Coverage is source-curated and incomplete; no defensible national denominator is currently available.",
+		"source_mode": "CURATED_SNAPSHOT",
+	}
+	manifestBytes, err := json.MarshalIndent(manifest, "", "  "); must(err)
+	manifestBytes = append(manifestBytes, '\n')
+	files["cegs/manifest.json"] = manifestBytes
+	files["public/manifest.json"] = manifestBytes
+
+	for name, data := range files { must(writeCurrent(filepath.Join("data", filepath.FromSlash(name)), data)) }
+	releaseRoot := filepath.Join("data", "releases", datasetVersion)
+	for name, data := range files { must(writeHistorical(filepath.Join(releaseRoot, filepath.FromSlash(name)), data)) }
+
+	fmt.Printf("[INFO] Snapshot %s created: %d projects, %d evidence records, %d scores (status %s, duration %v)\n", datasetVersion, len(projects), len(evidence), len(scores), report.Status, report.Duration)
 }
 
-func writeJSONL(filePath string, items interface{}) {
-	file, err := os.Create(filepath.Clean(filePath))
-	if err != nil {
-		fmt.Printf("Error creating %s: %v\n", filePath, err)
-		return
-	}
+func must(err error) { if err != nil { fmt.Fprintln(os.Stderr, "[ERROR]", err); os.Exit(1) } }
+
+func mustJSONL[T any](items []T) []byte {
+	var out bytes.Buffer
+	encoder := json.NewEncoder(&out)
+	encoder.SetEscapeHTML(false)
+	for _, item := range items { must(encoder.Encode(item)) }
+	return out.Bytes()
+}
+
+func writeCurrent(path string, data []byte) error {
+	if err := os.MkdirAll(filepath.Dir(path), 0o755); err != nil { return err }
+	return os.WriteFile(path, data, 0o644)
+}
+
+func writeHistorical(path string, data []byte) error {
+	if existing, err := os.ReadFile(path); err == nil {
+		if bytes.Equal(existing, data) { return nil }
+		return fmt.Errorf("refusing to overwrite historical release %s", path)
+	} else if !os.IsNotExist(err) { return err }
+	if err := os.MkdirAll(filepath.Dir(path), 0o755); err != nil { return err }
+	file, err := os.OpenFile(path, os.O_WRONLY|os.O_CREATE|os.O_EXCL, 0o644)
+	if err != nil { return err }
 	defer file.Close()
+	_, err = file.Write(data)
+	return err
+}
 
-	valBytes, _ := json.Marshal(items)
-	var list []interface{}
-	_ = json.Unmarshal(valBytes, &list)
-
-	for _, item := range list {
-		line, _ := json.Marshal(item)
-		_, _ = file.Write(line)
-		_, _ = file.WriteString("\n")
-	}
+func checksum(data []byte) string {
+	sum := sha256.Sum256(data)
+	return hex.EncodeToString(sum[:])
 }

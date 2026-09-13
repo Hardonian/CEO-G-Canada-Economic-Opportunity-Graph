@@ -15,20 +15,20 @@ import (
 )
 
 const (
-	VersionBuildability   = "buildability-v2.0"
-	VersionInvestability  = "investability-v1.0"
+	VersionBuildability    = "buildability-v2.0"
+	VersionInvestability   = "investability-v1.0"
 	VersionSupplierability = "supplierability-v1.0"
-	VersionStrategicity   = "strategicity-v1.0"
+	VersionStrategicity    = "strategicity-v1.0"
 )
 
 // ProjectContext aggregates relevant facts for deterministic scoring.
 type ProjectContext struct {
-	Project        *domain.Project
-	CapitalItems   []*domain.CapitalItem
-	Events         []*domain.Event
-	Relationships  []*domain.Relationship
-	Procurements   []*domain.Procurement
-	Opportunities  []*domain.Opportunity
+	Project       *domain.Project
+	CapitalItems  []*domain.CapitalItem
+	Events        []*domain.Event
+	Relationships []*domain.Relationship
+	Procurements  []*domain.Procurement
+	Opportunities []*domain.Opportunity
 }
 
 // CalculateBuildability computes a deterministic 0-100 score on project execution likelihood.
@@ -102,42 +102,58 @@ func CalculateBuildability(ctx *ProjectContext) *domain.ProjectScore {
 	}
 	sort.Strings(unknown)
 	total := 0.0
-	if coverage > 0 { total = clamp(weighted/coverage, 0, 100) }
+	if coverage > 0 {
+		total = clamp(weighted/coverage, 0, 100)
+	}
 
 	confidence := domain.ConfidenceUnknown
-	if coverage >= 0.75 { confidence = domain.ConfidenceSupported } else if coverage >= 0.5 { confidence = domain.ConfidenceReported }
+	if coverage >= 0.75 {
+		confidence = domain.ConfidenceSupported
+	} else if coverage >= 0.5 {
+		confidence = domain.ConfidenceReported
+	}
 	inputHash := buildabilityInputHash(ctx)
 	calculatedAt := latestInputTime(ctx)
 	explanation := fmt.Sprintf("%s uses only evidenced factors; %.0f%% of factor weight is currently covered and %d factors remain unknown.", VersionBuildability, coverage*100, len(unknown))
 
 	return &domain.ProjectScore{
-		ID:           identity.StableID("score", VersionBuildability, p.ID+":"+inputHash),
-		ProjectID:    p.ID,
-		ScoreType:    "buildability",
-		ScoreValue:   round(total),
-		ScoreVersion: VersionBuildability,
-		Factors:      factors,
+		ID:             identity.StableID("score", VersionBuildability, p.ID+":"+inputHash),
+		ProjectID:      p.ID,
+		ScoreType:      "buildability",
+		ScoreValue:     round(total),
+		ScoreVersion:   VersionBuildability,
+		Factors:        factors,
 		UnknownFactors: unknown,
-		Coverage:     round(coverage * 100),
-		Confidence:   confidence,
-		InputHash:    inputHash,
-		Explanation:  explanation,
-		CalculatedAt: calculatedAt,
+		Coverage:       round(coverage * 100),
+		Confidence:     confidence,
+		InputHash:      inputHash,
+		Explanation:    explanation,
+		CalculatedAt:   calculatedAt,
 	}
 }
 
 func stageProgressScore(stage domain.LifecycleStage) float64 {
 	switch stage {
-	case domain.StageDiscovered, domain.StageAnnounced: return 20
-	case domain.StageReferred, domain.StageEarlyDevelopment, domain.StageFeasibility: return 35
-	case domain.StageEnvironmentalReview, domain.StagePermitting: return 55
-	case domain.StageFinancing, domain.StageProcurement: return 70
-	case domain.StageFIDLikely: return 85
-	case domain.StageFID, domain.StageConstruction: return 95
-	case domain.StageCommissioning, domain.StageOperating: return 100
-	case domain.StageDelayed, domain.StagePaused: return 25
-	case domain.StageCancelled: return 0
-	default: return 0
+	case domain.StageDiscovered, domain.StageAnnounced:
+		return 20
+	case domain.StageReferred, domain.StageEarlyDevelopment, domain.StageFeasibility:
+		return 35
+	case domain.StageEnvironmentalReview, domain.StagePermitting:
+		return 55
+	case domain.StageFinancing, domain.StageProcurement:
+		return 70
+	case domain.StageFIDLikely:
+		return 85
+	case domain.StageFID, domain.StageConstruction:
+		return 95
+	case domain.StageCommissioning, domain.StageOperating:
+		return 100
+	case domain.StageDelayed, domain.StagePaused:
+		return 25
+	case domain.StageCancelled:
+		return 0
+	default:
+		return 0
 	}
 }
 
@@ -146,13 +162,30 @@ func isKnown(status domain.ConfidenceLevel) bool {
 }
 
 func buildabilityInputHash(ctx *ProjectContext) string {
-	type input struct { Project *domain.Project; Events []string; Capital []string; Relationships []string; Procurements []string }
+	type input struct {
+		Project       *domain.Project
+		Events        []string
+		Capital       []string
+		Relationships []string
+		Procurements  []string
+	}
 	value := input{Project: ctx.Project}
-	for _, event := range ctx.Events { value.Events = append(value.Events, event.ID) }
-	for _, item := range ctx.CapitalItems { value.Capital = append(value.Capital, item.ID) }
-	for _, relationship := range ctx.Relationships { value.Relationships = append(value.Relationships, relationship.ID) }
-	for _, procurement := range ctx.Procurements { value.Procurements = append(value.Procurements, procurement.ID) }
-	sort.Strings(value.Events); sort.Strings(value.Capital); sort.Strings(value.Relationships); sort.Strings(value.Procurements)
+	for _, event := range ctx.Events {
+		value.Events = append(value.Events, event.ID)
+	}
+	for _, item := range ctx.CapitalItems {
+		value.Capital = append(value.Capital, item.ID)
+	}
+	for _, relationship := range ctx.Relationships {
+		value.Relationships = append(value.Relationships, relationship.ID)
+	}
+	for _, procurement := range ctx.Procurements {
+		value.Procurements = append(value.Procurements, procurement.ID)
+	}
+	sort.Strings(value.Events)
+	sort.Strings(value.Capital)
+	sort.Strings(value.Relationships)
+	sort.Strings(value.Procurements)
 	data, _ := json.Marshal(value)
 	hash := sha256.Sum256(data)
 	return hex.EncodeToString(hash[:])
@@ -160,11 +193,29 @@ func buildabilityInputHash(ctx *ProjectContext) string {
 
 func latestInputTime(ctx *ProjectContext) time.Time {
 	latest := ctx.Project.UpdatedAt
-	for _, event := range ctx.Events { if event.EventDate.After(latest) { latest = event.EventDate } }
-	for _, item := range ctx.CapitalItems { if item.CreatedAt.After(latest) { latest = item.CreatedAt } }
-	for _, relationship := range ctx.Relationships { if relationship.CreatedAt.After(latest) { latest = relationship.CreatedAt } }
-	for _, procurement := range ctx.Procurements { if procurement.CreatedAt.After(latest) { latest = procurement.CreatedAt } }
-	if latest.IsZero() { return time.Unix(0, 0).UTC() }
+	for _, event := range ctx.Events {
+		if event.EventDate.After(latest) {
+			latest = event.EventDate
+		}
+	}
+	for _, item := range ctx.CapitalItems {
+		if item.CreatedAt.After(latest) {
+			latest = item.CreatedAt
+		}
+	}
+	for _, relationship := range ctx.Relationships {
+		if relationship.CreatedAt.After(latest) {
+			latest = relationship.CreatedAt
+		}
+	}
+	for _, procurement := range ctx.Procurements {
+		if procurement.CreatedAt.After(latest) {
+			latest = procurement.CreatedAt
+		}
+	}
+	if latest.IsZero() {
+		return time.Unix(0, 0).UTC()
+	}
 	return latest.UTC()
 }
 

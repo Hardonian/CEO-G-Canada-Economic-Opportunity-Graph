@@ -24,15 +24,15 @@ type Envelope struct {
 // Project represents a canonical CEGS project resource.
 type Project struct {
 	Envelope
-	Aliases      []string     `json:"aliases,omitempty"`
-	Description  string       `json:"description,omitempty"`
-	Sector       string       `json:"sector"`
-	Subsector    string       `json:"subsector,omitempty"`
-	Stage        string       `json:"stage"`
-	Capex        Monetary     `json:"capex"`
-	Proponents   []string     `json:"proponents,omitempty"`
-	Location     Location     `json:"location"`
-	SourceStatus string       `json:"source_status"`
+	Aliases      []string `json:"aliases,omitempty"`
+	Description  string   `json:"description,omitempty"`
+	Sector       string   `json:"sector"`
+	Subsector    string   `json:"subsector,omitempty"`
+	Stage        string   `json:"stage"`
+	Capex        Monetary `json:"capex"`
+	Proponents   []string `json:"proponents,omitempty"`
+	Location     Location `json:"location"`
+	SourceStatus string   `json:"source_status"`
 }
 
 // Monetary encapsulates standard CEGS currency values.
@@ -51,10 +51,10 @@ type CapitalRange struct {
 
 // Location represents standardized geographic placement.
 type Location struct {
-	Name      string  `json:"name"`
-	Province  string  `json:"province"`
-	Latitude  float64 `json:"latitude"`
-	Longitude float64 `json:"longitude"`
+	Name      string   `json:"name"`
+	Province  string   `json:"province"`
+	Latitude  *float64 `json:"latitude,omitempty"`
+	Longitude *float64 `json:"longitude,omitempty"`
 }
 
 // Organization represents a corporate, public, or Indigenous entity.

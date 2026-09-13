@@ -2,6 +2,7 @@
   "cegs_vocab": "project-stages",
   "version": "0.1",
   "stages": [
+    { "id": "UNKNOWN", "order": 0, "name": "Unknown", "description": "The current lifecycle stage is not established by available evidence." },
     { "id": "DISCOVERED", "order": 1, "name": "Discovered", "description": "Project identified from early public signals or pre-feasibility exploratory notices." },
     { "id": "ANNOUNCED", "order": 2, "name": "Announced", "description": "Formally announced by proponent or government sponsor via official press release." },
     { "id": "REFERRED", "order": 3, "name": "Referred", "description": "Formally submitted to regulatory or environmental evaluation agencies (e.g. IAAC, CER)." },
