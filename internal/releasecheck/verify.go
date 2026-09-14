@@ -83,7 +83,7 @@ func Verify(repositoryRoot string) error {
 	if err := verifyCounts(dataRoot, releaseManifest.RecordCounts); err != nil {
 		return err
 	}
-	return verifyReferences(dataRoot)
+	return verifyReferences(repositoryRoot, dataRoot)
 }
 
 func verifyArtifactSet(checksums map[string]string) error {
@@ -219,7 +219,7 @@ func countJSONLLines(path string) (int, error) {
 	return count, nil
 }
 
-func verifyReferences(dataRoot string) error {
+func verifyReferences(repositoryRoot, dataRoot string) error {
 	publicEvidence, err := readJSONL[domain.Evidence](filepath.Join(dataRoot, "public", "evidence.jsonl"), false)
 	if err != nil {
 		return err
@@ -262,15 +262,8 @@ func verifyReferences(dataRoot string) error {
 				return err
 			}
 		}
-		seenEmbedded := make(map[string]struct{}, len(project.EvidenceIDs))
-		for _, evidence := range projectEvidence(project) {
-			if _, duplicate := seenEmbedded[evidence.ID]; duplicate {
-				return fmt.Errorf("project %s embeds duplicate evidence %s", project.ID, evidence.ID)
-			}
-			seenEmbedded[evidence.ID] = struct{}{}
-			if err := requireReference("project "+project.ID+" embedded evidence", evidence.ID, evidenceIDs, false); err != nil {
-				return err
-			}
+		if err := requireUnique("project "+project.ID+" evidence", project.EvidenceIDs); err != nil {
+			return err
 		}
 	}
 	for _, event := range events {
@@ -289,6 +282,9 @@ func verifyReferences(dataRoot string) error {
 			if err := requireReference("score "+score.ID+" evidence", evidenceID, evidenceIDs, false); err != nil {
 				return err
 			}
+		}
+		if err := requireUnique("score "+score.ID+" evidence", score.EvidenceIDs); err != nil {
+			return err
 		}
 	}
 	for _, metric := range tradeMetrics {
@@ -328,6 +324,7 @@ func verifyReferences(dataRoot string) error {
 			if err := requireReference("CEGS project "+project.ID+" provenance", evidenceID, cegsEvidenceIDs, false); err != nil {
 				return err
 			}
+		}
 		for _, proponentID := range project.Proponents {
 			if err := requireReference("CEGS project "+project.ID+" proponent", proponentID, cegsOrganizationIDs, false); err != nil {
 				return err
@@ -344,7 +341,76 @@ func verifyReferences(dataRoot string) error {
 			}
 		}
 	}
+	return verifyWebSnapshots(repositoryRoot, projectIDs, evidenceIDs)
+}
+
+func verifyWebSnapshots(repositoryRoot string, projectIDs, evidenceIDs map[string]struct{}) error {
+	type webEvidence struct {
+		ID string `json:"id"`
+	}
+	type webProject struct {
+		ID       string        `json:"id"`
+		Evidence []webEvidence `json:"evidence"`
+	}
+	path := filepath.Join(repositoryRoot, "apps", "web", "data", "projects.snapshot.json")
+	data, err := os.ReadFile(path)
+	if err != nil {
+		return fmt.Errorf("read web project snapshot: %w", err)
+	}
+	var projects []webProject
+	if err := json.Unmarshal(data, &projects); err != nil {
+		return fmt.Errorf("parse web project snapshot: %w", err)
+	}
+	if len(projects) != len(projectIDs) {
+		return fmt.Errorf("web project snapshot has %d projects; expected %d", len(projects), len(projectIDs))
+	}
+	seenProjects := make(map[string]struct{}, len(projects))
+	for _, project := range projects {
+		if err := requireReference("web snapshot project", project.ID, projectIDs, false); err != nil {
+			return err
+		}
+		if _, duplicate := seenProjects[project.ID]; duplicate {
+			return fmt.Errorf("web project snapshot contains duplicate project %s", project.ID)
+		}
+		seenProjects[project.ID] = struct{}{}
+		seenEvidence := make(map[string]struct{}, len(project.Evidence))
+		for _, evidence := range project.Evidence {
+			if err := requireReference("web snapshot project "+project.ID+" evidence", evidence.ID, evidenceIDs, false); err != nil {
+				return err
+			}
+			if _, duplicate := seenEvidence[evidence.ID]; duplicate {
+				return fmt.Errorf("web snapshot project %s embeds duplicate evidence %s", project.ID, evidence.ID)
+			}
+			seenEvidence[evidence.ID] = struct{}{}
+		}
+	}
+
+	webManifestPath := filepath.Join(repositoryRoot, "apps", "web", "data", "manifest.snapshot.json")
+	webManifest, err := os.ReadFile(webManifestPath)
+	if err != nil {
+		return fmt.Errorf("read web manifest snapshot: %w", err)
+	}
+	publicManifest, err := os.ReadFile(filepath.Join(repositoryRoot, "data", "public", "manifest.json"))
+	if err != nil {
+		return fmt.Errorf("read public manifest for web comparison: %w", err)
+	}
+	var webValue, publicValue any
+	if err := json.Unmarshal(webManifest, &webValue); err != nil {
+		return fmt.Errorf("parse web manifest snapshot: %w", err)
+	}
+	if err := json.Unmarshal(publicManifest, &publicValue); err != nil {
+		return fmt.Errorf("parse public manifest for web comparison: %w", err)
+	}
+	if !deepJSONEqual(webValue, publicValue) {
+		return errors.New("web manifest snapshot differs from the public release manifest")
+	}
 	return nil
+}
+
+func deepJSONEqual(left, right any) bool {
+	leftJSON, leftErr := json.Marshal(left)
+	rightJSON, rightErr := json.Marshal(right)
+	return leftErr == nil && rightErr == nil && bytes.Equal(leftJSON, rightJSON)
 }
 
 func readJSONL[T any](path string, validateCEGS bool) ([]T, error) {
@@ -429,25 +495,13 @@ func requireReference(label, reference string, available map[string]struct{}, op
 	return nil
 }
 
-// projectEvidence avoids changing the public domain type solely for verifier
-// concerns while still checking the embedded project evidence projection.
-func projectEvidence(project domain.Project) []*domain.Evidence {
-	seen := make(map[string]*domain.Evidence)
-	for _, score := range project.ScoreDetails {
-		for _, evidenceID := range score.EvidenceIDs {
-			if _, ok := seen[evidenceID]; !ok {
-				seen[evidenceID] = &domain.Evidence{ID: evidenceID}
-			}
+func requireUnique(label string, references []string) error {
+	seen := make(map[string]struct{}, len(references))
+	for _, reference := range references {
+		if _, duplicate := seen[reference]; duplicate {
+			return fmt.Errorf("%s contains duplicate id %s", label, reference)
 		}
+		seen[reference] = struct{}{}
 	}
-	for _, evidenceID := range project.EvidenceIDs {
-		if _, ok := seen[evidenceID]; !ok {
-			seen[evidenceID] = &domain.Evidence{ID: evidenceID}
-		}
-	}
-	result := make([]*domain.Evidence, 0, len(seen))
-	for _, evidence := range seen {
-		result = append(result, evidence)
-	}
-	return result
+	return nil
 }

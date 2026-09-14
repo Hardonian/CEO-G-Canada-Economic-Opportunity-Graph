@@ -71,6 +71,7 @@ func main() {
 	}
 	tradeMetrics, err := store.ListTradeMetrics(ctx, "CAN")
 	must(err)
+	sort.Slice(tradeMetrics, func(i, j int) bool { return tradeMetrics[i].ID < tradeMetrics[j].ID })
 	for _, metric := range tradeMetrics {
 		evidence, err := store.GetEvidence(ctx, metric.EvidenceID)
 		must(err)
