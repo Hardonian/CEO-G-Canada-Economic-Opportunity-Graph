@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"sort"
 	"sync"
 	"time"
 
@@ -219,8 +220,22 @@ func (p *Pipeline) Run(ctx context.Context) (*IngestionReport, error) {
 	}
 
 	// 5. Generate template-derived needs, evidence-backed signals, and
-	// versioned scores only after their persisted inputs are queryable.
+	// versioned scores once per final canonical record. Multiple authoritative
+	// adapters may have contributed to the same project during this run.
+	canonicalProjectIDs := make(map[string]struct{}, len(ingestedProjects))
 	for _, project := range ingestedProjects {
+		canonicalProjectIDs[project.ID] = struct{}{}
+	}
+	projectIDs := make([]string, 0, len(canonicalProjectIDs))
+	for projectID := range canonicalProjectIDs {
+		projectIDs = append(projectIDs, projectID)
+	}
+	sort.Strings(projectIDs)
+	for _, projectID := range projectIDs {
+		project, err := p.store.GetProject(ctx, projectID)
+		if err != nil {
+			return report, err
+		}
 		opportunities := propagation.PropagateOpportunities(project)
 		for _, opportunity := range opportunities {
 			if err := p.store.SaveOpportunity(ctx, opportunity); err != nil {

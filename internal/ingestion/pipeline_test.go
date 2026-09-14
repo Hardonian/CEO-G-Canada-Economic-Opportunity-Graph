@@ -18,6 +18,24 @@ type checkpointTestAdapter struct {
 	health     adapters.SourceHealth
 }
 
+type projectTestAdapter struct {
+	name    string
+	project *domain.Project
+	health  adapters.SourceHealth
+}
+
+func (a *projectTestAdapter) Name() string            { return a.name }
+func (a *projectTestAdapter) Tier() domain.SourceTier { return domain.SourceTier1 }
+func (a *projectTestAdapter) Health() *adapters.SourceHealth {
+	copy := a.health
+	return &copy
+}
+func (a *projectTestAdapter) Fetch(context.Context) ([]byte, error) { return []byte(a.name), nil }
+func (a *projectTestAdapter) Parse([]byte) (*adapters.IngestionResult, error) {
+	copy := *a.project
+	return &adapters.IngestionResult{Projects: []*domain.Project{&copy}}, nil
+}
+
 func newCheckpointTestAdapter(parseErr error) *checkpointTestAdapter {
 	return &checkpointTestAdapter{
 		payload:  []byte(`{"records":[{"id":"one"}]}`),
@@ -76,5 +94,30 @@ func TestSuccessfulPayloadAdvancesLastKnownGoodHash(t *testing.T) {
 
 	if adapter.parseCalls != 1 {
 		t.Fatalf("parse calls = %d, want 1 for an unchanged last-known-good payload", adapter.parseCalls)
+	}
+}
+
+func TestCanonicalProjectIsScoredOnceAfterMultiAdapterMerge(t *testing.T) {
+	store := database.NewMemoryStore()
+	first := &projectTestAdapter{name: "first", project: &domain.Project{
+		ID: "project-a", Slug: "shared-project", Name: "Shared Project", Sector: domain.SectorTransportation,
+		Province: "BC", CurrentStage: domain.StageProcurement, CapexCAD: 1_000_000_000,
+		CapexStatus: domain.ConfidenceReported, UpdatedAt: time.Date(2026, 1, 1, 0, 0, 0, 0, time.UTC),
+	}}
+	second := &projectTestAdapter{name: "second", project: &domain.Project{
+		ID: "project-b", Slug: "shared-project", Name: "Shared Project", Sector: domain.SectorTransportation,
+		Province: "BC", CurrentStage: domain.StageConstruction, CapexCAD: 1_000_000_000,
+		CapexStatus: domain.ConfidenceReported, UpdatedAt: time.Date(2026, 2, 1, 0, 0, 0, 0, time.UTC),
+	}}
+	pipeline := NewPipeline(store, []adapters.Adapter{first, second})
+	if _, err := pipeline.Run(context.Background()); err != nil {
+		t.Fatal(err)
+	}
+	history, err := store.ListScoreHistory(context.Background(), "project-a", "")
+	if err != nil {
+		t.Fatal(err)
+	}
+	if len(history) != 5 {
+		t.Fatalf("score history has %d records, want exactly one record for each of five dimensions", len(history))
 	}
 }

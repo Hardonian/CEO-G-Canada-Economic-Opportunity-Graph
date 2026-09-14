@@ -10,8 +10,8 @@
     "public/evidence.jsonl": "2efa0ddbcd31033bee38cd91a46e2001cebf99466dace30774a19191a7bd3450",
     "public/projects.csv": "81e9d3f0cbc1060f408c2fa9dfe74f61bfabe4323e7f278544dd8b6e2f1ad2ec",
     "public/projects.geojson": "d25beaca37cfd97fadb797443e16eb55018e098791887d47a81c60231f49f48c",
-    "public/projects.jsonl": "2d466a9526fea731d6a9af02f830c21834f3d5d37b642d23c12b009534fca7ea",
-    "public/scores.jsonl": "c3101fee00a5ebf1bc7794a34641b8a84f61382b8ba8e3998eae335db7bbdc27",
+    "public/projects.jsonl": "d44f7c87be3ef6790b081aa317d3a2d2f280918a7c979c4733c54479efd643e5",
+    "public/scores.jsonl": "3852dd1d36f3cdafec7ba81131b24e9ad3bd2dbc27ed8874e3a20ee0a99c0ea9",
     "public/trade_metrics.jsonl": "9c89c0c10ff0b0561542e4e9b587dc003cd0109ad3478bb15bab7f5d2ecd2ba2"
   },
   "coverage_note": "Coverage includes the 2025-2035 NRCan Major Projects Inventory point layer, curated primary-source project records, and credential-free World Bank Indicators API observations for Canada. Other registered trade sources remain explicitly marked as not yet ingested.",
@@ -43,7 +43,7 @@
     "evidence": 312,
     "organizations": 258,
     "projects": 296,
-    "scores": 1492,
+    "scores": 1480,
     "trade_metrics": 11
   },
   "source_mode": "OFFICIAL_SNAPSHOT_WITH_GLOBAL_TRADE",
