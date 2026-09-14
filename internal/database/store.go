@@ -78,5 +78,8 @@ type Store interface {
 	SaveEvidence(ctx context.Context, e *domain.Evidence) error
 	GetEvidence(ctx context.Context, id string) (*domain.Evidence, error)
 
+	SaveTradeMetric(ctx context.Context, metric *domain.TradeMetric) error
+	ListTradeMetrics(ctx context.Context, geography string) ([]*domain.TradeMetric, error)
+
 	GetRadarStats(ctx context.Context) (*RadarStats, error)
 }

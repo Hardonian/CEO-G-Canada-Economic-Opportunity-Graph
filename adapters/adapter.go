@@ -37,6 +37,7 @@ type IngestionResult struct {
 	Relationships []*domain.Relationship
 	Procurements  []*domain.Procurement
 	CapitalItems  []*domain.CapitalItem
+	TradeMetrics  []*domain.TradeMetric
 	Evidence      []*domain.Evidence
 }
 

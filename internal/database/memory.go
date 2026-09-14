@@ -33,6 +33,7 @@ type MemoryStore struct {
 	signals        map[string]*domain.Signal
 	opportunities  map[string]*domain.Opportunity
 	evidence       map[string]*domain.Evidence
+	tradeMetrics   map[string]*domain.TradeMetric
 	slugIndex      map[string]string                 // slug -> project ID
 	entityNameIndex map[string]string               // normalized name -> entity ID
 	publishers                map[string]*domain.Publisher
@@ -70,6 +71,7 @@ func NewMemoryStore() *MemoryStore {
 		signals:        make(map[string]*domain.Signal),
 		opportunities:  make(map[string]*domain.Opportunity),
 		evidence:       make(map[string]*domain.Evidence),
+		tradeMetrics:   make(map[string]*domain.TradeMetric),
 		publishers:              make(map[string]*domain.Publisher),
 		publisherPolicies:       make(map[string]*domain.PublisherPolicy),
 		sources:                 make(map[string]*domain.Source),
@@ -611,6 +613,37 @@ func (m *MemoryStore) GetEvidence(ctx context.Context, id string) (*domain.Evide
 		return nil, ErrNotFound
 	}
 	return e, nil
+}
+
+func (m *MemoryStore) SaveTradeMetric(ctx context.Context, metric *domain.TradeMetric) error {
+	if metric == nil || metric.ID == "" || metric.Geography == "" || metric.MetricCode == "" || metric.EvidenceID == "" {
+		return fmt.Errorf("invalid trade metric")
+	}
+	m.mu.Lock()
+	defer m.mu.Unlock()
+	if _, ok := m.evidence[metric.EvidenceID]; !ok {
+		return fmt.Errorf("trade metric evidence %q: %w", metric.EvidenceID, ErrNotFound)
+	}
+	m.tradeMetrics[metric.ID] = metric
+	return nil
+}
+
+func (m *MemoryStore) ListTradeMetrics(ctx context.Context, geography string) ([]*domain.TradeMetric, error) {
+	m.mu.RLock()
+	defer m.mu.RUnlock()
+	metrics := make([]*domain.TradeMetric, 0, len(m.tradeMetrics))
+	for _, metric := range m.tradeMetrics {
+		if geography == "" || metric.Geography == geography {
+			metrics = append(metrics, metric)
+		}
+	}
+	sort.Slice(metrics, func(i, j int) bool {
+		if metrics[i].MetricCode == metrics[j].MetricCode {
+			return metrics[i].ReferencePeriod > metrics[j].ReferencePeriod
+		}
+		return metrics[i].MetricCode < metrics[j].MetricCode
+	})
+	return metrics, nil
 }
 
 func (m *MemoryStore) GetRadarStats(ctx context.Context) (*RadarStats, error) {
