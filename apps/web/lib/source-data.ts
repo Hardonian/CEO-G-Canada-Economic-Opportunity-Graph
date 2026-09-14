@@ -179,6 +179,10 @@ function normalizeSource(value: unknown): PublicSource | null {
   const evidenceRecordCount = value.evidence_record_count === undefined
     ? undefined
     : nonNegativeInteger(value.evidence_record_count);
+  const integrationStatus = value.integration_status === "EVIDENCE_LINKED" || value.integration_status === "REGISTERED_NOT_INGESTED"
+    ? value.integration_status
+    : undefined;
+  const authenticationRequired = typeof value.authentication_required === "boolean" ? value.authentication_required : undefined;
 
   if (
     !id ||
@@ -240,6 +244,8 @@ function normalizeSource(value: unknown): PublicSource | null {
     coverage_class: coverageClass,
     description,
     evidence_record_count: evidenceRecordCount,
+    integration_status: integrationStatus,
+    authentication_required: authenticationRequired,
   };
 }
 
@@ -442,7 +448,7 @@ export function getSnapshotCoverage(): SourceCoverageReport {
     lifecycle_counts: {
       discovered: VETTED_SOURCES.length,
       registered: VETTED_SOURCES.length,
-      tested: VETTED_SOURCES.length,
+      tested: VETTED_SOURCES.filter((source) => source.last_success_at).length,
       active,
       broken,
     },
@@ -456,6 +462,7 @@ export function getSnapshotCoverage(): SourceCoverageReport {
       "The bundled snapshot is a reviewed planning dataset, not a complete census of every Canadian economic project.",
       "Publisher availability is independent of snapshot integrity and may change between checks.",
       "Procurement coverage is not yet represented as a live, complete CanadaBuys feed.",
+      "Registered global trade and supply-chain services are not yet joined to project scores or represented as active ingestion.",
     ],
   };
 }

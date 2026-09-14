@@ -199,6 +199,8 @@ export interface PublicSource {
   coverage_class: string;
   description: string;
   evidence_record_count?: number;
+  integration_status?: "EVIDENCE_LINKED" | "REGISTERED_NOT_INGESTED";
+  authentication_required?: boolean;
 }
 
 export interface SourceListResponse {
