@@ -113,7 +113,18 @@ export function LocalizedContent({ children }: { children: ReactNode }) {
     const observer = new MutationObserver((mutations) => {
       if (applying) return;
       for (const mutation of mutations) {
-        if (mutation.type === "characterData") apply(mutation.target);
+        if (mutation.type === "characterData") {
+          const textNode = mutation.target as Text;
+          const source = textSources.current.get(textNode);
+          const expected = source === undefined ? undefined : translateText(source, language);
+          // A React/state update changed this node: adopt the new English value
+          // as its source. Observer callbacks caused by our own translation keep
+          // the existing source because the current value already matches.
+          if (expected !== undefined && textNode.nodeValue !== expected) {
+            textSources.current.set(textNode, textNode.nodeValue ?? "");
+          }
+          apply(textNode);
+        }
         for (const node of mutation.addedNodes) apply(node);
       }
     });

@@ -2,7 +2,9 @@ import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
   reactStrictMode: true,
-  output: "standalone",
+  // Windows developer machines commonly reject pnpm's traced symlink layout.
+  // Linux/Docker keeps the self-contained standalone package used in sovereign deployments.
+  output: process.platform === "win32" ? undefined : "standalone",
   poweredByHeader: false,
   compress: true,
   async headers() {
