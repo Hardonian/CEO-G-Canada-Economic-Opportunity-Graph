@@ -15,6 +15,7 @@ ID,Slug,Name,Sector,Subsector,Province,Location,Stage,CapexCAD,CapexStatus,Build
 12ed5de3-38a9-50b5-a5ff-aad1cdb1bcea,river-valley-palladium,River Valley Palladium,Mining & Metals,Mining & mineral development,ON,30 km N of Warren,ANNOUNCED,268700000,REPORTED,20.0,15.0,REPORTED
 1332203b-002f-5c28-98e4-82dd3f880b97,upper-beaver,Upper Beaver,Mining & Metals,Mining & mineral development,ON,Kirkland Lake,ANNOUNCED,900000000,REPORTED,20.0,15.0,REPORTED
 14ab6ba7-f3f4-507a-9c28-26ae2b4d29ff,gething-coal-project,Gething Coal Project,Mining & Metals,Mining & mineral development,BC,Hudson Hope,ANNOUNCED,1360000000,REPORTED,20.0,15.0,REPORTED
+153e3a12-cbaf-582f-b1dd-7ff7c5b0046a,syncrude-mildred-lake-extension-153e3a12cbaf,Syncrude Mildred Lake Extension,Energy & Fuels,Energy infrastructure,AB,Mildred Lake,CONSTRUCTION,3300000000,REPORTED,95.0,15.0,REPORTED
 15915161-8f3e-5a77-9a22-9998c8505382,shaakichiuwaanaan,Shaakichiuwaanaan,Mining & Metals,Mining & mineral development,QC,Eeyou Istchee Baie-James,ANNOUNCED,1373500000,REPORTED,20.0,15.0,REPORTED
 1602f9c4-15bd-54cc-aff2-c2c6b3ac4113,marban-project-prev-marban-alliance,Marban Project (prev. Marban Alliance),Mining & Metals,Mining & mineral development,QC,Val-d'Or,ANNOUNCED,435100000,REPORTED,20.0,15.0,REPORTED
 17a48f6b-a793-5273-92ad-75fba2b38dca,biofuel-facility,Biofuel Facility,Clean Energy & Grid,Bioenergy,BC,Prince George,ANNOUNCED,70000000,REPORTED,20.0,15.0,REPORTED
@@ -76,7 +77,7 @@ ID,Slug,Name,Sector,Subsector,Province,Location,Stage,CapexCAD,CapexStatus,Build
 4fcfddf1-35ec-562d-9e94-d97d9a0a25ab,benjamin-mills-wind-project,Benjamin Mills Wind Project,Clean Energy & Grid,Wind,NS,"Dalmouth, Nova Scotia",CONSTRUCTION,68000000,REPORTED,95.0,15.0,REPORTED
 52cb6081-1b39-53ed-8085-aa686522e36a,heidelberg-materials-carbon-capture-utilization-and-storage-hub,Heidelberg Materials Carbon Capture Utilization and Storage Hub,Clean Energy & Grid,Carbon Capture and Storage,AB,Edmonton,ANNOUNCED,1360000000,REPORTED,20.0,15.0,REPORTED
 52f1553a-328a-5878-9d45-93cd62e65faa,jurassic-solar-and-battery-storage,Jurassic Solar and Battery Storage,Clean Energy & Grid,Solar,AB,Cypress County,CONSTRUCTION,500000000,REPORTED,95.0,15.0,REPORTED
-5384a2be-d2d0-593f-9278-7d6a6198015b,syncrude-mildred-lake-extension,Syncrude Mildred Lake Extension,Energy & Fuels,Energy infrastructure,AB,Mildred Lake,CONSTRUCTION,3300000000,REPORTED,95.0,15.0,REPORTED
+5384a2be-d2d0-593f-9278-7d6a6198015b,syncrude-mildred-lake-extension,Syncrude (Mildred Lake Extension),Energy & Fuels,Energy infrastructure,AB,Regional Municipality of Wood Buffalo (RMWB),CONSTRUCTION,3300000000,REPORTED,95.0,15.0,REPORTED
 54b4c5f4-8507-5b71-bee3-ccc9c30786f2,asphalt-shingle-reprocessing-facility,Asphalt Shingle Reprocessing Facility,Energy & Fuels,Energy infrastructure,AB,Rocky View County,CONSTRUCTION,15000000,REPORTED,95.0,15.0,REPORTED
 54b9c099-75fa-5681-a537-0df7078f13e3,peace-river-arch-lithium-project,Peace River Arch Lithium Project,Mining & Metals,Mining & mineral development,AB,Northern Sunrise County,ANNOUNCED,400000000,REPORTED,20.0,15.0,REPORTED
 557bc3d2-991f-5ae7-9928-756a065700d3,deep-fox-foxtrot,Deep Fox + Foxtrot,Mining & Metals,Mining & mineral development,NL,Port Hope Simpson,ANNOUNCED,421800000,REPORTED,20.0,15.0,REPORTED
@@ -87,6 +88,7 @@ ID,Slug,Name,Sector,Subsector,Province,Location,Stage,CapexCAD,CapexStatus,Build
 5d5a83b2-804d-5110-8d84-6c364f2d3a87,dauphin-vermillion-230kv-stn-capacity-in,Dauphin Vermillion 230kV Stn Capacity In,Clean Energy & Grid,Hydro,MB,Dauphin,CONSTRUCTION,21900000,REPORTED,95.0,15.0,REPORTED
 5ec039c6-8498-58de-8027-44535b04c050,bassano-435s-der-solar,Bassano 435S DER Solar,Clean Energy & Grid,Solar,AB,Newell County,ANNOUNCED,15000000,REPORTED,20.0,15.0,REPORTED
 61d14600-200b-5e61-9ec6-e6717402bd41,projet-galaxy-lithium,Projet Galaxy Lithium,Mining & Metals,Mining & mineral development,QC,Eeyou Istchee Baie-James,ANNOUNCED,508700000,REPORTED,20.0,15.0,REPORTED
+62024f04-d4ab-53b2-9567-7c55ed38e753,mill-upgrade-62024f04d4ab,Mill upgrade,Forestry & Bioeconomy,Forest products,BC,Armstrong,ANNOUNCED,35000000,REPORTED,20.0,15.0,REPORTED
 62ec8d4f-3874-5ee0-96f7-779d4c84b7ba,blackrock-mine,BlackRock - Mine,Mining & Metals,Mining & mineral development,QC,Eeyou Istchee Baie-James,ANNOUNCED,373000000,REPORTED,20.0,15.0,REPORTED
 63200eb7-3f9b-556d-a356-cf2262ed1eda,eagle-s-nest-mcfaulds-lake,Eagle's Nest (McFaulds Lake),Mining & Metals,Mining & mineral development,ON,Webequie,ANNOUNCED,609000000,REPORTED,20.0,15.0,REPORTED
 63e7a961-d4b6-5ad4-97f2-db964897f41b,fibre-pontiac-the-biomass-conversion-centre,Fibre Pontiac (The Biomass Conversion Centre),Clean Energy & Grid,Bioenergy,QC,Pontiac,ANNOUNCED,120000000,REPORTED,20.0,15.0,REPORTED
@@ -183,7 +185,7 @@ b2a137a8-764c-5e3c-a252-5b2c966eb4ec,jackfish,Jackfish,Energy & Fuels,Energy inf
 b2ba0fb9-27b5-5a17-b683-c5d6e164aef9,mill-modernisation,Mill modernisation,Forestry & Bioeconomy,Forest products,QC,Val-d'Or,CONSTRUCTION,310000000,REPORTED,95.0,15.0,REPORTED
 b3572f90-cdfb-5f2d-aba9-15cc930f221c,goldboro-gold,Goldboro Gold,Mining & Metals,Mining & mineral development,NS,Goldboro,ANNOUNCED,271000000,REPORTED,20.0,15.0,REPORTED
 b4cac3c0-8376-53f6-8f2d-19318b8bf7ba,tilbury-lng-phase-1b,Tilbury LNG Phase 1B,Energy & Fuels,Energy infrastructure,BC,Delta,ANNOUNCED,60000000,REPORTED,20.0,15.0,REPORTED
-b4d5fb72-31a9-51a1-bb07-3898a9616e98,mill-upgrade,Mill upgrade,Forestry & Bioeconomy,Forest products,BC,Armstrong,ANNOUNCED,35000000,REPORTED,20.0,15.0,REPORTED
+b4d5fb72-31a9-51a1-bb07-3898a9616e98,mill-upgrade,Mill upgrade,Forestry & Bioeconomy,Forest products,BC,Castlegar,CONSTRUCTION,50000000,REPORTED,95.0,15.0,REPORTED
 b534d4e5-a6cb-513a-a066-273ffee375b8,downtown-vancouver-electricity-supply-west-end-strategic-property-purchase,Downtown Vancouver Electricity Supply - West End Strategic Property Purchase,Energy & Fuels,Energy infrastructure,BC,Vancouver,CONSTRUCTION,81000000,REPORTED,95.0,15.0,REPORTED
 b639e79e-2832-57c2-ae4c-6178a87cb079,fording-river-castle-expansion,Fording River Castle Expansion,Mining & Metals,Mining & mineral development,BC,Elkford,ANNOUNCED,2290000000,REPORTED,20.0,15.0,REPORTED
 b6c7138c-7731-5109-bc58-d42675e734ef,fort-providence-and-kakisa-transmission-line,Fort Providence and Kakisa Transmission Line,Energy & Fuels,Energy infrastructure,NT,Highway 2/5 juction to Fort Providence,ANNOUNCED,60000000,REPORTED,20.0,15.0,REPORTED

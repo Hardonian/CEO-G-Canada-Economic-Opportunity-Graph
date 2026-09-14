@@ -81,7 +81,7 @@ export default function CEGSAdoptPage() {
           <div className="p-4 rounded-xl bg-surface border border-borderSubtle space-y-2">
             <div className="font-bold text-gold text-sm">Step 3: Ingest & Federate</div>
             <p className="text-text-muted text-[11px] leading-relaxed">
-              Publish compliant JSONL datasets or consume live CEGS feeds directly into CanadaOpportunityGraph or custom institutional pipelines.
+              Publish compliant JSONL datasets or consume versioned CEGS snapshot and API exports in institutional pipelines.
             </p>
           </div>
         </div>

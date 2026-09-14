@@ -50,6 +50,11 @@ func main() {
 		log.Println("[INFO] Shutdown signal received during initial ingestion")
 		return
 	}
+	stats, statsErr := store.GetRadarStats(processContext)
+	if statsErr != nil || stats == nil || stats.TotalProjects == 0 {
+		log.Fatalf("[FATAL] Authoritative snapshot bootstrap produced no usable projects")
+	}
+	log.Printf("[INFO] Runtime configuration: %s", cfg)
 
 	server, err := api.NewServerWithOptions(store, api.Options{
 		AllowedOrigins:      cfg.CORSOrigins,

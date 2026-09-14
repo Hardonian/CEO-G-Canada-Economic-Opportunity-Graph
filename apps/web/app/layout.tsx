@@ -1,4 +1,5 @@
 import type { Metadata, Viewport } from "next";
+import Script from "next/script";
 import "./globals.css";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
@@ -28,14 +29,10 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en-CA" data-language="en" className="dark" suppressHydrationWarning>
-      <head>
-        <script
-          dangerouslySetInnerHTML={{
-            __html: `(function(){try{var l=localStorage.getItem('cog-language');if(l!=='fr'&&l!=='en'){l=(document.cookie.match(/(?:^|; )cog-language=(en|fr)/)||[])[1]}if(l==='fr'){document.documentElement.lang='fr-CA';document.documentElement.dataset.language='fr'}}catch(e){}})();`,
-          }}
-        />
-      </head>
       <body className="flex min-h-screen flex-col bg-background text-text-main antialiased">
+        <Script id="language-bootstrap" strategy="beforeInteractive">
+          {`(function(){try{var l=localStorage.getItem('cog-language');if(l!=='fr'&&l!=='en'){l=(document.cookie.match(/(?:^|; )cog-language=(en|fr)/)||[])[1]}if(l==='fr'){document.documentElement.lang='fr-CA';document.documentElement.dataset.language='fr'}}catch(e){}})();`}
+        </Script>
         <LanguageProvider>
           <LocalizedContent>
             <a href="#main-content" className="skip-link">

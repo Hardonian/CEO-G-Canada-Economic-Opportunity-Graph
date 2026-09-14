@@ -106,6 +106,10 @@ func main() {
 	for _, item := range evidence {
 		cegsEvidence = append(cegsEvidence, cegs.ToCEGSEvidence(item))
 	}
+	sort.Slice(cegsProjects, func(i, j int) bool { return cegsProjects[i].ID < cegsProjects[j].ID })
+	sort.Slice(cegsOrgs, func(i, j int) bool { return cegsOrgs[i].ID < cegsOrgs[j].ID })
+	sort.Slice(cegsEvents, func(i, j int) bool { return cegsEvents[i].ID < cegsEvents[j].ID })
+	sort.Slice(cegsEvidence, func(i, j int) bool { return cegsEvidence[i].ID < cegsEvidence[j].ID })
 
 	files := map[string][]byte{}
 	files["public/projects.jsonl"] = mustJSONL(projects)

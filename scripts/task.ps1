@@ -15,6 +15,7 @@ function Show-Help {
     Write-Host "  build           - Build all Go binaries (cog, api, worker)"
     Write-Host "  test            - Run all Go unit and integration tests"
     Write-Host "  cegs-validate   - Validate all spec schemas, examples, and public datasets"
+    Write-Host "  release-check   - Verify release hashes, counts, ordering, and references"
     Write-Host "  seed            - Ingest authoritative adapters and generate public snapshots"
     Write-Host "  demo            - Run instant deterministic demo via CLI"
     Write-Host "  api             - Run the REST API server on :8080"
@@ -34,7 +35,7 @@ switch ($Target.ToLower()) {
     }
     "test" {
         Write-Host "[TEST] Running Go test suite with race detector..." -ForegroundColor Cyan
-        go test -v ./internal/... ./adapters/...
+        go test -v -race ./...
     }
     "cegs-validate" {
         Write-Host "[CEGS] Validating all specification examples and public manifests..." -ForegroundColor Cyan
@@ -50,6 +51,11 @@ switch ($Target.ToLower()) {
     "seed" {
         Write-Host "[SEED] Generating public datasets..." -ForegroundColor Cyan
         go run ./scripts/generate_datasets.go
+        pnpm --dir apps/web snapshot:generate
+    }
+    "release-check" {
+        Write-Host "[RELEASE] Verifying hashes, ordering, and graph references..." -ForegroundColor Cyan
+        go run ./cmd/releasecheck
     }
     "demo" {
         Write-Host "[DEMO] Running deterministic demo..." -ForegroundColor Cyan
@@ -62,6 +68,7 @@ switch ($Target.ToLower()) {
     "web-build" {
         Write-Host "[WEB] Building Next.js frontend..." -ForegroundColor Cyan
         Set-Location "apps/web"
+        pnpm typecheck
         pnpm build
         Set-Location "../.."
     }
@@ -74,10 +81,12 @@ switch ($Target.ToLower()) {
     "verify" {
         Write-Host "=== CanadaOpportunityGraph Full Verification Suite ===" -ForegroundColor Cyan
         & $PSCommandPath build
-        & $PSCommandPath test
         & $PSCommandPath seed
+        & $PSCommandPath test
+        & $PSCommandPath release-check
         & $PSCommandPath cegs-validate
         & $PSCommandPath demo
+        & $PSCommandPath web-build
         Write-Host "=== VERIFICATION COMPLETE: ALL GATES PASSED ===" -ForegroundColor Green
     }
     default {

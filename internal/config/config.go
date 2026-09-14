@@ -18,13 +18,14 @@ const (
 	defaultRateLimitBurst     = 100
 )
 
-// Config holds validated runtime configuration values. Secrets such as
-// DatabaseURL must never be included in logs; use SafeSummary for diagnostics.
+// Config holds validated runtime configuration values. The shipped runtime is
+// an immutable-snapshot service; unsupported persistence settings fail closed
+// rather than creating the appearance of durable storage.
 type Config struct {
 	Env                  string
 	BindAddress          string
 	Port                 int
-	DatabaseURL          string `json:"-"`
+	StorageMode          string
 	LogLevel             string
 	CORSOrigin           string // Raw, backwards-compatible CORS setting.
 	CORSOrigins          []string
@@ -45,14 +46,13 @@ type Config struct {
 	InitialIngestTimeout time.Duration
 }
 
-// RuntimeSummary is safe to emit to application logs. It deliberately reports
-// only whether a database is configured, never its URL, credentials, or query.
+// RuntimeSummary is safe to emit to application logs.
 type RuntimeSummary struct {
 	Environment        string   `json:"environment"`
 	ListenAddress      string   `json:"listen_address"`
 	PublicURL          string   `json:"public_url"`
 	CORSOrigins        []string `json:"cors_origins"`
-	DatabaseConfigured bool     `json:"database_configured"`
+	StorageMode        string   `json:"storage_mode"`
 	HSTS               bool     `json:"hsts"`
 	RateLimitPerMinute int      `json:"rate_limit_per_minute"`
 	RateLimitBurst     int      `json:"rate_limit_burst"`
@@ -75,7 +75,10 @@ func LoadValidated() (*Config, error) {
 	cfg := defaults()
 	cfg.Env = strings.ToLower(strings.TrimSpace(getEnv("ENV", cfg.Env)))
 	cfg.BindAddress = strings.TrimSpace(getEnv("BIND_ADDRESS", cfg.BindAddress))
-	cfg.DatabaseURL = getEnv("DATABASE_URL", "")
+	cfg.StorageMode = strings.ToLower(strings.TrimSpace(getEnv("STORAGE_MODE", cfg.StorageMode)))
+	if strings.TrimSpace(os.Getenv("DATABASE_URL")) != "" {
+		return nil, fmt.Errorf("DATABASE_URL is not supported by this snapshot runtime; unset it instead of assuming writes are durable")
+	}
 	cfg.LogLevel = strings.ToLower(strings.TrimSpace(getEnv("LOG_LEVEL", cfg.LogLevel)))
 	cfg.PublicURL = strings.TrimSpace(getEnv("PUBLIC_URL", cfg.PublicURL))
 
@@ -167,6 +170,9 @@ func LoadValidated() (*Config, error) {
 	if !oneOf(cfg.LogLevel, "debug", "info", "warn", "error") {
 		return nil, fmt.Errorf("LOG_LEVEL must be one of debug, info, warn, or error")
 	}
+	if cfg.StorageMode != "snapshot" {
+		return nil, fmt.Errorf("STORAGE_MODE must be snapshot; no durable database adapter is shipped")
+	}
 	if err := validateHTTPOrigin(cfg.PublicURL); err != nil {
 		return nil, fmt.Errorf("PUBLIC_URL: %w", err)
 	}
@@ -179,6 +185,7 @@ func defaults() *Config {
 		Env:                  "development",
 		BindAddress:          "0.0.0.0",
 		Port:                 defaultPort,
+		StorageMode:          "snapshot",
 		LogLevel:             "info",
 		CORSOrigin:           "*",
 		CORSOrigins:          []string{"*"},
@@ -208,24 +215,22 @@ func (c *Config) SafeSummary() RuntimeSummary {
 		ListenAddress:      c.ListenAddress(),
 		PublicURL:          c.PublicURL,
 		CORSOrigins:        append([]string(nil), c.CORSOrigins...),
-		DatabaseConfigured: strings.TrimSpace(c.DatabaseURL) != "",
+		StorageMode:        c.StorageMode,
 		HSTS:               c.EnableHSTS,
 		RateLimitPerMinute: c.RateLimitPerMinute,
 		RateLimitBurst:     c.RateLimitBurst,
 	}
 }
 
-// String and GoString prevent common formatted logging from exposing
-// DatabaseURL. Callers needing the full configuration should access fields
-// explicitly and keep secret-bearing values out of logs.
+// String and GoString keep formatted logging limited to the safe summary.
 func (c Config) String() string {
 	summary := c.SafeSummary()
-	return fmt.Sprintf("{environment:%q listen_address:%q public_url:%q cors_origins:%q database_configured:%t hsts:%t rate_limit_per_minute:%d rate_limit_burst:%d}",
+	return fmt.Sprintf("{environment:%q listen_address:%q public_url:%q cors_origins:%q storage_mode:%q hsts:%t rate_limit_per_minute:%d rate_limit_burst:%d}",
 		summary.Environment,
 		summary.ListenAddress,
 		summary.PublicURL,
 		summary.CORSOrigins,
-		summary.DatabaseConfigured,
+		summary.StorageMode,
 		summary.HSTS,
 		summary.RateLimitPerMinute,
 		summary.RateLimitBurst,

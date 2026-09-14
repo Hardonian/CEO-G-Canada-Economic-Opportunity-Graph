@@ -296,11 +296,22 @@ func TestReadinessChecksStoreAndMetricsFailClosed(t *testing.T) {
 		}
 	}
 
-	readyServer := mustServer(t, database.NewMemoryStore(), testOptions())
+	emptyServer := mustServer(t, database.NewMemoryStore(), testOptions())
 	response := httptest.NewRecorder()
+	emptyServer.ServeHTTP(response, httptest.NewRequest(http.MethodGet, "/ready", nil))
+	if response.Code != http.StatusServiceUnavailable {
+		t.Fatalf("empty-store readiness status = %d, body = %s", response.Code, response.Body.String())
+	}
+
+	readyStore := database.NewMemoryStore()
+	if err := readyStore.SaveProject(context.Background(), &domain.Project{ID: "project-1", Slug: "project-1"}); err != nil {
+		t.Fatal(err)
+	}
+	readyServer := mustServer(t, readyStore, testOptions())
+	response = httptest.NewRecorder()
 	readyServer.ServeHTTP(response, httptest.NewRequest(http.MethodGet, "/ready", nil))
 	if response.Code != http.StatusOK {
-		t.Fatalf("ready status = %d, body = %s", response.Code, response.Body.String())
+		t.Fatalf("populated-store readiness status = %d, body = %s", response.Code, response.Body.String())
 	}
 }
 

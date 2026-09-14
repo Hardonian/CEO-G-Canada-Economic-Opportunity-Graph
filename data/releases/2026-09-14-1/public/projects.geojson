@@ -395,6 +395,32 @@
       "type": "Feature",
       "geometry": {
         "coordinates": [
+          -111.58510376639647,
+          57.04521839482405
+        ],
+        "type": "Point"
+      },
+      "properties": {
+        "capex_cad": 3300000000,
+        "current_stage": "CONSTRUCTION",
+        "id": "153e3a12-cbaf-582f-b1dd-7ff7c5b0046a",
+        "name": "Syncrude Mildred Lake Extension",
+        "province": "AB",
+        "scores": {
+          "buildability": 95,
+          "investability": 75,
+          "strategicity": 20,
+          "supplierability": 66.7,
+          "trade_resilience": 68.6
+        },
+        "sector": "Energy \u0026 Fuels",
+        "slug": "syncrude-mildred-lake-extension-153e3a12cbaf"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "coordinates": [
           -73.89710255296305,
           53.53961035327812
         ],
@@ -1981,8 +2007,8 @@
       "type": "Feature",
       "geometry": {
         "coordinates": [
-          -111.58510376639647,
-          57.04521839482405
+          -110.84681502112532,
+          55.639007409698884
         ],
         "type": "Point"
       },
@@ -1990,7 +2016,7 @@
         "capex_cad": 3300000000,
         "current_stage": "CONSTRUCTION",
         "id": "5384a2be-d2d0-593f-9278-7d6a6198015b",
-        "name": "Syncrude Mildred Lake Extension",
+        "name": "Syncrude (Mildred Lake Extension)",
         "province": "AB",
         "scores": {
           "buildability": 95,
@@ -2261,6 +2287,32 @@
         },
         "sector": "Mining \u0026 Metals",
         "slug": "projet-galaxy-lithium"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "coordinates": [
+          -119.19701509951295,
+          50.44770612210984
+        ],
+        "type": "Point"
+      },
+      "properties": {
+        "capex_cad": 35000000,
+        "current_stage": "ANNOUNCED",
+        "id": "62024f04-d4ab-53b2-9567-7c55ed38e753",
+        "name": "Mill upgrade",
+        "province": "BC",
+        "scores": {
+          "buildability": 20,
+          "investability": 50,
+          "strategicity": 20,
+          "supplierability": 47.9,
+          "trade_resilience": 68.6
+        },
+        "sector": "Forestry \u0026 Bioeconomy",
+        "slug": "mill-upgrade-62024f04d4ab"
       }
     },
     {
@@ -4737,22 +4789,22 @@
       "type": "Feature",
       "geometry": {
         "coordinates": [
-          -119.19701509951295,
-          50.44770612210984
+          -117.73701652415909,
+          49.33563122565679
         ],
         "type": "Point"
       },
       "properties": {
-        "capex_cad": 35000000,
-        "current_stage": "ANNOUNCED",
+        "capex_cad": 50000000,
+        "current_stage": "CONSTRUCTION",
         "id": "b4d5fb72-31a9-51a1-bb07-3898a9616e98",
         "name": "Mill upgrade",
         "province": "BC",
         "scores": {
-          "buildability": 20,
-          "investability": 50,
+          "buildability": 95,
+          "investability": 61.7,
           "strategicity": 20,
-          "supplierability": 47.9,
+          "supplierability": 66.7,
           "trade_resilience": 68.6
         },
         "sector": "Forestry \u0026 Bioeconomy",

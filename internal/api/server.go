@@ -378,7 +378,7 @@ func (s *Server) handleReady(w http.ResponseWriter, r *http.Request) {
 	ctx, cancel := context.WithTimeout(r.Context(), s.readinessTimeout)
 	defer cancel()
 	stats, err := s.store.GetRadarStats(ctx)
-	if err != nil || stats == nil {
+	if err != nil || stats == nil || stats.TotalProjects == 0 || stats.DataStatus == domain.StatusUnavailable {
 		writeError(w, r, http.StatusServiceUnavailable, "not_ready", "The API data store is not ready.")
 		return
 	}

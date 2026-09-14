@@ -35,7 +35,7 @@ export default function MethodologyPage() {
               </span>
             </div>
             <p className="text-xs text-text-muted leading-relaxed">
-              Measures the objective probability that an announced major project will successfully reach operational completion without structural abandonment.
+              A deterministic readiness index built from observed project attributes. It is not a calibrated probability of completion.
             </p>
             <div className="space-y-1.5 text-xs font-mono">
               <div className="flex justify-between text-[11px] py-1 border-b border-borderSubtle">
@@ -154,7 +154,7 @@ export default function MethodologyPage() {
           <div className="p-4 rounded-xl bg-surface border border-borderSubtle space-y-2">
             <div className="text-aurora font-bold text-sm">Tier 1: Statutory Registries</div>
             <p className="text-text-muted text-[11px] leading-relaxed">
-              IAAC registry filings, CER decisions, Canadian Nuclear Safety Commission records, CanadaBuys contracts, and SEDAR+ audited disclosures.
+              Eligible examples include statutory registries and official contract or regulatory records. The current snapshot&apos;s actual coverage is listed in Sources and its release manifest.
             </p>
           </div>
           <div className="p-4 rounded-xl bg-surface border border-borderSubtle space-y-2">

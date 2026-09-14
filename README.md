@@ -5,7 +5,7 @@
 
 [![CEGS Standard](https://img.shields.io/badge/CEGS-0.1%20Compliant-00F2FE?style=flat-square&logo=json)](spec/cegs/README.md)
 [![License](https://img.shields.io/badge/license-Apache--2.0-blue.svg?style=flat-square)](LICENSE)
-[![Data License](https://img.shields.io/badge/data-CC--BY--4.0-green.svg?style=flat-square)](https://creativecommons.org/licenses/by/4.0/)
+[![Data Terms](https://img.shields.io/badge/data-source--specific-4ade80?style=flat-square)](DATA_SOURCES.md)
 [![Go Version](https://img.shields.io/badge/Go-1.24%2B-00ADD8?style=flat-square&logo=go)](cmd/)
 [![Next.js](https://img.shields.io/badge/Frontend-Next.js%2015-black?style=flat-square&logo=next.js)](apps/web/)
 
@@ -46,8 +46,8 @@ CEGS is an open, implementation-neutral data specification for representing Cana
        │  └───────────┬───────────┘  └───────────┬───────────┘  │
        │              ▼                          ▼              │
        │  ┌──────────────────────────────────────────────────┐  │
-       │  │        Append-Only Historical Event Ledger       │  │
-       │  │             (PostgreSQL / MemoryStore)           │  │
+       │  │       Evidence-linked Snapshot & Event Graph     │  │
+       │  │         (deterministic in-memory projection)     │  │
        │  └──────────────────────────────────────────────────┘  │
        └───────────────────────────┬────────────────────────────┘
                                    │
@@ -197,4 +197,4 @@ Base URL: `http://localhost:8080/api/v1`
 
 - **Software**: [Apache License 2.0](LICENSE)
 - **Specification (CEGS)**: [Creative Commons Attribution 4.0 International (CC BY 4.0)](spec/cegs/LICENSE)
-- **Public Datasets**: [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/) with attribution to *CanadaOpportunityGraph Consortium*.
+- **Public Datasets**: source-specific terms are retained. Government of Canada records use the Open Government Licence – Canada; World Bank observations generally use CC BY 4.0 plus the publisher's dataset terms. See [DATA_SOURCES.md](DATA_SOURCES.md) and each evidence record before redistribution.

@@ -1,4 +1,4 @@
-.PHONY: all bootstrap build test cegs-validate seed demo api worker web-build web-dev verify clean
+.PHONY: all bootstrap build test cegs-validate release-check seed demo api worker web-build web-dev verify clean
 
 all: build test
 
@@ -13,7 +13,7 @@ build:
 	go build -o bin/worker ./cmd/worker
 
 test:
-	go test -v -race ./internal/... ./adapters/...
+	go test -v -race ./...
 
 cegs-validate: build
 	go test -v ./internal/cegs -run TestSpecExamples
@@ -24,8 +24,12 @@ cegs-validate: build
 	./bin/cog cegs validate spec/cegs/examples/evidence.json
 	./bin/cog cegs validate data/cegs/manifest.json
 
+release-check:
+	go run ./cmd/releasecheck
+
 seed:
 	go run ./scripts/generate_datasets.go
+	cd apps/web && pnpm snapshot:generate
 
 demo: build
 	./bin/cog demo
@@ -37,12 +41,12 @@ worker:
 	go run ./cmd/worker
 
 web-build:
-	cd apps/web && pnpm build
+	cd apps/web && pnpm typecheck && pnpm build
 
 web-dev:
 	cd apps/web && pnpm dev
 
-verify: build test seed cegs-validate demo
+verify: build seed test release-check cegs-validate demo web-build
 	@echo "=== ALL VERIFICATION GATES PASSED ==="
 
 clean:

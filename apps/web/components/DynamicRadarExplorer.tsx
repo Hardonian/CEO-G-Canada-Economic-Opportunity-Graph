@@ -210,20 +210,20 @@ export default function DynamicRadarExplorer({ initialProjects }: DynamicRadarEx
                       <div className="flex items-center justify-between text-[11px] text-gold font-mono">
                         <span className="flex items-center gap-1 font-semibold">
                           <Zap className="h-3.5 w-3.5" />
-                          Derived Downstream Procurement Requirements
+                          Illustrative Downstream Requirements
                         </span>
-                        <span className="text-[10px] text-text-subtle">Deterministic Ontology</span>
+                        <span className="text-[10px] text-text-subtle">Scenario output · not a tender feed</span>
                       </div>
                       <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs">
                         <div className="p-2 rounded bg-card border border-borderSubtle">
-                          <div className="text-[10px] font-mono text-aurora">CONFIRMED TENDER</div>
-                          <div className="font-semibold text-text-main text-[11px] mt-0.5">Heavy Engineering EPC Package</div>
-                          <div className="text-[10px] text-text-subtle mt-0.5">$350M–$750M Est. Value</div>
+                          <div className="text-[10px] font-mono text-aurora">POTENTIAL REQUIREMENT</div>
+                          <div className="font-semibold text-text-main text-[11px] mt-0.5">Engineering and construction services</div>
+                          <div className="text-[10px] text-text-subtle mt-0.5">Confirm scope and value with the proponent</div>
                         </div>
                         <div className="p-2 rounded bg-card border border-borderSubtle">
                           <div className="text-[10px] font-mono text-gold">DERIVED INFRASTRUCTURE</div>
-                          <div className="font-semibold text-text-main text-[11px] mt-0.5">High-Voltage Substation & Interconnect</div>
-                          <div className="text-[10px] text-text-subtle mt-0.5">Mandatory grid tie-in requirement</div>
+                          <div className="font-semibold text-text-main text-[11px] mt-0.5">Site and utility infrastructure</div>
+                          <div className="text-[10px] text-text-subtle mt-0.5">Ontology-derived; not project-confirmed</div>
                         </div>
                       </div>
                     </div>
@@ -246,7 +246,8 @@ export default function DynamicRadarExplorer({ initialProjects }: DynamicRadarEx
   "capex": {
     "amount": proj.capex_cad,
     "currency": "CAD",
-    "epistemic_status": "VERIFIED"
+  "epistemic_status": proj.confidence,
+  "evidence_count": proj.evidence_ids.length
   },
   "conformance_tier": "CEGS Provenance"
 }, null, 2)}

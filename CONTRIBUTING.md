@@ -93,4 +93,4 @@ Requirements for new adapters:
 
 ## 5. Security & Responsible Disclosure
 
-If you discover a vulnerability or security flaw, please review our [Security Policy](file:///docs/SECURITY.md) and report it to `security@canadaopportunitygraph.ca`. Do not open public issues for security exploits.
+If you discover a vulnerability or security flaw, please review our [Security Policy](docs/SECURITY.md) and report it to `security@canadaopportunitygraph.ca`. Do not open public issues for security exploits.

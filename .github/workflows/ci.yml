@@ -1,0 +1,53 @@
+name: ci
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version-file: go.mod
+          cache: true
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 11.8.0
+          run_install: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+          cache-dependency-path: apps/web/pnpm-lock.yaml
+      - name: Install locked web dependencies
+        run: pnpm --dir apps/web install --frozen-lockfile
+      - name: Generate deterministic release and web projection
+        run: |
+          go run ./scripts/generate_datasets.go
+          pnpm --dir apps/web snapshot:generate
+      - name: Reject stale generated artifacts
+        run: git diff --exit-code
+      - name: Verify release graph
+        run: go run ./cmd/releasecheck
+      - name: Test Go with race detector
+        run: go test -race ./...
+      - name: Vet Go
+        run: go vet ./...
+      - name: Audit production web dependencies
+        run: pnpm --dir apps/web audit --prod --audit-level=moderate
+      - name: Typecheck and build web
+        run: |
+          pnpm --dir apps/web typecheck
+          pnpm --dir apps/web build

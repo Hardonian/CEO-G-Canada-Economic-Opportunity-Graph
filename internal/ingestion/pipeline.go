@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"sort"
+	"strings"
 	"sync"
 	"time"
 
@@ -121,15 +122,30 @@ func (p *Pipeline) Run(ctx context.Context) (*IngestionReport, error) {
 				proj.ProponentID = resolvedID
 			}
 
-			// Check if project already exists
-			existing, err := p.store.GetProjectBySlug(ctx, proj.Slug)
-			if err == nil && existing != nil {
-				// Record stage change event if progressed
-				if existing.CurrentStage != proj.CurrentStage {
-					eventTime := proj.LastMeaningfulUpdate
-					if eventTime.IsZero() {
-						eventTime = time.Now().UTC()
+			// Prefer canonical IDs. Slug fallback is allowed only when the
+			// province and resolved proponent also agree; names such as "Mill
+			// upgrade" are not globally unique project identities.
+			existing, err := p.store.GetProject(ctx, proj.ID)
+			if err != nil {
+				candidate, slugErr := p.store.GetProjectBySlug(ctx, proj.Slug)
+				if slugErr == nil && sameProjectIdentity(candidate, proj) {
+					existing = candidate
+				} else {
+					existing = nil
+					if slugErr == nil && candidate != nil {
+						proj.Slug = uniqueProjectSlug(proj.Slug, proj.ID)
 					}
+				}
+			}
+			if existing != nil {
+				// A cross-source disagreement is not a historical transition.
+				// Emit a stage event only when a newer, evidence-linked record
+				// advances the last meaningful observation.
+				if existing.CurrentStage != proj.CurrentStage &&
+					!proj.LastMeaningfulUpdate.IsZero() &&
+					proj.LastMeaningfulUpdate.After(existing.LastMeaningfulUpdate) &&
+					len(proj.EvidenceIDs) > 0 {
+					eventTime := proj.LastMeaningfulUpdate
 					ev := &domain.Event{
 						ID:            identity.StableID("event", "stage-change", existing.ID+":"+string(existing.CurrentStage)+":"+string(proj.CurrentStage)+":"+eventTime.Format(time.RFC3339Nano)),
 						ProjectID:     existing.ID,
@@ -138,7 +154,8 @@ func (p *Pipeline) Run(ctx context.Context) (*IngestionReport, error) {
 						PreviousStage: &existing.CurrentStage,
 						NewStage:      &proj.CurrentStage,
 						Title:         fmt.Sprintf("Stage updated to %s", proj.CurrentStage),
-						Description:   fmt.Sprintf("Project progressed from %s to %s.", existing.CurrentStage, proj.CurrentStage),
+						Description:   fmt.Sprintf("Newer source evidence reports a stage change from %s to %s.", existing.CurrentStage, proj.CurrentStage),
+						EvidenceID:    proj.EvidenceIDs[0],
 						CreatedAt:     eventTime,
 					}
 					if err := p.store.SaveEvent(ctx, ev); err != nil {
@@ -303,4 +320,35 @@ func (p *Pipeline) Run(ctx context.Context) (*IngestionReport, error) {
 		return report, errors.Join(runErrors...)
 	}
 	return report, nil
+}
+
+func sameProjectIdentity(existing, incoming *domain.Project) bool {
+	if existing == nil || incoming == nil {
+		return false
+	}
+	if existing.ID == incoming.ID {
+		return true
+	}
+	for key, existingValue := range existing.ExternalIDs {
+		if existingValue != "" && incoming.ExternalIDs[key] == existingValue {
+			return true
+		}
+	}
+	return existing.Province != "" && existing.Province == incoming.Province &&
+		existing.ProponentID != "" && existing.ProponentID == incoming.ProponentID
+}
+
+func uniqueProjectSlug(base, id string) string {
+	suffix := strings.ReplaceAll(strings.ToLower(id), "-", "")
+	if len(suffix) > 12 {
+		suffix = suffix[:12]
+	}
+	if suffix == "" {
+		suffix = "distinct"
+	}
+	base = strings.Trim(strings.TrimSpace(base), "-")
+	if base == "" {
+		base = "project"
+	}
+	return base + "-" + suffix
 }

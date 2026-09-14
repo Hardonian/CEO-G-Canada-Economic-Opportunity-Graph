@@ -18,6 +18,7 @@ import (
 
 var (
 	ErrNotFound = errors.New("resource not found")
+	ErrConflict = errors.New("resource conflict")
 )
 
 // MemoryStore provides a thread-safe in-memory implementation of Store.
@@ -96,8 +97,16 @@ func NewMemoryStore() *MemoryStore {
 }
 
 func (m *MemoryStore) SaveProject(ctx context.Context, p *domain.Project) error {
+	if p == nil || p.ID == "" {
+		return errors.New("project id is required")
+	}
 	m.mu.Lock()
 	defer m.mu.Unlock()
+	if p.Slug != "" {
+		if owner, ok := m.slugIndex[p.Slug]; ok && owner != p.ID {
+			return fmt.Errorf("project slug %q belongs to %s: %w", p.Slug, owner, ErrConflict)
+		}
+	}
 	if existing, ok := m.projects[p.ID]; ok {
 		if !existing.CreatedAt.IsZero() && (p.CreatedAt.IsZero() || existing.CreatedAt.Before(p.CreatedAt)) {
 			p.CreatedAt = existing.CreatedAt
@@ -113,13 +122,22 @@ func (m *MemoryStore) SaveProject(ctx context.Context, p *domain.Project) error 
 		}
 		p.ExternalIDs = mergeStringMap(existing.ExternalIDs, p.ExternalIDs)
 		p.Metadata = mergeMetadata(existing.Metadata, p.Metadata)
+		if !existing.LastMeaningfulUpdate.IsZero() && (p.LastMeaningfulUpdate.IsZero() || p.LastMeaningfulUpdate.Before(existing.LastMeaningfulUpdate)) {
+			p.CurrentStage = existing.CurrentStage
+			p.LastMeaningfulUpdate = existing.LastMeaningfulUpdate
+		}
+		if existing.Slug != "" && existing.Slug != p.Slug && m.slugIndex[existing.Slug] == p.ID {
+			delete(m.slugIndex, existing.Slug)
+		}
 	}
 	m.projects[p.ID] = p
 	// Keep slug index consistent.
 	if m.slugIndex == nil {
 		m.slugIndex = make(map[string]string, len(m.projects))
 	}
-	m.slugIndex[p.Slug] = p.ID
+	if p.Slug != "" {
+		m.slugIndex[p.Slug] = p.ID
+	}
 	return nil
 }
 
@@ -302,8 +320,17 @@ func (m *MemoryStore) ListEntities(ctx context.Context) ([]*domain.Entity, error
 }
 
 func (m *MemoryStore) SaveEvent(ctx context.Context, ev *domain.Event) error {
+	if ev == nil || ev.ID == "" || ev.ProjectID == "" || ev.EvidenceID == "" {
+		return errors.New("event id, project id, and evidence id are required")
+	}
 	m.mu.Lock()
 	defer m.mu.Unlock()
+	if _, ok := m.projects[ev.ProjectID]; !ok {
+		return fmt.Errorf("event project %q: %w", ev.ProjectID, ErrNotFound)
+	}
+	if _, ok := m.evidence[ev.EvidenceID]; !ok {
+		return fmt.Errorf("event evidence %q: %w", ev.EvidenceID, ErrNotFound)
+	}
 	m.events[ev.ID] = ev
 	return nil
 }
@@ -642,6 +669,10 @@ func (m *MemoryStore) GetRadarStats(ctx context.Context) (*RadarStats, error) {
 		ProvinceBreakdown: make(map[string]int64),
 		DataStatus:        domain.StatusHealthy,
 		GeneratedAt:       time.Now().UTC(),
+	}
+	if len(m.projects) == 0 {
+		stats.DataStatus = domain.StatusUnavailable
+		return stats, nil
 	}
 
 	weekAgo := time.Now().Add(-7 * 24 * time.Hour)

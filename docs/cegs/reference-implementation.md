@@ -24,8 +24,8 @@ This document details the exact mapping between the internal storage and domain 
        │  └───────────┬───────────┘  └───────────┬───────────┘  │
        │              ▼                          ▼              │
        │  ┌──────────────────────────────────────────────────┐  │
-       │  │        Internal Storage & Event Ledger           │  │
-       │  │          (PostgreSQL / MemoryStore)              │  │
+       │  │        Verified Snapshot & Event Graph           │  │
+       │  │       (deterministic MemoryStore projection)     │  │
        │  └───────────────────┬──────────────────────────────┘  │
        │                      │                                 │
        │                      ▼                                 │
@@ -47,8 +47,8 @@ This document details the exact mapping between the internal storage and domain 
 
 | Internal Domain Entity (`internal/domain`) | CEGS Canonical Resource (`spec/cegs/schemas`) | Canonical ID Prefix |
 | :--- | :--- | :--- |
-| `domain.Project` | `project.schema.json` | `cegs:project:ca:<province>:<slug>` |
-| `domain.Entity` | `organization.schema.json` | `cegs:org:ca:<slug>` |
+| `domain.Project` | `project.schema.json` | `cegs:project:ca:<province>:<stable-id>` |
+| `domain.Entity` | `organization.schema.json` | `cegs:org:ca:<stable-id>` |
 | `domain.Event` | `event.schema.json` | `cegs:event:ca:<slug>` |
 | `domain.Relationship` | `relationship.schema.json` | `cegs:rel:ca:<slug>` |
 | `domain.Evidence` | `evidence.schema.json` | `cegs:evidence:ca:<slug>` |
@@ -63,8 +63,7 @@ This document details the exact mapping between the internal storage and domain 
 ## 3. Transformation Guarantees
 
 1. **Deterministic ID Generation**:
-   The Go translation package (`internal/cegs`) maps UUIDs and slugs to canonical URI schemes deterministically:
-   - If a project slug is `darlington-smr` in Ontario, the canonical CEGS ID is `cegs:project:ca:on:darlington-smr`.
+   The Go translation package (`internal/cegs`) maps stable domain IDs to canonical URI schemes deterministically. Human-readable slugs remain routing metadata and are never used as global identity because names can collide.
 2. **Monetary Standardization**:
    CAD integers in cents or whole dollars are mapped strictly to the CEGS currency envelope:
    ```json

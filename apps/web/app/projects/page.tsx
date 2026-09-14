@@ -26,17 +26,8 @@ export default function ProjectsPage() {
   const [sortBy, setSortBy] = useState<"capex" | "buildability" | "investability" | "name">("capex");
   const [viewMode, setViewMode] = useState<"table" | "grid">("grid");
 
-  const sectors = [
-    "ALL",
-    "Nuclear & Clean Power",
-    "Critical Minerals",
-    "Clean Energy & Grid",
-    "AI Compute & Data Centres",
-    "Transportation & Ports",
-    "Defence & Arctic",
-  ];
-
-  const provinces = ["ALL", "ON", "QC", "NU", "MB"];
+  const sectors = ["ALL", ...Array.from(new Set(FALLBACK_PROJECTS.map((project) => project.sector))).sort()];
+  const provinces = ["ALL", ...Array.from(new Set(FALLBACK_PROJECTS.map((project) => project.province))).sort()];
 
   const filtered = FALLBACK_PROJECTS.filter((p) => {
     if (selectedSector !== "ALL" && p.sector !== selectedSector) return false;
@@ -73,8 +64,8 @@ export default function ProjectsPage() {
             Canadian <span className="text-aurora">Major Projects Directory</span>
           </h1>
           <p className="text-xs sm:text-sm text-text-muted mt-1.5 max-w-3xl leading-relaxed">
-            Tracking {filtered.length} verified projects representing ${(totalCapex / 1e9).toFixed(2)}B CAD in capital investment. 
-            All entries are mathematically scored and anchored to statutory evidence from IAAC, CER, and federal gazettes.
+            Showing {filtered.length} source-linked project records representing ${(totalCapex / 1e9).toFixed(2)}B CAD in reported capital. 
+            Scores are deterministic planning indicators, not forecasts or verification of project outcomes.
           </p>
         </div>
 

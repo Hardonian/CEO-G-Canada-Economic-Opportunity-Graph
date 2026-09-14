@@ -26,7 +26,7 @@ CanadaOpportunityGraph is architected around three discrete layers:
                │ Append-Only Event Ledger & Temporal Graph    │
                │ Deterministic Scoring Engine (Buildability)  │
                │ Opportunity Propagation Engine (Downstream)  │
-               │ Storage Abstraction: PostgreSQL / Memory     │
+               │ Immutable snapshots -> MemoryStore projection│
                └──────────────────────┬───────────────────────┘
                                       │
          ┌────────────────────────────┼────────────────────────────┐
@@ -45,7 +45,8 @@ CanadaOpportunityGraph is architected around three discrete layers:
 - **Append-Only History**: Entity lifecycle transitions create discrete `domain.Event` records. Historical records are never mutated or deleted.
 - **Epistemic States**: Factual confidence is explicitly marked as `VERIFIED`, `SUPPORTED`, `INFERRED`, `CONFLICTED`, `UNKNOWN`, or `STALE`. Missing data remains `UNKNOWN`.
 
-## 3. Database Layer
+## 3. Runtime Data Layer
 
-- **PostgreSQL**: Production storage engine with explicit forward migrations (`migrations/001_initial_schema.sql`), JSONB columns for flexible attributes, full-text search indexes (`tsvector`), and relational foreign keys.
-- **MemoryStore**: High-performance, thread-safe in-memory repository for local zero-dependency development, unit testing, and instant CLI execution (`cog demo`).
+- **Shipped runtime**: The API deterministically loads pinned, evidence-linked source snapshots into a thread-safe `MemoryStore` at startup. It is a stateless, read-only projection that can be rebuilt and independently verified on every instance.
+- **Future durable store**: `migrations/001_initial_schema.sql` is a design draft, not a wired production backend. `DATABASE_URL` is rejected at startup so operators cannot mistake discarded writes for persistence.
+- **Release boundary**: `cmd/releasecheck` validates hashes, counts, ordering, duplicate IDs, graph references, CEGS conformance, web snapshot parity, and current/latest immutable release equality.

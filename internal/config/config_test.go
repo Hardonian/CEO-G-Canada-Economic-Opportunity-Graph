@@ -1,8 +1,6 @@
 package config
 
 import (
-	"encoding/json"
-	"fmt"
 	"reflect"
 	"strings"
 	"testing"
@@ -14,7 +12,6 @@ func TestLoadValidatedProductionSecuritySettings(t *testing.T) {
 	t.Setenv("ENV", "production")
 	t.Setenv("BIND_ADDRESS", "127.0.0.1")
 	t.Setenv("PORT", "9090")
-	t.Setenv("DATABASE_URL", "postgres://admin:super-secret@db.internal/cog?sslmode=require&token=also-secret")
 	t.Setenv("CORS_ORIGINS", "https://planner.gc.ca/, https://investor.example")
 	t.Setenv("TRUSTED_PROXY_CIDRS", "10.0.0.0/8, 2001:db8::/32")
 	t.Setenv("REQUEST_TIMEOUT", "12s")
@@ -39,23 +36,17 @@ func TestLoadValidatedProductionSecuritySettings(t *testing.T) {
 		t.Fatalf("CORSOrigins = %#v, want %#v", cfg.CORSOrigins, wantOrigins)
 	}
 
-	summaryJSON, err := json.Marshal(cfg.SafeSummary())
-	if err != nil {
-		t.Fatalf("marshal SafeSummary: %v", err)
+	if cfg.SafeSummary().StorageMode != "snapshot" {
+		t.Fatalf("safe summary storage mode = %q", cfg.SafeSummary().StorageMode)
 	}
-	formatted := strings.Join([]string{
-		string(summaryJSON),
-		fmt.Sprintf("%v", *cfg),
-		fmt.Sprintf("%+v", *cfg),
-		fmt.Sprintf("%#v", *cfg),
-	}, "\n")
-	for _, secret := range []string{"super-secret", "also-secret", "postgres://"} {
-		if strings.Contains(formatted, secret) {
-			t.Fatalf("safe configuration output leaked %q: %s", secret, formatted)
-		}
-	}
-	if !cfg.SafeSummary().DatabaseConfigured {
-		t.Fatal("safe summary should indicate that a database is configured")
+}
+
+func TestLoadValidatedRejectsUnsupportedDatabaseConfiguration(t *testing.T) {
+	clearConfigEnvironment(t)
+	t.Setenv("DATABASE_URL", "postgres://admin:super-secret@db.internal/cog")
+	_, err := LoadValidated()
+	if err == nil || strings.Contains(err.Error(), "super-secret") {
+		t.Fatalf("unsupported database configuration error was absent or leaked the URL: %v", err)
 	}
 }
 
@@ -134,6 +125,7 @@ func clearConfigEnvironment(t *testing.T) {
 		"BIND_ADDRESS",
 		"PORT",
 		"DATABASE_URL",
+		"STORAGE_MODE",
 		"LOG_LEVEL",
 		"CORS_ORIGIN",
 		"CORS_ORIGINS",

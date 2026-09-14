@@ -2,7 +2,7 @@
 
 ## Implemented production path
 
-The default API, CLI, worker and dataset generator ingest two local, reproducible inputs:
+The default API, CLI and dataset generator ingest local, reproducible inputs:
 
 1. `data/fixtures/nrcan_mpi_2025.json` — a pinned copy of the official NRCan Major Projects Inventory point layer, including source URL, dataset vintage, retrieval time, licence and 295 features.
 2. `data/fixtures/official_records.json` — a narrow human-reviewed record set with assertion-level evidence for selected regulatory, construction and capital milestones.

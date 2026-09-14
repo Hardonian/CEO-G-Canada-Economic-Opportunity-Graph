@@ -10,7 +10,7 @@ import {
   ShieldCheck,
   Briefcase
 } from "lucide-react";
-import { getRadarData, getProjects } from "@/lib/data";
+import { getRadarData, getProjects, SNAPSHOT_MANIFEST } from "@/lib/data";
 import DynamicRadarExplorer from "@/components/DynamicRadarExplorer";
 
 export default async function HomePage() {
@@ -41,13 +41,13 @@ export default async function HomePage() {
             </h1>
             <p className="text-sm text-text-muted max-w-3xl leading-relaxed">
               Tracking <span className="text-aurora font-bold">${(stats.total_capex_cad / 1e9).toFixed(2)} Billion CAD</span> in 
-              Canada's major projects cycle. High-provenance data capturing capital commitments, regulatory milestones, procurement tenders, and downstream industrial opportunities.
+              Canada&apos;s major projects cycle. Source-linked records capture reported capital, selected milestones, and deterministic planning scores.
             </p>
           </div>
 
           <div className="mt-5 inline-flex flex-wrap items-center gap-x-3 gap-y-1 rounded-lg border border-primary/30 bg-background/80 px-3 py-2 font-mono text-[10px] text-text-muted">
             <span className="font-bold text-aurora">{snapshotMode ? "REVIEWED SNAPSHOT" : "LIVE UPSTREAM API"}</span>
-            <span>{projects.length} projects · {radarData.source_mode === "BUNDLED_REVIEWED_SNAPSHOT" ? "301 evidence records" : "upstream response"}</span>
+            <span>{projects.length} projects · {radarData.source_mode === "BUNDLED_REVIEWED_SNAPSHOT" ? `${SNAPSHOT_MANIFEST.record_counts.evidence} evidence records` : "upstream response"}</span>
             <span>Data through {new Intl.DateTimeFormat("en-CA", { dateStyle: "medium", timeZone: "UTC" }).format(new Date(radarData.generated_at ?? "2026-09-13T00:00:00Z"))} UTC</span>
           </div>
 
@@ -112,12 +112,12 @@ export default async function HomePage() {
           </div>
 
           <div className="glass-card p-4 rounded-xl border border-border/80">
-            <div className="text-[11px] font-mono text-text-subtle uppercase">Active Tenders</div>
+            <div className="text-[11px] font-mono text-text-subtle uppercase">Tender Records</div>
             <div className="text-2xl font-black font-tabular text-gold mt-1">
               {stats.active_procurements_count}
             </div>
             <div className="text-[10px] text-text-muted mt-1">
-              CanadaBuys + DND
+              No live connector
             </div>
           </div>
 
@@ -127,7 +127,7 @@ export default async function HomePage() {
               v0.1
             </div>
             <div className="text-[10px] text-aurora mt-1 font-mono">
-              Cryptographic Moat
+              Checksummed release
             </div>
           </div>
         </div>
@@ -145,7 +145,7 @@ export default async function HomePage() {
               </h2>
             </div>
             <span className="text-xs text-text-subtle font-mono">
-              Live Interactive Filters
+              Interactive snapshot filters
             </span>
           </div>
 

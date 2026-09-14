@@ -24,8 +24,8 @@ This is an implementation threat model, not a certification, Privacy Impact Asse
 ### Web and container runtime
 
 - Next.js emits a standalone image with CSP and browser security headers and hides framework identification.
-- API, worker and web containers run as non-root with dropped capabilities, `no-new-privileges`, bounded PIDs and read-only roots plus constrained temporary filesystems.
-- Docker Compose requires an operator-supplied database password and binds public development ports to loopback by default.
+- API and web containers run as non-root with dropped capabilities, `no-new-privileges`, bounded PIDs and read-only roots plus constrained temporary filesystems.
+- Docker Compose binds public development ports to loopback and explicitly selects the stateless snapshot storage mode.
 - JavaScript dependency versions are locked; the current production audit reports no known vulnerabilities.
 
 ## AI and forecast safety
@@ -36,7 +36,7 @@ Any future generative layer must be downstream of this evidence contract, treat 
 
 ## Residual risks
 
-- The shipped server currently uses the in-memory store; the PostgreSQL schema is not yet wired into the runtime. It is unsuitable for durable multi-instance production records until a transactional store, migrations, backup/restore and row-level authorization are implemented.
+- The shipped server is a read-only snapshot projection. It rejects `DATABASE_URL`; durable mutations and cross-instance ingestion remain unsupported until a transactional store, migrations, backup/restore and row-level authorization are implemented.
 - Rate limiting is process-local and must move to a shared sovereign service for horizontally scaled enforcement.
 - CSP permits inline scripts/styles required by the present Next.js build. A nonce-based policy is a future hardening item.
 - Source hashes are not publisher signatures. Independent verification and an externally witnessed transparency log remain roadmap items.

@@ -3,6 +3,7 @@ package ingestion
 import (
 	"context"
 	"errors"
+	"strings"
 	"testing"
 	"time"
 
@@ -19,9 +20,10 @@ type checkpointTestAdapter struct {
 }
 
 type projectTestAdapter struct {
-	name    string
-	project *domain.Project
-	health  adapters.SourceHealth
+	name     string
+	project  *domain.Project
+	evidence []*domain.Evidence
+	health   adapters.SourceHealth
 }
 
 func (a *projectTestAdapter) Name() string            { return a.name }
@@ -33,7 +35,7 @@ func (a *projectTestAdapter) Health() *adapters.SourceHealth {
 func (a *projectTestAdapter) Fetch(context.Context) ([]byte, error) { return []byte(a.name), nil }
 func (a *projectTestAdapter) Parse([]byte) (*adapters.IngestionResult, error) {
 	copy := *a.project
-	return &adapters.IngestionResult{Projects: []*domain.Project{&copy}}, nil
+	return &adapters.IngestionResult{Projects: []*domain.Project{&copy}, Evidence: a.evidence}, nil
 }
 
 func newCheckpointTestAdapter(parseErr error) *checkpointTestAdapter {
@@ -101,12 +103,14 @@ func TestCanonicalProjectIsScoredOnceAfterMultiAdapterMerge(t *testing.T) {
 	store := database.NewMemoryStore()
 	first := &projectTestAdapter{name: "first", project: &domain.Project{
 		ID: "project-a", Slug: "shared-project", Name: "Shared Project", Sector: domain.SectorTransportation,
-		Province: "BC", CurrentStage: domain.StageProcurement, CapexCAD: 1_000_000_000,
+		ProponentID: "shared-proponent",
+		Province:    "BC", CurrentStage: domain.StageProcurement, CapexCAD: 1_000_000_000,
 		CapexStatus: domain.ConfidenceReported, UpdatedAt: time.Date(2026, 1, 1, 0, 0, 0, 0, time.UTC),
 	}}
 	second := &projectTestAdapter{name: "second", project: &domain.Project{
 		ID: "project-b", Slug: "shared-project", Name: "Shared Project", Sector: domain.SectorTransportation,
-		Province: "BC", CurrentStage: domain.StageConstruction, CapexCAD: 1_000_000_000,
+		ProponentID: "shared-proponent",
+		Province:    "BC", CurrentStage: domain.StageConstruction, CapexCAD: 1_000_000_000,
 		CapexStatus: domain.ConfidenceReported, UpdatedAt: time.Date(2026, 2, 1, 0, 0, 0, 0, time.UTC),
 	}}
 	pipeline := NewPipeline(store, []adapters.Adapter{first, second})
@@ -119,5 +123,62 @@ func TestCanonicalProjectIsScoredOnceAfterMultiAdapterMerge(t *testing.T) {
 	}
 	if len(history) != 5 {
 		t.Fatalf("score history has %d records, want exactly one record for each of five dimensions", len(history))
+	}
+}
+
+func TestSlugCollisionDoesNotMergeDifferentProjects(t *testing.T) {
+	store := database.NewMemoryStore()
+	first := &projectTestAdapter{name: "first", project: &domain.Project{
+		ID: "project-a", Slug: "mill-upgrade", Name: "Mill upgrade", Province: "BC", ProponentID: "company-a",
+		CurrentStage: domain.StageConstruction, LastMeaningfulUpdate: time.Date(2026, 1, 1, 0, 0, 0, 0, time.UTC),
+	}}
+	second := &projectTestAdapter{name: "second", project: &domain.Project{
+		ID: "project-b", Slug: "mill-upgrade", Name: "Mill upgrade", Province: "BC", ProponentID: "company-b",
+		CurrentStage: domain.StageAnnounced, LastMeaningfulUpdate: time.Date(2026, 2, 1, 0, 0, 0, 0, time.UTC),
+	}}
+	pipeline := NewPipeline(store, []adapters.Adapter{first, second})
+	if _, err := pipeline.Run(context.Background()); err != nil {
+		t.Fatal(err)
+	}
+	projects, total, err := store.ListProjects(context.Background(), database.ProjectFilter{Limit: 10})
+	if err != nil {
+		t.Fatal(err)
+	}
+	if total != 2 || len(projects) != 2 {
+		t.Fatalf("slug collision merged distinct projects: total=%d projects=%#v", total, projects)
+	}
+	if projects[0].Slug == projects[1].Slug {
+		t.Fatalf("distinct projects retained an ambiguous route slug %q", projects[0].Slug)
+	}
+	events, err := store.ListRecentEvents(context.Background(), 10)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if len(events) != 0 {
+		t.Fatalf("cross-project slug collision emitted a false event: %#v", events)
+	}
+}
+
+func TestNewerMergedStageEmitsEvidenceLinkedEvent(t *testing.T) {
+	store := database.NewMemoryStore()
+	evidence := &domain.Evidence{ID: "evidence-2", SourceURL: "https://example.gc.ca/record", Publisher: "Public authority", ContentHash: strings.Repeat("a", 64)}
+	first := &projectTestAdapter{name: "first", project: &domain.Project{
+		ID: "project-a", Slug: "shared-project", Province: "ON", ProponentID: "company-a",
+		CurrentStage: domain.StagePermitting, LastMeaningfulUpdate: time.Date(2026, 1, 1, 0, 0, 0, 0, time.UTC),
+	}}
+	second := &projectTestAdapter{name: "second", evidence: []*domain.Evidence{evidence}, project: &domain.Project{
+		ID: "project-b", Slug: "shared-project", Province: "ON", ProponentID: "company-a", EvidenceIDs: []string{evidence.ID},
+		CurrentStage: domain.StageConstruction, LastMeaningfulUpdate: time.Date(2026, 2, 1, 0, 0, 0, 0, time.UTC),
+	}}
+	pipeline := NewPipeline(store, []adapters.Adapter{first, second})
+	if _, err := pipeline.Run(context.Background()); err != nil {
+		t.Fatal(err)
+	}
+	events, err := store.ListRecentEvents(context.Background(), 10)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if len(events) != 1 || events[0].EvidenceID != evidence.ID || events[0].ProjectID != "project-a" {
+		t.Fatalf("stage event is not linked to canonical project evidence: %#v", events)
 	}
 }
