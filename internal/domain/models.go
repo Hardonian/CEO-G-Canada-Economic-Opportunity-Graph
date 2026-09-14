@@ -111,41 +111,41 @@ type Relationship struct {
 
 // ProjectScore represents a versioned, deterministic score with factor breakdown.
 type ProjectScore struct {
-	ID              string             `json:"id"`
-	ProjectID       string             `json:"project_id"`
-	ScoreType       string             `json:"score_type"`    // buildability, investability, supplierability, strategicity
-	ScoreValue      float64            `json:"score_value"`   // 0-100
-	ScoreVersion    string             `json:"score_version"` // e.g. "buildability-v1.0"
-	Factors         map[string]float64 `json:"factors"`
+	ID              string              `json:"id"`
+	ProjectID       string              `json:"project_id"`
+	ScoreType       string              `json:"score_type"`    // buildability, investability, supplierability, strategicity
+	ScoreValue      float64             `json:"score_value"`   // 0-100
+	ScoreVersion    string              `json:"score_version"` // e.g. "buildability-v1.0"
+	Factors         map[string]float64  `json:"factors"`
 	FactorEvidence  map[string][]string `json:"factor_evidence,omitempty"`
-	EvidenceIDs     []string           `json:"evidence_ids,omitempty"`
-	UnknownFactors  []string           `json:"unknown_factors,omitempty"`
-	Coverage        float64            `json:"coverage"`
-	Confidence      ConfidenceLevel    `json:"confidence"`
-	InputHash       string             `json:"input_hash"`
-	PreviousValue   *float64           `json:"previous_value,omitempty"`
-	Movement        *float64           `json:"movement,omitempty"`
-	MovementReasons []string           `json:"movement_reasons,omitempty"`
-	Explanation     string             `json:"explanation"`
-	CalculatedAt    time.Time          `json:"calculated_at"`
+	EvidenceIDs     []string            `json:"evidence_ids,omitempty"`
+	UnknownFactors  []string            `json:"unknown_factors,omitempty"`
+	Coverage        float64             `json:"coverage"`
+	Confidence      ConfidenceLevel     `json:"confidence"`
+	InputHash       string              `json:"input_hash"`
+	PreviousValue   *float64            `json:"previous_value,omitempty"`
+	Movement        *float64            `json:"movement,omitempty"`
+	MovementReasons []string            `json:"movement_reasons,omitempty"`
+	Explanation     string              `json:"explanation"`
+	CalculatedAt    time.Time           `json:"calculated_at"`
 }
 
 // TradeMetric is a normalized official observation used by trade and
 // supply-chain scoring. EvidenceID makes every numeric input independently
 // traceable to the publisher response from which it was parsed.
 type TradeMetric struct {
-	ID              string          `json:"id"`
-	Geography       string          `json:"geography"`
-	MetricCode      string          `json:"metric_code"`
-	MetricName      string          `json:"metric_name"`
-	ReferencePeriod string          `json:"reference_period"`
-	Value           float64         `json:"value"`
-	Unit            string          `json:"unit"`
-	ScaleMin        *float64        `json:"scale_min,omitempty"`
-	ScaleMax        *float64        `json:"scale_max,omitempty"`
-	EvidenceID      string          `json:"evidence_id"`
-	Evidence        *Evidence       `json:"evidence,omitempty"`
-	ObservedAt      time.Time       `json:"observed_at"`
+	ID              string    `json:"id"`
+	Geography       string    `json:"geography"`
+	MetricCode      string    `json:"metric_code"`
+	MetricName      string    `json:"metric_name"`
+	ReferencePeriod string    `json:"reference_period"`
+	Value           float64   `json:"value"`
+	Unit            string    `json:"unit"`
+	ScaleMin        *float64  `json:"scale_min,omitempty"`
+	ScaleMax        *float64  `json:"scale_max,omitempty"`
+	EvidenceID      string    `json:"evidence_id"`
+	Evidence        *Evidence `json:"evidence,omitempty"`
+	ObservedAt      time.Time `json:"observed_at"`
 }
 
 // CapitalItem records categorized, non-blended capital events.

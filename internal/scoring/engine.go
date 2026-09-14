@@ -296,7 +296,7 @@ func finalize(ctx *ProjectContext, scoreType, version string, factors, weights m
 		ScoreType: scoreType, ScoreValue: round(total), ScoreVersion: version, Factors: factors,
 		FactorEvidence: normalizeFactorEvidence(factorEvidence), EvidenceIDs: evidenceIDs,
 		UnknownFactors: unknown, Coverage: round(coverage * 100), Confidence: confidence, InputHash: inputHash,
-		Explanation: fmt.Sprintf("%s %s; %.0f%% of configured factor weight is covered and %d factors are unknown.", version, methodology, coverage*100, len(unknown)),
+		Explanation:  fmt.Sprintf("%s %s; %.0f%% of configured factor weight is covered and %d factors are unknown.", version, methodology, coverage*100, len(unknown)),
 		CalculatedAt: latestInputTime(ctx, includeTrade),
 	}
 }
@@ -353,10 +353,10 @@ func sortedUnique(values []string) []string {
 
 func scoringInputHash(projectID, scoreType, version string, factors map[string]float64, evidenceIDs []string) string {
 	payload := struct {
-		ProjectID  string             `json:"project_id"`
-		ScoreType  string             `json:"score_type"`
-		Version    string             `json:"version"`
-		Factors    map[string]float64 `json:"factors"`
+		ProjectID   string             `json:"project_id"`
+		ScoreType   string             `json:"score_type"`
+		Version     string             `json:"version"`
+		Factors     map[string]float64 `json:"factors"`
 		EvidenceIDs []string           `json:"evidence_ids"`
 	}{projectID, scoreType, version, factors, evidenceIDs}
 	data, _ := json.Marshal(payload)

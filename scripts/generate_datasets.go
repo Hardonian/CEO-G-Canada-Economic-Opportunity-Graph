@@ -23,7 +23,7 @@ import (
 	"github.com/Hardonian/CEO-G-Canada-Economic-Opportunity-Graph/internal/ingestion"
 )
 
-	const (
+const (
 	datasetVersion = "2026-09-13-2"
 	datasetTime    = "2026-09-13T00:00:00Z"
 )

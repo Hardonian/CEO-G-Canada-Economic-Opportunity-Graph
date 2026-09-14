@@ -22,56 +22,56 @@ var (
 
 // MemoryStore provides a thread-safe in-memory implementation of Store.
 type MemoryStore struct {
-	mu             sync.RWMutex
-	projects       map[string]*domain.Project
-	entities       map[string]*domain.Entity
-	events         map[string]*domain.Event
-	relationships  map[string]*domain.Relationship
-	scores         map[string][]*domain.ProjectScore // projectID -> list of scores
-	procurements   map[string]*domain.Procurement
-	capitalItems   map[string]*domain.CapitalItem
-	signals        map[string]*domain.Signal
-	opportunities  map[string]*domain.Opportunity
-	evidence       map[string]*domain.Evidence
-	tradeMetrics   map[string]*domain.TradeMetric
-	slugIndex      map[string]string                 // slug -> project ID
-	entityNameIndex map[string]string               // normalized name -> entity ID
-	publishers                map[string]*domain.Publisher
-	publisherPolicies         map[string]*domain.PublisherPolicy
-	sources                   map[string]*domain.Source
-	sourceURLIndex            map[string]string
-	sourcePrivateConfigs      map[string]*domain.SourcePrivateConfig
-	sourceCandidates          map[string]*domain.SourceCandidate
-	sourceRelationships       map[string]*domain.SourceRelationship
-	sourceRelationshipIndex   map[string]string
-	sourceVersions            map[string]*domain.SourceVersion
-	sourceVersionHashIndex    map[string]string
-	sourceChanges             map[string]*domain.SourceChange
-	sourceChangeIndex         map[string]string
-	sourceHealthChecks        map[string]*domain.SourceHealthCheck
-	sourceCheckpoints         map[string]*domain.SourceCheckpoint
-	mappingVersions           map[string]*domain.MappingVersion
-	mappingVersionIndex       map[string]string
-	ingestionJobs             map[string]*domain.IngestionJob
-	ingestionJobDedupeIndex   map[string]string
-	outboxEvents              map[string]*domain.OutboxEvent
-	outboxHashIndex           map[string]string
+	mu                      sync.RWMutex
+	projects                map[string]*domain.Project
+	entities                map[string]*domain.Entity
+	events                  map[string]*domain.Event
+	relationships           map[string]*domain.Relationship
+	scores                  map[string][]*domain.ProjectScore // projectID -> list of scores
+	procurements            map[string]*domain.Procurement
+	capitalItems            map[string]*domain.CapitalItem
+	signals                 map[string]*domain.Signal
+	opportunities           map[string]*domain.Opportunity
+	evidence                map[string]*domain.Evidence
+	tradeMetrics            map[string]*domain.TradeMetric
+	slugIndex               map[string]string // slug -> project ID
+	entityNameIndex         map[string]string // normalized name -> entity ID
+	publishers              map[string]*domain.Publisher
+	publisherPolicies       map[string]*domain.PublisherPolicy
+	sources                 map[string]*domain.Source
+	sourceURLIndex          map[string]string
+	sourcePrivateConfigs    map[string]*domain.SourcePrivateConfig
+	sourceCandidates        map[string]*domain.SourceCandidate
+	sourceRelationships     map[string]*domain.SourceRelationship
+	sourceRelationshipIndex map[string]string
+	sourceVersions          map[string]*domain.SourceVersion
+	sourceVersionHashIndex  map[string]string
+	sourceChanges           map[string]*domain.SourceChange
+	sourceChangeIndex       map[string]string
+	sourceHealthChecks      map[string]*domain.SourceHealthCheck
+	sourceCheckpoints       map[string]*domain.SourceCheckpoint
+	mappingVersions         map[string]*domain.MappingVersion
+	mappingVersionIndex     map[string]string
+	ingestionJobs           map[string]*domain.IngestionJob
+	ingestionJobDedupeIndex map[string]string
+	outboxEvents            map[string]*domain.OutboxEvent
+	outboxHashIndex         map[string]string
 }
 
 // NewMemoryStore initializes an empty in-memory repository.
 func NewMemoryStore() *MemoryStore {
 	return &MemoryStore{
-		projects:       make(map[string]*domain.Project),
-		entities:       make(map[string]*domain.Entity),
-		events:         make(map[string]*domain.Event),
-		relationships:  make(map[string]*domain.Relationship),
-		scores:         make(map[string][]*domain.ProjectScore),
-		procurements:   make(map[string]*domain.Procurement),
-		capitalItems:   make(map[string]*domain.CapitalItem),
-		signals:        make(map[string]*domain.Signal),
-		opportunities:  make(map[string]*domain.Opportunity),
-		evidence:       make(map[string]*domain.Evidence),
-		tradeMetrics:   make(map[string]*domain.TradeMetric),
+		projects:                make(map[string]*domain.Project),
+		entities:                make(map[string]*domain.Entity),
+		events:                  make(map[string]*domain.Event),
+		relationships:           make(map[string]*domain.Relationship),
+		scores:                  make(map[string][]*domain.ProjectScore),
+		procurements:            make(map[string]*domain.Procurement),
+		capitalItems:            make(map[string]*domain.CapitalItem),
+		signals:                 make(map[string]*domain.Signal),
+		opportunities:           make(map[string]*domain.Opportunity),
+		evidence:                make(map[string]*domain.Evidence),
+		tradeMetrics:            make(map[string]*domain.TradeMetric),
 		publishers:              make(map[string]*domain.Publisher),
 		publisherPolicies:       make(map[string]*domain.PublisherPolicy),
 		sources:                 make(map[string]*domain.Source),

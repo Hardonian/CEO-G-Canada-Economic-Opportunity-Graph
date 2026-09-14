@@ -9,8 +9,8 @@ import (
 	"time"
 
 	"github.com/Hardonian/CEO-G-Canada-Economic-Opportunity-Graph/adapters"
-	"github.com/Hardonian/CEO-G-Canada-Economic-Opportunity-Graph/adapters/global_trade"
 	"github.com/Hardonian/CEO-G-Canada-Economic-Opportunity-Graph/adapters/gazette"
+	"github.com/Hardonian/CEO-G-Canada-Economic-Opportunity-Graph/adapters/global_trade"
 	"github.com/Hardonian/CEO-G-Canada-Economic-Opportunity-Graph/adapters/indigenous"
 	"github.com/Hardonian/CEO-G-Canada-Economic-Opportunity-Graph/adapters/nrcan_major_projects"
 	"github.com/Hardonian/CEO-G-Canada-Economic-Opportunity-Graph/adapters/official"
