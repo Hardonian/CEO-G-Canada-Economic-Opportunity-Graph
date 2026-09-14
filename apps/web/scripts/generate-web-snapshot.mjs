@@ -111,6 +111,21 @@ const sourceProfiles = {
     licence: "Publisher terms apply",
     coverage: "PRIMARY_ISSUER_DISCLOSURE",
   },
+  "World Bank": {
+    name: "World Bank Indicators — Canada trade and logistics",
+    publisherId: "publisher:intl:world-bank",
+    jurisdiction: "INTL:WORLD_BANK",
+    geography: ["GLOBAL", "CA"],
+    family: "INDICATORS_API",
+    accessMethod: "REST_API",
+    contentType: "application/json",
+    subjects: ["international trade", "logistics performance", "supply chain", "official statistics"],
+    sectors: ["global trade and supply chains", "Transportation & Ports", "Industrial & Manufacturing"],
+    languages: ["en"],
+    frequency: "PERIODIC_ANNUAL",
+    licence: "Creative Commons Attribution 4.0",
+    coverage: "GLOBAL_TRADE_AND_LOGISTICS_SCORE_INPUTS",
+  },
 };
 
 const registeredTradeSources = [
@@ -294,8 +309,25 @@ const compactProjects = projects.map((project) => ({
   proponent_name: project.proponent?.common_name || project.proponent?.legal_name,
   confidence: project.confidence,
   scores: project.scores,
+  score_details: (project.score_details || []).map((score) => ({
+    score_type: score.score_type,
+    score_value: score.score_value,
+    score_version: score.score_version,
+    factors: score.factors,
+    factor_evidence: score.factor_evidence,
+    evidence_ids: score.evidence_ids,
+    unknown_factors: score.unknown_factors,
+    coverage: score.coverage,
+    confidence: score.confidence,
+    input_hash: score.input_hash,
+    explanation: score.explanation,
+    calculated_at: score.calculated_at,
+  })),
   last_meaningful_update: project.last_meaningful_update,
-  evidence: (project.evidence_ids || [])
+  evidence: [...new Set([
+    ...(project.evidence_ids || []),
+    ...(project.score_details || []).flatMap((score) => score.evidence_ids || []),
+  ])]
     .map((id) => evidenceById.get(String(id).replace(/^cegs:evidence:ca:/, "")))
     .filter(Boolean)
     .map((item) => ({
@@ -315,8 +347,11 @@ const compactProjects = projects.map((project) => ({
 
 const sourceGroups = new Map();
 for (const item of evidence) {
-  const key = `${item.publisher}\0${item.source_url}`;
-  const group = sourceGroups.get(key) || { publisher: item.publisher, url: item.source_url, records: [] };
+  const sourceURL = item.publisher === "World Bank"
+    ? "https://api.worldbank.org/v2/country/CAN"
+    : item.source_url;
+  const key = `${item.publisher}\0${sourceURL}`;
+  const group = sourceGroups.get(key) || { publisher: item.publisher, url: sourceURL, records: [] };
   group.records.push(item);
   sourceGroups.set(key, group);
 }
@@ -357,7 +392,9 @@ const compactSources = [...sourceGroups.values()].map((group) => {
   };
 });
 
-compactSources.push(...registeredTradeSources.map((source) => ({
+compactSources.push(...registeredTradeSources
+  .filter((source) => source.id !== "source:worldbank:logistics-performance-index")
+  .map((source) => ({
   ...source,
   authority_tier: 1,
   lifecycle: "APPROVED",

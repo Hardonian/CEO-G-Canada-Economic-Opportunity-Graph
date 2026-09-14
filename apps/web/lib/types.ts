@@ -49,6 +49,7 @@ export interface Project {
   capex_status?: "VERIFIED" | "SUPPORTED" | "REPORTED" | "INFERRED" | "CONFLICTED" | "UNKNOWN" | "STALE" | "RETRACTED";
   confidence: "VERIFIED" | "SUPPORTED" | "REPORTED" | "INFERRED" | "CONFLICTED" | "UNKNOWN" | "STALE" | "RETRACTED";
   scores?: Record<string, number>;
+  score_details?: ProjectScore[];
   last_meaningful_update: string;
   evidence?: ProjectEvidence[];
 }
@@ -72,7 +73,14 @@ export interface ProjectScore {
   score_value: number;
   score_version: string;
   factors: Record<string, number>;
+  factor_evidence?: Record<string, string[]>;
+  evidence_ids?: string[];
+  unknown_factors?: string[];
+  coverage?: number;
+  confidence?: string;
+  input_hash?: string;
   explanation: string;
+  calculated_at?: string;
 }
 
 export interface CapitalItem {
