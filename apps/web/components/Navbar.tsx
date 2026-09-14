@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import {
   Activity,
   Cpu,
@@ -17,11 +17,25 @@ import {
   Search,
   ShieldCheck,
   Target,
+  Menu,
+  X,
 } from "lucide-react";
 
 export default function Navbar() {
   const pathname = usePathname();
   const [lang, setLang] = useState<"en" | "fr">("en");
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const mobileMenuRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape" && mobileMenuOpen) {
+        setMobileMenuOpen(false);
+      }
+    };
+    document.addEventListener("keydown", handleKeyDown);
+    return () => document.removeEventListener("keydown", handleKeyDown);
+  }, [mobileMenuOpen]);
 
   const navItems = [
     { href: "/briefing", label: lang === "en" ? "Executive Brief" : "Note exécutive", icon: Landmark, badge: lang === "en" ? "ANALYSIS" : "ANALYSE" },
@@ -63,8 +77,8 @@ export default function Navbar() {
               type="button"
               onClick={() => setLang(lang === "en" ? "fr" : "en")}
               className="inline-flex min-h-7 items-center gap-1.5 rounded px-1.5 text-text-muted transition-colors hover:bg-surface hover:text-text-main"
-              aria-label={`Switch navigation to ${nextLanguage}`}
-              title={`Switch navigation to ${nextLanguage}`}
+              aria-label={`Switch navigation language to ${nextLanguage}`}
+              title={`Switch navigation language to ${nextLanguage}`}
             >
               <Languages aria-hidden="true" className="h-3.5 w-3.5" />
               <span className={lang === "en" ? "font-black text-text-main" : undefined}>EN</span>
@@ -112,16 +126,27 @@ export default function Navbar() {
               /
             </kbd>
           </Link>
+
+          <button
+            type="button"
+            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+            aria-expanded={mobileMenuOpen}
+            aria-controls="mobile-navigation"
+            aria-label={mobileMenuOpen ? (lang === "en" ? "Close main navigation" : "Fermer la navigation principale") : (lang === "en" ? "Open main navigation" : "Ouvrir la navigation principale")}
+            className="lg:hidden inline-flex min-h-10 items-center justify-center rounded-lg border border-border bg-surface px-3 text-text-main transition-colors hover:border-primary hover:bg-card"
+          >
+            {mobileMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+          </button>
         </div>
       </div>
 
-      <div data-print-hide="true" className="border-t border-borderSubtle bg-[#07110d]">
+      <div data-print-hide="true" className={`border-t border-borderSubtle bg-[#07110d] lg:block ${mobileMenuOpen ? "block" : "lg:block hidden"}`} id="mobile-navigation">
         <nav
           lang={lang === "fr" ? "fr-CA" : "en-CA"}
           aria-label={lang === "en" ? "Primary navigation" : "Navigation principale"}
           className="mx-auto max-w-7xl overflow-x-auto px-3 sm:px-5 lg:px-7"
         >
-          <ul className="flex min-w-max list-none items-center gap-1 py-1.5" role="list">
+          <ul className="flex min-w-max list-none items-center gap-1 py-1.5 lg:py-2" role="list">
             {navItems.map((item) => {
               const Icon = item.icon;
               const isActive = pathname === item.href || (item.href !== "/" && pathname.startsWith(item.href));
@@ -131,11 +156,12 @@ export default function Navbar() {
                   <Link
                     href={item.href}
                     aria-current={isActive ? "page" : undefined}
-                    className={`inline-flex min-h-9 items-center gap-1.5 whitespace-nowrap rounded-md border px-2.5 py-1.5 text-[11px] font-semibold transition-colors sm:px-3 sm:text-xs ${
+                    className={`inline-flex min-h-9 lg:min-h-10 items-center gap-1.5 whitespace-nowrap rounded-md border px-2.5 py-1.5 text-[11px] font-semibold transition-colors sm:px-3 sm:text-xs ${
                       isActive
                         ? "border-primary/70 bg-card text-aurora shadow-[inset_0_-2px_0_rgba(0,245,160,0.8)]"
                         : "border-transparent text-text-muted hover:border-borderSubtle hover:bg-surface hover:text-text-main"
                     }`}
+                    onClick={() => setMobileMenuOpen(false)}
                   >
                     <Icon aria-hidden="true" className={`h-3.5 w-3.5 ${isActive ? "text-aurora" : "text-text-subtle"}`} />
                     <span>{item.label}</span>

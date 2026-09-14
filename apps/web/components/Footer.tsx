@@ -2,7 +2,7 @@ import Link from "next/link";
 import { Database, ShieldCheck } from "lucide-react";
 
 const footerLinkClass =
-  "rounded-sm text-text-muted underline decoration-border underline-offset-4 transition-colors hover:text-text-main hover:decoration-aurora";
+  "rounded-sm text-text-muted underline decoration-border underline-offset-4 transition-colors hover:text-text-main hover:decoration-aurora focus:outline-none focus-visible:ring-2 focus-visible:ring-aurora focus-visible:ring-offset-2 focus-visible:ring-offset-background";
 
 export default function Footer() {
   return (
@@ -62,7 +62,7 @@ export default function Footer() {
 
           <nav aria-labelledby="standards-links-title">
             <h2 id="standards-links-title" className="mb-3 text-[11px] font-bold uppercase tracking-[0.14em] text-text-main">
-              Standards &amp; assurance
+              Standards & assurance
             </h2>
             <ul className="space-y-2.5" role="list">
               <li><Link href="/cegs" className={footerLinkClass}>CEGS specification v0.1</Link></li>
@@ -79,7 +79,7 @@ export default function Footer() {
             </h2>
             <div className="space-y-3 font-mono text-[11px]">
               <div className="select-all rounded-md border border-border bg-surface p-3 leading-5 text-text-muted">
-                <span aria-hidden="true" className="text-aurora">$</span> cog search &quot;nuclear ontario&quot;<br />
+                <span aria-hidden="true" className="text-aurora">$</span> cog search "nuclear ontario"<br />
                 <span aria-hidden="true" className="text-aurora">$</span> cog cegs validate file.json
               </div>
               <p className="font-sans leading-relaxed text-text-muted">
@@ -91,7 +91,7 @@ export default function Footer() {
 
         <section aria-labelledby="legal-notice-title" className="legal-rule border-y border-borderSubtle bg-card/45 py-5 pl-5 pr-4 text-[11px] leading-relaxed text-text-muted">
           <h2 id="legal-notice-title" className="font-bold uppercase tracking-[0.12em] text-text-main">
-            Research, regulatory &amp; investment-use notice
+            Research, regulatory & investment-use notice
           </h2>
           <div className="mt-2 grid gap-2 lg:grid-cols-2 lg:gap-8">
             <p>
