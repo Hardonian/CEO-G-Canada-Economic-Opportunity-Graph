@@ -301,15 +301,16 @@ export async function getRadarData(): Promise<RadarData> {
   if (response?.ok) {
     try {
       const data: unknown = await response.json();
-      const stats = isRecord(data) ? normalizeRadarStats(data.stats) : null;
-      if (stats) {
+      const record = isRecord(data) ? data : null;
+      const stats = record ? normalizeRadarStats(record.stats) : null;
+      if (stats && record) {
         return {
           stats,
           accelerating_projects: [],
           recent_signals: [],
-          cegs_version: typeof data.cegs_version === "string" ? data.cegs_version : "0.1",
+          cegs_version: typeof record.cegs_version === "string" ? record.cegs_version : "0.1",
           source_mode: "LIVE_UPSTREAM_API",
-          generated_at: typeof data.generated_at === "string" ? data.generated_at : undefined,
+          generated_at: typeof record.generated_at === "string" ? record.generated_at : undefined,
         };
       }
     } catch (error) {
