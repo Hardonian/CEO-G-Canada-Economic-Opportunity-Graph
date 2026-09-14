@@ -2,6 +2,22 @@
 
 CanadaOpportunityGraph treats provenance as a product boundary. Observed facts, source-reported values, deterministic derivations, and user-authored scenarios are kept distinct. A government publisher does not make every value independently audited, and a cryptographic hash proves content integrity—not factual truth or legal authenticity.
 
+## Active global trade and supply-chain adapter
+
+The `world_bank_global_trade` adapter ingests 11 official Canada observations
+covering logistics performance, customs, trade infrastructure, international
+shipments, logistics services, tracking, timeliness, trade-to-GDP, merchandise
+exports/imports, and high-technology export intensity. It defaults to the
+reviewed fixture at `data/fixtures/world_bank_trade_canada.json`; setting
+`GLOBAL_TRADE_MODE=live` fetches the same fixed allowlist from the public World
+Bank Indicators API.
+
+Each observation becomes a `TradeMetric` with a stable ID and a separate
+`Evidence` record containing the normalized-record SHA-256, HTTPS URL, source
+locator, retrieval/publication/effective dates, parser version, mapping version,
+and pipeline version. The adapter rejects detached lineage before ingestion.
+See `docs/DATA_CREDENTIALS.md` for the no-key/key-required access register.
+
 ## Active snapshot sources
 
 | Source | Coverage in the default build | Mode | Epistemic treatment |

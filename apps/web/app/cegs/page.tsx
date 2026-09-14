@@ -137,7 +137,7 @@ export default function CEGSPage() {
               Adoption Guide <ArrowRight className="h-4 w-4" />
             </Link>
             <a
-              href="http://localhost:8080/api/v1/cegs/export"
+              href="/api/v1/cegs/export"
               target="_blank"
               rel="noreferrer"
               className="px-3.5 py-2.5 rounded-xl bg-card border border-border text-text-muted text-xs hover:text-aurora hover:border-primary/50 font-mono flex items-center gap-1.5 transition-all"

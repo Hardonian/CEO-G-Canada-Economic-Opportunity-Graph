@@ -158,6 +158,8 @@ Public release snapshots are maintained under [`data/cegs/`](data/cegs/) and [`d
 - `data/cegs/projects.jsonl`: Verified major infrastructure projects.
 - `data/cegs/organizations.jsonl`: Proponents, Crown corporations, and regulators.
 - `data/cegs/events.jsonl`: Append-only transition events.
+- `data/public/trade_metrics.jsonl`: Official normalized trade and logistics score inputs with evidence IDs.
+- [`docs/DATA_CREDENTIALS.md`](docs/DATA_CREDENTIALS.md): Credential-free sources, required account keys, and secret-handling rules.
 
 ---
 

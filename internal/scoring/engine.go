@@ -291,12 +291,16 @@ func finalize(ctx *ProjectContext, scoreType, version string, factors, weights m
 	} else if coverage >= .5 {
 		confidence = domain.ConfidenceReported
 	}
+	unknownSummary := fmt.Sprintf("%d factors are unknown", len(unknown))
+	if len(unknown) == 1 {
+		unknownSummary = "1 factor is unknown"
+	}
 	return &domain.ProjectScore{
 		ID: identity.StableID("score", version, ctx.Project.ID+":"+inputHash), ProjectID: ctx.Project.ID,
 		ScoreType: scoreType, ScoreValue: round(total), ScoreVersion: version, Factors: factors,
 		FactorEvidence: normalizeFactorEvidence(factorEvidence), EvidenceIDs: evidenceIDs,
 		UnknownFactors: unknown, Coverage: round(coverage * 100), Confidence: confidence, InputHash: inputHash,
-		Explanation:  fmt.Sprintf("%s %s; %.0f%% of configured factor weight is covered and %d factors are unknown.", version, methodology, coverage*100, len(unknown)),
+		Explanation:  fmt.Sprintf("%s %s; %.0f%% of configured factor weight is covered and %s.", version, methodology, coverage*100, unknownSummary),
 		CalculatedAt: latestInputTime(ctx, includeTrade),
 	}
 }

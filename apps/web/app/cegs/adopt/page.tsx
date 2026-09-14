@@ -16,7 +16,7 @@ export default function CEGSAdoptPage() {
     {
       title: "Infrastructure Funds & Institutional Investors",
       useCase: "Ingest structured project data into quantitative pipeline models, tracking stage velocity and capital gaps across Canada.",
-      command: "curl -s http://localhost:8080/api/v1/cegs/export | jq .",
+      command: "curl -s \"$COG_BASE_URL/api/v1/cegs/export\" | jq .",
     },
     {
       title: "Suppliers & EPCM Contractors",

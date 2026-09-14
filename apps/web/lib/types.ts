@@ -83,6 +83,20 @@ export interface ProjectScore {
   calculated_at?: string;
 }
 
+export interface TradeMetric {
+  id: string;
+  geography: string;
+  metric_code: string;
+  metric_name: string;
+  reference_period: string;
+  value: number;
+  unit: string;
+  scale_min?: number;
+  scale_max?: number;
+  evidence_id: string;
+  observed_at: string;
+}
+
 export interface CapitalItem {
   id: string;
   category: string;

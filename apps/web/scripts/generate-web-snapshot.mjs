@@ -284,9 +284,10 @@ const registeredTradeSources = [
   },
 ];
 
-const [projects, evidence, manifest] = await Promise.all([
+const [projects, evidence, tradeMetrics, manifest] = await Promise.all([
   readJsonLines(resolve(repositoryRoot, "data/public/projects.jsonl")),
   readJsonLines(resolve(repositoryRoot, "data/public/evidence.jsonl")),
+  readJsonLines(resolve(repositoryRoot, "data/public/trade_metrics.jsonl")),
   readFile(resolve(repositoryRoot, "data/public/manifest.json"), "utf8").then(JSON.parse),
 ]);
 
@@ -413,7 +414,8 @@ await mkdir(outputDirectory, { recursive: true });
 await Promise.all([
   writeFile(resolve(outputDirectory, "projects.snapshot.json"), `${JSON.stringify(compactProjects)}\n`),
   writeFile(resolve(outputDirectory, "sources.snapshot.json"), `${JSON.stringify(compactSources)}\n`),
+  writeFile(resolve(outputDirectory, "trade-metrics.snapshot.json"), `${JSON.stringify(tradeMetrics)}\n`),
   writeFile(resolve(outputDirectory, "manifest.snapshot.json"), `${JSON.stringify(manifest)}\n`),
 ]);
 
-console.log(`Generated web snapshot: ${compactProjects.length} projects, ${evidence.length} evidence records, ${compactSources.length} canonical source records.`);
+console.log(`Generated web snapshot: ${compactProjects.length} projects, ${evidence.length} evidence records, ${tradeMetrics.length} trade metrics, ${compactSources.length} canonical source records.`);

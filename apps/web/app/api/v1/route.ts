@@ -10,12 +10,15 @@ export function GET() {
     documentation: "/apis",
     endpoints: [
       "/api/v1/health",
+      "/api/v1/integrations/status",
       "/api/v1/radar",
+      "/api/v1/cegs/export",
       "/api/v1/projects",
       "/api/v1/projects/{slug}",
       "/api/v1/sources",
       "/api/v1/sources/coverage",
       "/api/v1/sources/{id}",
+      "/api/v1/trade/metrics",
       "/api/v1/export/project/{slug}?format=cegs|markdown",
     ],
   });

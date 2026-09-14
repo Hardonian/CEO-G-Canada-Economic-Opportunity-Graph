@@ -10,6 +10,7 @@ const translations: Record<string, string> = {
   "Open-source research · Not a government service": "Recherche à code source ouvert · Aucun service gouvernemental",
   "Independent economic intelligence": "Veille économique indépendante",
   "Executive Brief": "Note exécutive",
+  "ANALYSIS": "ANALYSE",
   "Capital Radar": "Radar du capital",
   "Planning": "Planification",
   "Projects": "Projets",
@@ -52,6 +53,10 @@ const translations: Record<string, string> = {
   "Research, regulatory & investment-use notice": "Avis sur l’usage en recherche, réglementation et investissement",
   "English interface · French navigation preview · WCAG 2.2 AA design target": "Interface bilingue français-anglais · Objectif de conception WCAG 2.2 AA",
   "English/French bilingual interface · WCAG 2.2 AA design target": "Interface bilingue français-anglais · Objectif de conception WCAG 2.2 AA",
+  "Advertising preference": "Préférence publicitaire",
+  "Optional, non-personalized advertising helps fund this open public-interest research. Ads load only if you allow them; declining does not limit the site.": "La publicité facultative et non personnalisée contribue au financement de cette recherche ouverte d’intérêt public. Les annonces ne se chargent qu’avec votre autorisation; un refus ne limite pas le site.",
+  "Continue without ads": "Continuer sans publicité",
+  "Allow ads": "Autoriser les annonces",
   "An open, machine-readable intelligence layer for Canadian economic development, infrastructure capital, and sovereign procurement planning.": "Une couche de renseignements ouverte et lisible par machine pour le développement économique canadien, le capital d’infrastructure et la planification de l’approvisionnement souverain.",
   "CanadaOpportunityGraph is not a Government of Canada service and is not affiliated with or endorsed by any federal, provincial, territorial, municipal, or Indigenous government.": "CanadaOpportunityGraph n’est pas un service du gouvernement du Canada et n’est ni affilié à un gouvernement fédéral, provincial, territorial, municipal ou autochtone, ni approuvé par celui-ci.",
   "Software is released under Apache-2.0; public datasets use CC BY 4.0 with attribution.": "Le logiciel est publié sous licence Apache-2.0; les jeux de données publics utilisent CC BY 4.0 avec attribution.",
@@ -104,6 +109,34 @@ const translations: Record<string, string> = {
   "Supplierability": "Capacité des fournisseurs",
   "Strategicity": "Importance stratégique",
   "NOT SCORED": "NON NOTÉ",
+  "buildability": "faisabilité d’exécution",
+  "investability": "attractivité de l’investissement",
+  "supplierability": "capacité des fournisseurs",
+  "strategicity": "importance stratégique",
+  "SUPPORTED EVIDENCE": "PREUVES ÉTAYÉES",
+  "VERIFIED EVIDENCE": "PREUVES VÉRIFIÉES",
+  "REPORTED EVIDENCE": "PREUVES DÉCLARÉES",
+  "UNKNOWN EVIDENCE": "PREUVES INCONNUES",
+  "Small Modular Reactor": "Petit réacteur modulaire",
+  "Nickel-Cobalt Mine and Mill": "Mine et usine de nickel-cobalt",
+  "Container Port Terminal": "Terminal portuaire à conteneurs",
+  "Battery Energy Storage": "Stockage d’énergie par batteries",
+  "Mining & mineral development": "Mines et mise en valeur des minéraux",
+  "Energy infrastructure": "Infrastructures énergétiques",
+  "Hydro": "Hydroélectricité",
+  "Bioenergy": "Bioénergie",
+  "Solar": "Énergie solaire",
+  "Wind": "Énergie éolienne",
+  "Forest products": "Produits forestiers",
+  "Energy Storage": "Stockage d’énergie",
+  "Carbon Capture and Storage": "Captage et stockage du carbone",
+  "Nuclear": "Nucléaire",
+  "Geothermal": "Géothermie",
+  "Tidal": "Énergie marémotrice",
+  "Ontario Power Generation is constructing one BWRX-300 reactor at the Darlington New Nuclear Project site in Clarington, Ontario.": "Ontario Power Generation construit un réacteur BWRX-300 sur le site du nouveau projet nucléaire de Darlington, à Clarington, en Ontario.",
+  "Canada Nickel Company proposes an open-pit nickel-cobalt mine and on-site metal mill approximately 42 kilometres north of Timmins, Ontario.": "Canada Nickel Company propose une mine de nickel-cobalt à ciel ouvert et une usine métallurgique sur place, à environ 42 kilomètres au nord de Timmins, en Ontario.",
+  "The Montreal Port Authority proposes a container terminal in Contrecœur with a maximum annual capacity of 1.15 million twenty-foot-equivalent containers.": "L’Administration portuaire de Montréal propose à Contrecœur un terminal à conteneurs d’une capacité annuelle maximale de 1,15 million d’équivalents vingt pieds.",
+  "Oneida is a 250 MW / 1,000 MWh battery energy storage facility in Haldimand County, Ontario that entered commercial operations in 2025.": "Oneida est une installation de stockage d’énergie par batteries de 250 MW / 1 000 MWh située dans le comté de Haldimand, en Ontario, qui est entrée en exploitation commerciale en 2025.",
 
   "MAJOR PROJECTS CYCLE & CAPITAL TRACKING": "CYCLE DES GRANDS PROJETS ET SUIVI DU CAPITAL",
   "Explore Canadian": "Explorer les",
@@ -284,9 +317,18 @@ const translations: Record<string, string> = {
   "GLOBAL TRADE & SUPPLY-CHAIN SOURCE LAYER": "COUCHE DE SOURCES SUR LE COMMERCE MONDIAL ET LES CHAÎNES D’APPROVISIONNEMENT",
   "Trade & Supply Chains": "Commerce et chaînes d’approvisionnement",
   "Supply Chains": "Chaînes d’approvisionnement",
+  "Official Canadian and multilateral intelligence for commodity flows, value-added trade, tariffs, logistics performance, ports and maritime connectivity. World Bank observations now feed a reproducible trade-resilience score; all other services remain explicitly staged until their adapters and lineage gates pass.": "Renseignements officiels canadiens et multilatéraux sur les flux de marchandises, le commerce en valeur ajoutée, les tarifs, la performance logistique, les ports et la connectivité maritime. Les observations de la Banque mondiale alimentent maintenant une note reproductible de résilience commerciale; tous les autres services demeurent explicitement en attente jusqu’à la réussite de leurs adaptateurs et contrôles de traçabilité.",
   "A vetted registry of official Canadian and multilateral services for commodity flows, value-added trade, tariffs, logistics performance, ports and maritime connectivity. Registration expands the evidence map without implying that a feed already affects project scores.": "Un registre vérifié de services officiels canadiens et multilatéraux sur les flux de marchandises, le commerce en valeur ajoutée, les tarifs, la performance logistique, les ports et la connectivité maritime. L’enregistrement élargit la carte des preuves sans laisser entendre qu’un flux influence déjà les notes des projets.",
   "Open machine-readable registry": "Ouvrir le registre lisible par machine",
   "Inspect source profiles": "Consulter les profils de source",
+  "Evidence-linked scoring input": "Intrant de notation lié aux preuves",
+  "Canada trade-resilience context": "Contexte canadien de résilience commerciale",
+  "normalized official observations with record hashes, source locators and immutable evidence IDs. The score is national context—not a claim about a specific project's supplier exposure.": "observations officielles normalisées avec hachages de dossier, localisateurs de source et identifiants de preuve immuables. La note décrit le contexte national — elle ne constitue pas une affirmation sur l’exposition d’un projet précis à ses fournisseurs.",
+  "Open all metrics and lineage IDs": "Ouvrir toutes les mesures et tous les identifiants de traçabilité",
+  "Logistics performance index: Overall (1=low to 5=high)": "Indice de performance logistique : ensemble (1=faible à 5=élevé)",
+  "Trade (% of GDP)": "Commerce (% du PIB)",
+  "Merchandise exports (current US$)": "Exportations de marchandises ($ US courants)",
+  "Merchandise imports (current US$)": "Importations de marchandises ($ US courants)",
   "Coverage architecture": "Architecture de couverture",
   "Four complementary lenses connect Canadian projects to external demand, input dependencies and transport risk.": "Quatre perspectives complémentaires relient les projets canadiens à la demande extérieure, aux dépendances d’intrants et aux risques de transport.",
   "Commodity trade flows": "Flux commerciaux de marchandises",
@@ -301,11 +343,16 @@ const translations: Record<string, string> = {
   "Canadian services": "services canadiens",
   "multilateral services": "services multilatéraux",
   "all publisher links checked": "tous les liens des éditeurs vérifiés",
+  "evidence-linked": "liée aux preuves",
+  "staged": "en attente",
+  "Integration status shown per source": "État d’intégration indiqué pour chaque source",
+  "evidence-linked records": "dossiers liés aux preuves",
   "Registered · not yet joined to scores": "Enregistrées · pas encore intégrées aux notes",
   "Official publisher": "Éditeur officiel",
   "Registered, not ingested": "Enregistrée, non ingérée",
   "Open official service": "Ouvrir le service officiel",
   "Integration boundary": "Limite d’intégration",
+  "World Bank Indicators is active through a versioned adapter and contributes only to the disclosed trade-resilience and supplierability factors. Every other service is registered, classified and link-checked but does not yet alter scores. Promotion requires licence review, schema mapping, freshness monitoring, reconciliation tests and immutable evidence lineage.": "Les Indicateurs de la Banque mondiale sont actifs grâce à un adaptateur versionné et contribuent uniquement aux facteurs publiés de résilience commerciale et de capacité des fournisseurs. Tous les autres services sont enregistrés, classifiés et leurs liens sont vérifiés, mais ils ne modifient pas encore les notes. Leur activation exige l’examen des licences, le mappage du schéma, la surveillance de la fraîcheur, des tests de rapprochement et une traçabilité immuable des preuves.",
   "These services are registered, classified and link-checked. They are not yet active ingestion inputs and do not alter project facts, scores or opportunities. Promotion to active requires a versioned adapter, licence review, schema mapping, freshness monitoring, reconciliation tests and immutable evidence lineage.": "Ces services sont enregistrés, classifiés et leurs liens ont été vérifiés. Ils ne sont pas encore des intrants d’ingestion active et ne modifient ni les faits, ni les notes, ni les possibilités des projets. Le passage au statut actif exige un adaptateur versionné, l’examen des licences, le mappage du schéma, la surveillance de la fraîcheur, des tests de rapprochement et une traçabilité immuable des preuves.",
   "Official Statistics Canada API for released data and metadata, including Canadian international merchandise trade tables and daily change lists.": "API officielle de Statistique Canada pour les données et métadonnées publiées, y compris les tableaux du commerce international de marchandises et les listes quotidiennes de changements.",
   "Official Canadian trade portal for customized product- and industry-level reports covering Canada and United States trade with more than 200 economies.": "Portail commercial officiel du Canada pour des rapports personnalisés par produit et industrie couvrant le commerce du Canada et des États-Unis avec plus de 200 économies.",
@@ -375,6 +422,60 @@ const translations: Record<string, string> = {
   "Measures the objective probability that an announced major project will successfully reach operational completion without structural abandonment.": "Mesure la probabilité objective qu’un grand projet annoncé atteigne l’exploitation sans abandon structurel.",
   "Buildability Score (0–100)": "Note de faisabilité d’exécution (0–100)",
   "Investability Score (0–100)": "Note d’attractivité de l’investissement (0–100)",
+  "Supplierability Score (0–100)": "Note de capacité des fournisseurs (0–100)",
+  "Strategicity Score (0–100)": "Note d’importance stratégique (0–100)",
+  "Trade Resilience Score (0–100)": "Note de résilience commerciale (0–100)",
+  "Trade resilience": "Résilience commerciale",
+  "Canada-level logistics, trade participation, two-way flows, and high-technology exports.": "Logistique, participation au commerce, flux bilatéraux et exportations de haute technologie à l’échelle canadienne.",
+  "Scoring lineage": "Traçabilité de la notation",
+  "Version, factor coverage, input hash, and resolvable evidence for every published score.": "Version, couverture des facteurs, hachage des intrants et preuves vérifiables pour chaque note publiée.",
+  "Open formulas": "Ouvrir les formules",
+  "SHA-256 input:": "Intrant SHA-256 :",
+  "Evidence records:": "Dossiers de preuve :",
+  "execution evidence": "preuves d’exécution",
+  "regulatory environmental": "réglementation et environnement",
+  "stage progress": "progression de l’étape",
+  "capital scale": "ampleur du capital",
+  "execution feasibility": "faisabilité d’exécution",
+  "strategic importance": "importance stratégique",
+  "downstream opportunities": "possibilités en aval",
+  "procurement proximity": "proximité de l’approvisionnement",
+  "technical intensity": "intensité technique",
+  "ai sovereignty": "souveraineté de l’IA",
+  "critical minerals": "minéraux critiques",
+  "energy security": "sécurité énergétique",
+  "sovereign infrastructure": "infrastructure souveraine",
+  "uses only evidenced execution factors; uncovered factor weight is reported rather than replaced with a default": "utilise uniquement des facteurs d’exécution étayés; la pondération non couverte est signalée plutôt que remplacée par une valeur par défaut",
+  "combines disclosed capital scale, observed financing events, classified strategic demand, and evidenced lifecycle maturity": "combine l’ampleur du capital publiée, les événements de financement observés, la demande stratégique classifiée et la maturité du cycle de vie étayée",
+  "combines project procurement signals with the official Canada logistics-performance context; missing tender or trade inputs remain explicit": "combine les signaux d’approvisionnement du projet avec le contexte officiel de performance logistique du Canada; les intrants manquants relatifs aux appels d’offres ou au commerce demeurent explicites",
+  "classifies evidenced project sector and geography against published Canadian industrial-sovereignty dimensions": "classe le secteur et l’emplacement étayés du projet selon les dimensions publiées de souveraineté industrielle canadienne",
+  "is a Canada-level context index: 45% normalized LPI, 20% trade-to-GDP, 20% two-way merchandise-flow balance, and 15% high-technology export share": "est un indice du contexte canadien : 45 % pour l’IPL normalisé, 20 % pour le commerce rapporté au PIB, 20 % pour l’équilibre bilatéral des flux de marchandises et 15 % pour la part des exportations de haute technologie",
+  "of configured factor weight is covered and": "de la pondération configurée est couverte et",
+  "factor is unknown.": "facteur est inconnu.",
+  "factors are unknown.": "facteurs sont inconnus.",
+  "Measures contracting opportunity from project stage, confirmed tenders, technical intensity, derived downstream needs, and Canada's official logistics context.": "Mesure les possibilités contractuelles selon l’étape du projet, les appels d’offres confirmés, l’intensité technique, les besoins en aval dérivés et le contexte logistique officiel du Canada.",
+  "Procurement proximity": "Proximité de l’approvisionnement",
+  "Observed tender volume": "Volume d’appels d’offres observé",
+  "Technical intensity": "Intensité technique",
+  "Downstream opportunity density": "Densité des possibilités en aval",
+  "World Bank logistics performance": "Performance logistique de la Banque mondiale",
+  "Classifies the sourced project sector and geography across critical minerals, energy security, sovereign infrastructure, and AI sovereignty.": "Classe le secteur et l’emplacement sourcés du projet selon les minéraux critiques, la sécurité énergétique, les infrastructures souveraines et la souveraineté de l’IA.",
+  "Critical minerals · 25%": "Minéraux critiques · 25 %",
+  "Energy security · 25%": "Sécurité énergétique · 25 %",
+  "Sovereign infrastructure · 25%": "Infrastructure souveraine · 25 %",
+  "AI sovereignty · 25%": "Souveraineté de l’IA · 25 %",
+  "A Canada-level operating-context index—not project-specific import exposure. Inputs are normalized World Bank observations with per-factor evidence IDs and reproducible SHA-256 input hashes.": "Un indice du contexte d’exploitation à l’échelle canadienne — et non de l’exposition propre à un projet. Les intrants sont des observations normalisées de la Banque mondiale, avec identifiants de preuve par facteur et hachages SHA-256 reproductibles.",
+  "Normalized LPI": "IPL normalisé",
+  "Trade / GDP": "Commerce / PIB",
+  "Two-way merchandise balance": "Équilibre bilatéral des marchandises",
+  "High-tech export share": "Part des exportations de haute technologie",
+  "Missing inputs are never replaced with synthetic values. Available weights are renormalized, and the published score reports coverage, unknown factors, factor-to-evidence mappings, calculation timestamp, and input hash.": "Les intrants manquants ne sont jamais remplacés par des valeurs synthétiques. Les pondérations disponibles sont renormalisées, et la note publiée indique la couverture, les facteurs inconnus, les liens entre facteurs et preuves, l’horodatage du calcul et le hachage des intrants.",
+  "trade resilience": "résilience commerciale",
+  "logistics performance": "performance logistique",
+  "trade participation": "participation commerciale",
+  "two way merchandise balance": "équilibre bilatéral des marchandises",
+  "high technology export intensity": "intensité des exportations de haute technologie",
+  "trade logistics": "logistique commerciale",
   "Full mathematical transparency regarding deterministic score calculations, source tiering, change detection, epistemic confidence invariants, and entity resolution in CanadaOpportunityGraph.": "Transparence mathématique complète des calculs déterministes, des niveaux de source, de la détection des changements, des invariants de confiance épistémique et de la résolution des entités dans CanadaOpportunityGraph.",
 
   "CANADIAN AI SOVEREIGNTY INDEX — METHODOLOGY V1.0": "INDICE CANADIEN DE SOUVERAINETÉ DE L’IA — MÉTHODOLOGIE V1.0",
@@ -526,6 +627,23 @@ function translateDynamic(value: string): string {
   return translated;
 }
 
+const protectedIdentifierPattern = /\b(?:buildability|investability|supplierability|strategicity|trade-resilience)-v\d+\.\d+\b/g;
+
+function protectIdentifiers(value: string): { value: string; identifiers: string[] } {
+  const identifiers: string[] = [];
+  return {
+    value: value.replace(protectedIdentifierPattern, (identifier) => {
+      const index = identifiers.push(identifier) - 1;
+      return `\uE000${index}\uE001`;
+    }),
+    identifiers,
+  };
+}
+
+function restoreIdentifiers(value: string, identifiers: string[]): string {
+  return value.replace(/\uE000(\d+)\uE001/g, (_match, index: string) => identifiers[Number(index)] ?? _match);
+}
+
 export function translateText(value: string, language: Language): string {
   if (language === "en" || !/[A-Za-z]/.test(value)) return value;
   const spacing = value.match(/^(\s*)([\s\S]*?)(\s*)$/);
@@ -538,10 +656,14 @@ export function translateText(value: string, language: Language): string {
   const exact = translations[core];
   if (exact) return `${before}${exact}${after}`;
 
-  let translated = translateDynamic(core);
+  const protectedValue = protectIdentifiers(core);
+  let translated = translateDynamic(protectedValue.value);
   for (const [source, target] of orderedPhrases) {
     if (translated.includes(source)) translated = translated.replaceAll(source, target);
   }
+
+  translated = restoreIdentifiers(translated, protectedValue.identifiers);
+  translated = translated.replace(/(\d+(?:\.\d+)?)%/g, "$1 %");
   return `${before}${translated}${after}`;
 }
 

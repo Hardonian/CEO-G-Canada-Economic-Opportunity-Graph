@@ -18,7 +18,7 @@ export default function MethodologyPage() {
         </p>
       </div>
 
-      {/* Grid: 4 Scoring Engines Breakdown */}
+      {/* Grid: 5 Scoring Engines Breakdown */}
       <div className="space-y-6">
         <h2 className="text-base font-bold text-text-main font-mono uppercase tracking-wider flex items-center gap-2">
           <Calculator className="h-4 w-4 text-aurora" />
@@ -31,7 +31,7 @@ export default function MethodologyPage() {
             <div className="flex items-center justify-between border-b border-borderSubtle pb-3">
               <span className="font-bold text-text-main text-base">Buildability Score (0–100)</span>
               <span className="text-[10px] font-mono px-2.5 py-0.5 rounded-full bg-primary/10 text-aurora border border-primary/30 font-bold">
-                buildability-v1.0
+                buildability-v2.1
               </span>
             </div>
             <p className="text-xs text-text-muted leading-relaxed">
@@ -67,7 +67,7 @@ export default function MethodologyPage() {
                 <span className="text-text-main font-bold">10%</span>
               </div>
               <div className="flex justify-between text-[11px] py-1">
-                <span className="text-text-muted">Proponent Institutional Credibility</span>
+                <span className="text-text-muted">Observed Execution Evidence</span>
                 <span className="text-text-main font-bold">10%</span>
               </div>
             </div>
@@ -78,7 +78,7 @@ export default function MethodologyPage() {
             <div className="flex items-center justify-between border-b border-borderSubtle pb-3">
               <span className="font-bold text-text-main text-base">Investability Score (0–100)</span>
               <span className="text-[10px] font-mono px-2.5 py-0.5 rounded-full bg-gold/10 text-gold border border-gold/30 font-bold">
-                investability-v1.0
+                investability-v2.0
               </span>
             </div>
             <p className="text-xs text-text-muted leading-relaxed">
@@ -102,6 +102,44 @@ export default function MethodologyPage() {
                 <span className="text-gold font-bold">25%</span>
               </div>
             </div>
+          </div>
+
+          <div className="glass-card p-6 rounded-2xl border border-border/80 space-y-4 shadow-xl">
+            <div className="flex items-center justify-between border-b border-borderSubtle pb-3">
+              <span className="font-bold text-text-main text-base">Supplierability Score (0–100)</span>
+              <span className="text-[10px] font-mono px-2.5 py-0.5 rounded-full bg-primary/10 text-aurora border border-primary/30 font-bold">supplierability-v2.0</span>
+            </div>
+            <p className="text-xs text-text-muted leading-relaxed">Measures contracting opportunity from project stage, confirmed tenders, technical intensity, derived downstream needs, and Canada&apos;s official logistics context.</p>
+            <div className="space-y-1.5 text-xs font-mono">
+              {[["Procurement proximity", "25%"], ["Observed tender volume", "20%"], ["Technical intensity", "20%"], ["Downstream opportunity density", "20%"], ["World Bank logistics performance", "15%"]].map(([label, weight]) => (
+                <div key={label} className="flex justify-between text-[11px] py-1 border-b border-borderSubtle last:border-0"><span className="text-text-muted">{label}</span><span className="text-aurora font-bold">{weight}</span></div>
+              ))}
+            </div>
+          </div>
+
+          <div className="glass-card p-6 rounded-2xl border border-border/80 space-y-4 shadow-xl">
+            <div className="flex items-center justify-between border-b border-borderSubtle pb-3">
+              <span className="font-bold text-text-main text-base">Strategicity Score (0–100)</span>
+              <span className="text-[10px] font-mono px-2.5 py-0.5 rounded-full bg-primary/10 text-aurora border border-primary/30 font-bold">strategicity-v2.0</span>
+            </div>
+            <p className="text-xs text-text-muted leading-relaxed">Classifies the sourced project sector and geography across critical minerals, energy security, sovereign infrastructure, and AI sovereignty.</p>
+            <div className="grid grid-cols-2 gap-2 font-mono text-[11px] text-text-muted">
+              {["Critical minerals · 25%", "Energy security · 25%", "Sovereign infrastructure · 25%", "AI sovereignty · 25%"].map((item) => <div key={item} className="rounded-lg border border-borderSubtle bg-surface p-2">{item}</div>)}
+            </div>
+          </div>
+
+          <div className="glass-card p-6 rounded-2xl border border-gold/40 space-y-4 shadow-xl lg:col-span-2">
+            <div className="flex flex-wrap items-center justify-between gap-2 border-b border-borderSubtle pb-3">
+              <span className="font-bold text-text-main text-base">Trade Resilience Score (0–100)</span>
+              <span className="text-[10px] font-mono px-2.5 py-0.5 rounded-full bg-gold/10 text-gold border border-gold/30 font-bold">trade-resilience-v1.0</span>
+            </div>
+            <p className="text-xs text-text-muted leading-relaxed">A Canada-level operating-context index—not project-specific import exposure. Inputs are normalized World Bank observations with per-factor evidence IDs and reproducible SHA-256 input hashes.</p>
+            <div className="grid gap-2 sm:grid-cols-2 lg:grid-cols-4 font-mono text-[11px]">
+              {[["Normalized LPI", "45%"], ["Trade / GDP", "20%"], ["Two-way merchandise balance", "20%"], ["High-tech export share", "15%"]].map(([label, weight]) => (
+                <div key={label} className="rounded-lg border border-borderSubtle bg-surface p-3"><div className="text-text-muted">{label}</div><div className="mt-1 text-gold font-bold">{weight}</div></div>
+              ))}
+            </div>
+            <p className="font-mono text-[10px] leading-relaxed text-text-subtle">Missing inputs are never replaced with synthetic values. Available weights are renormalized, and the published score reports coverage, unknown factors, factor-to-evidence mappings, calculation timestamp, and input hash.</p>
           </div>
         </div>
       </div>

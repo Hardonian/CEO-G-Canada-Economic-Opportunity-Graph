@@ -1,7 +1,9 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { ArrowUpRight, Boxes, Globe2, Network, PackageSearch, Ship, ShieldCheck } from "lucide-react";
+import { ArrowUpRight, BarChart3, Boxes, Globe2, Network, PackageSearch, Ship, ShieldCheck } from "lucide-react";
+import { SNAPSHOT_PROJECTS } from "@/lib/data";
 import { VETTED_SOURCES } from "@/lib/source-data";
+import { TRADE_METRICS } from "@/lib/trade-data";
 
 export const metadata: Metadata = {
   title: "Global Trade & Supply Chains",
@@ -41,6 +43,15 @@ export default function TradePage() {
   );
   const canadian = sources.filter((source) => source.jurisdiction === "CA");
   const international = sources.filter((source) => source.jurisdiction !== "CA");
+  const active = sources.filter((source) => source.integration_status === "EVIDENCE_LINKED");
+  const registered = sources.filter((source) => source.integration_status !== "EVIDENCE_LINKED");
+  const tradeScore = SNAPSHOT_PROJECTS[0]?.scores?.trade_resilience;
+  const featuredMetrics = ["LP.LPI.OVRL.XQ", "NE.TRD.GNFS.ZS", "TX.VAL.MRCH.CD.WT", "TM.VAL.MRCH.CD.WT"]
+    .map((code) => TRADE_METRICS.find((metric) => metric.metric_code === code))
+    .filter((metric): metric is (typeof TRADE_METRICS)[number] => Boolean(metric));
+  const formatMetric = (value: number, unit: string) => unit === "current_USD"
+    ? `$${(value / 1_000_000_000).toFixed(1)}B USD`
+    : unit === "percent" ? `${value.toFixed(1)}%` : `${value.toFixed(1)}/5`;
 
   return (
     <div className="mx-auto max-w-7xl space-y-9 px-4 py-8 sm:px-6 lg:px-8">
@@ -54,7 +65,7 @@ export default function TradePage() {
             Trade & <span className="text-gold">Supply Chains</span>
           </h1>
           <p className="mt-4 max-w-3xl text-sm leading-relaxed text-text-muted">
-            A vetted registry of official Canadian and multilateral services for commodity flows, value-added trade, tariffs, logistics performance, ports and maritime connectivity. Registration expands the evidence map without implying that a feed already affects project scores.
+            Official Canadian and multilateral intelligence for commodity flows, value-added trade, tariffs, logistics performance, ports and maritime connectivity. World Bank observations now feed a reproducible trade-resilience score; all other services remain explicitly staged until their adapters and lineage gates pass.
           </p>
           <div className="mt-5 flex flex-wrap gap-3">
             <Link href="/api/v1/sources?q=trade" className="inline-flex min-h-10 items-center gap-2 rounded-lg bg-primary px-4 text-xs font-black text-[#050b08] hover:bg-aurora-mint">
@@ -66,6 +77,36 @@ export default function TradePage() {
           </div>
         </div>
       </header>
+
+      <section aria-labelledby="active-trade-intelligence-title" className="glass-card rounded-2xl border border-primary/30 p-6">
+        <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
+          <div>
+            <div className="flex items-center gap-2 font-mono text-[10px] font-bold uppercase tracking-wider text-aurora">
+              <BarChart3 aria-hidden="true" className="h-4 w-4" /> Evidence-linked scoring input
+            </div>
+            <h2 id="active-trade-intelligence-title" className="mt-2 text-xl font-black text-text-main">Canada trade-resilience context</h2>
+            <p className="mt-2 max-w-3xl text-xs leading-relaxed text-text-muted">
+              {TRADE_METRICS.length} normalized official observations with record hashes, source locators and immutable evidence IDs. The score is national context—not a claim about a specific project&apos;s supplier exposure.
+            </p>
+          </div>
+          <div className="rounded-xl border border-primary/40 bg-primary/10 px-5 py-3 text-right">
+            <div className="font-mono text-[9px] uppercase tracking-wider text-text-muted">trade-resilience-v1.0</div>
+            <div className="mt-1 text-2xl font-black tabular-nums text-aurora">{tradeScore == null ? "NOT SCORED" : `${tradeScore.toFixed(1)}/100`}</div>
+          </div>
+        </div>
+        <div className="mt-5 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+          {featuredMetrics.map((metric) => (
+            <div key={metric.id} className="rounded-xl border border-borderSubtle bg-background/60 p-4">
+              <div className="font-mono text-[9px] text-aurora">{metric.metric_code} · {metric.reference_period}</div>
+              <div className="mt-2 text-xl font-black tabular-nums text-text-main">{formatMetric(metric.value, metric.unit)}</div>
+              <div className="mt-1 line-clamp-2 text-[10px] leading-relaxed text-text-muted">{metric.metric_name}</div>
+            </div>
+          ))}
+        </div>
+        <Link href="/api/v1/trade/metrics" className="mt-5 inline-flex items-center gap-1 text-xs font-bold text-aurora underline decoration-border underline-offset-4">
+          Open all metrics and lineage IDs <ArrowUpRight aria-hidden="true" className="h-3 w-3" />
+        </Link>
+      </section>
 
       <section aria-labelledby="trade-dimensions-title" className="space-y-4">
         <div>
@@ -88,16 +129,18 @@ export default function TradePage() {
         <div className="flex flex-col gap-2 border-b border-borderSubtle pb-3 sm:flex-row sm:items-end sm:justify-between">
           <div>
             <h2 id="trade-sources-title" className="text-lg font-black text-text-main">Registered official sources</h2>
-            <p className="mt-1 text-xs text-text-muted">{canadian.length} Canadian services · {international.length} multilateral services · all publisher links checked</p>
+            <p className="mt-1 text-xs text-text-muted">{canadian.length} Canadian services · {international.length} multilateral services · {active.length} evidence-linked · {registered.length} staged</p>
           </div>
-          <span className="font-mono text-[10px] font-bold uppercase tracking-wider text-gold">Registered · not yet joined to scores</span>
+          <span className="font-mono text-[10px] font-bold uppercase tracking-wider text-gold">Integration status shown per source</span>
         </div>
         <div className="grid gap-4 lg:grid-cols-2">
           {sources.map((source) => (
             <article key={source.id} className="glass-card flex flex-col rounded-2xl p-5">
               <div className="flex flex-wrap items-center gap-2 font-mono text-[9px] font-bold uppercase tracking-wide">
                 <span className="rounded-full border border-primary/40 bg-primary/10 px-2.5 py-1 text-aurora">Official publisher</span>
-                <span className="rounded-full border border-gold/40 bg-gold/10 px-2.5 py-1 text-gold">Registered, not ingested</span>
+                <span className={`rounded-full border px-2.5 py-1 ${source.integration_status === "EVIDENCE_LINKED" ? "border-primary/40 bg-primary/10 text-aurora" : "border-gold/40 bg-gold/10 text-gold"}`}>
+                  {source.integration_status === "EVIDENCE_LINKED" ? `${source.evidence_record_count ?? 0} evidence-linked records` : "Registered, not ingested"}
+                </span>
                 {source.authentication_required && <span className="rounded-full border border-borderSubtle bg-background px-2.5 py-1 text-text-muted">Free API key required</span>}
               </div>
               <p className="mt-4 font-mono text-[10px] uppercase tracking-wider text-aurora">{source.publisher_name}</p>
@@ -120,7 +163,7 @@ export default function TradePage() {
           <div>
             <h2 id="integration-boundary-title" className="font-bold text-text-main">Integration boundary</h2>
             <p className="mt-2 text-sm leading-relaxed text-text-muted">
-              These services are registered, classified and link-checked. They are not yet active ingestion inputs and do not alter project facts, scores or opportunities. Promotion to active requires a versioned adapter, licence review, schema mapping, freshness monitoring, reconciliation tests and immutable evidence lineage.
+              World Bank Indicators is active through a versioned adapter and contributes only to the disclosed trade-resilience and supplierability factors. Every other service is registered, classified and link-checked but does not yet alter scores. Promotion requires licence review, schema mapping, freshness monitoring, reconciliation tests and immutable evidence lineage.
             </p>
           </div>
         </div>

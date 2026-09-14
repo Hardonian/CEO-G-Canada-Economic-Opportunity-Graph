@@ -43,7 +43,9 @@ export default async function ProjectProfilePage({ params }: Props) {
   const investability = score("investability");
   const supplierability = score("supplierability");
   const strategicity = score("strategicity");
+  const tradeResilience = score("trade_resilience");
   const evidence = project.evidence ?? [];
+  const scoreDetails = project.score_details ?? [];
 
   const stages = [
     "ANNOUNCED",
@@ -155,8 +157,8 @@ export default async function ProjectProfilePage({ params }: Props) {
         </div>
       </div>
 
-      {/* 4-D Deterministic Scorecards */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+      {/* 5-D Deterministic Scorecards */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-5 gap-4">
         {/* Buildability */}
         <div className="glass-card p-5 rounded-2xl border border-border/80 space-y-2.5 shadow-xl">
           <div className="flex items-center justify-between">
@@ -220,7 +222,58 @@ export default async function ProjectProfilePage({ params }: Props) {
             Importance to Canadian critical minerals, clean baseload power, and Arctic sovereignty.
           </p>
         </div>
+
+        {/* Trade resilience */}
+        <div className="glass-card p-5 rounded-2xl border border-border/80 space-y-2.5 shadow-xl">
+          <div className="flex items-center justify-between gap-2">
+            <span className="text-xs font-mono uppercase text-text-subtle">Trade resilience</span>
+            <span className="text-xs font-bold font-tabular text-gold">
+              {tradeResilience == null ? "NOT SCORED" : `${tradeResilience.toFixed(1)}/100`}
+            </span>
+          </div>
+          <div className="w-full h-2 rounded-full bg-surface overflow-hidden border border-borderSubtle">
+            <div className="h-full bg-gold rounded-full" style={{ width: `${tradeResilience ?? 0}%` }}></div>
+          </div>
+          <p className="text-[11px] text-text-subtle leading-tight pt-1">
+            Canada-level logistics, trade participation, two-way flows, and high-technology exports.
+          </p>
+        </div>
       </div>
+
+      {scoreDetails.length > 0 && (
+        <section className="glass-card rounded-2xl border border-border/80 p-6 shadow-xl" aria-labelledby="score-lineage-title">
+          <div className="flex flex-col gap-2 border-b border-borderSubtle pb-4 sm:flex-row sm:items-end sm:justify-between">
+            <div>
+              <h2 id="score-lineage-title" className="font-mono text-sm font-bold uppercase tracking-wider text-text-main">Scoring lineage</h2>
+              <p className="mt-1 text-xs text-text-muted">Version, factor coverage, input hash, and resolvable evidence for every published score.</p>
+            </div>
+            <Link href="/methodology" className="text-xs font-bold text-aurora underline decoration-border underline-offset-4">Open formulas</Link>
+          </div>
+          <div className="mt-4 grid gap-3 lg:grid-cols-2">
+            {scoreDetails.map((detail) => (
+              <details key={detail.score_type} className="rounded-xl border border-borderSubtle bg-background/50 p-4 open:border-primary/30">
+                <summary className="cursor-pointer list-none">
+                  <div className="flex flex-wrap items-center justify-between gap-2">
+                    <span className="font-mono text-xs font-bold uppercase text-text-main">{detail.score_type.replaceAll("_", " ")}</span>
+                    <span className="font-mono text-[10px] text-aurora">{detail.score_version} · {detail.coverage?.toFixed(0) ?? "—"}% covered</span>
+                  </div>
+                </summary>
+                <p className="mt-3 text-xs leading-relaxed text-text-muted">{detail.explanation}</p>
+                <div className="mt-3 grid grid-cols-2 gap-2">
+                  {Object.entries(detail.factors).map(([factor, value]) => (
+                    <div key={factor} className="rounded-lg border border-borderSubtle bg-surface px-3 py-2">
+                      <div className="font-mono text-[9px] uppercase text-text-subtle">{factor.replaceAll("_", " ")}</div>
+                      <div className="mt-1 font-mono text-xs font-bold tabular-nums text-text-main">{value.toFixed(1)}/100</div>
+                    </div>
+                  ))}
+                </div>
+                <div className="mt-3 break-all font-mono text-[9px] text-text-subtle">SHA-256 input: {detail.input_hash ?? "not available"}</div>
+                <div className="mt-1 font-mono text-[9px] text-text-subtle">Evidence records: {detail.evidence_ids?.length ?? 0}</div>
+              </details>
+            ))}
+          </div>
+        </section>
+      )}
 
       {/* Lifecycle Stage Progression Tracker */}
       <div className="glass-card p-6 rounded-2xl border border-border/80 space-y-4 shadow-xl">

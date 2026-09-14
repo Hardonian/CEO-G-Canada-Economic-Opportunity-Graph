@@ -1,6 +1,6 @@
 import projectsSnapshot from "@/data/projects.snapshot.json";
 import manifestSnapshot from "@/data/manifest.snapshot.json";
-import { Procurement, Project, ProjectEvidence, RadarStats, Signal } from "./types";
+import { Procurement, Project, ProjectEvidence, ProjectScore, RadarStats, Signal } from "./types";
 
 const SECTORS = new Set<Project["sector"]>([
   "Critical Minerals",
@@ -111,6 +111,34 @@ function normalizeEvidence(value: unknown): ProjectEvidence | null {
   };
 }
 
+function normalizeScore(value: unknown): ProjectScore | null {
+  if (!isRecord(value) || typeof value.score_type !== "string" || typeof value.score_version !== "string" ||
+      typeof value.score_value !== "number" || !Number.isFinite(value.score_value) || value.score_value < 0 || value.score_value > 100 ||
+      typeof value.explanation !== "string" || !isRecord(value.factors)) {
+    return null;
+  }
+  const factors = Object.fromEntries(Object.entries(value.factors).filter(([, candidate]) => typeof candidate === "number" && Number.isFinite(candidate))) as Record<string, number>;
+  if (Object.keys(factors).length !== Object.keys(value.factors).length) return null;
+  const factorEvidence = isRecord(value.factor_evidence)
+    ? Object.fromEntries(Object.entries(value.factor_evidence).flatMap(([factor, ids]) =>
+        Array.isArray(ids) && ids.every((id) => typeof id === "string") ? [[factor, ids as string[]]] : []))
+    : undefined;
+  return {
+    score_type: value.score_type,
+    score_value: value.score_value,
+    score_version: value.score_version,
+    factors,
+    factor_evidence: factorEvidence,
+    evidence_ids: Array.isArray(value.evidence_ids) ? value.evidence_ids.filter((id): id is string => typeof id === "string") : undefined,
+    unknown_factors: Array.isArray(value.unknown_factors) ? value.unknown_factors.filter((factor): factor is string => typeof factor === "string") : undefined,
+    coverage: typeof value.coverage === "number" && Number.isFinite(value.coverage) ? value.coverage : undefined,
+    confidence: typeof value.confidence === "string" ? value.confidence : undefined,
+    input_hash: typeof value.input_hash === "string" && /^[a-f0-9]{64}$/i.test(value.input_hash) ? value.input_hash : undefined,
+    explanation: value.explanation,
+    calculated_at: typeof value.calculated_at === "string" && !Number.isNaN(Date.parse(value.calculated_at)) ? value.calculated_at : undefined,
+  };
+}
+
 export function normalizeProject(value: unknown): Project | null {
   if (!isRecord(value)) return null;
   const raw = value;
@@ -158,6 +186,12 @@ export function normalizeProject(value: unknown): Project | null {
         return item ? [item] : [];
       })
     : undefined;
+  const scoreDetails = Array.isArray(raw.score_details)
+    ? raw.score_details.flatMap((candidate) => {
+        const item = normalizeScore(candidate);
+        return item ? [item] : [];
+      })
+    : undefined;
 
   return {
     id: raw.id,
@@ -177,6 +211,7 @@ export function normalizeProject(value: unknown): Project | null {
     capex_status: capexStatus,
     confidence: raw.confidence as Project["confidence"],
     scores,
+    score_details: scoreDetails,
     last_meaningful_update: raw.last_meaningful_update,
     evidence,
   };
