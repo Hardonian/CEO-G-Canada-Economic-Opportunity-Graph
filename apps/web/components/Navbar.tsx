@@ -20,10 +20,11 @@ import {
   Menu,
   X,
 } from "lucide-react";
+import { useLanguage } from "@/components/LanguageProvider";
 
 export default function Navbar() {
   const pathname = usePathname();
-  const [lang, setLang] = useState<"en" | "fr">("en");
+  const { language: lang, setLanguage } = useLanguage();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const mobileMenuRef = useRef<HTMLDivElement>(null);
 
@@ -50,8 +51,6 @@ export default function Navbar() {
     { href: "/cegs", label: lang === "en" ? "CEGS Standard" : "Norme CEGS", icon: FileCode2, badge: "0.1" },
   ];
 
-  const nextLanguage = lang === "en" ? "French" : "English";
-
   return (
     <header
       data-site-header="true"
@@ -73,18 +72,29 @@ export default function Navbar() {
               <ShieldCheck aria-hidden="true" className="h-3 w-3" />
               CEGS 0.1
             </span>
-            <button
-              type="button"
-              onClick={() => setLang(lang === "en" ? "fr" : "en")}
-              className="inline-flex min-h-7 items-center gap-1.5 rounded px-1.5 text-text-muted transition-colors hover:bg-surface hover:text-text-main"
-              aria-label={`Switch navigation language to ${nextLanguage}`}
-              title={`Switch navigation language to ${nextLanguage}`}
-            >
+            <div className="inline-flex min-h-8 items-center rounded-md border border-borderSubtle bg-background p-0.5" role="group" aria-label={lang === "en" ? "Interface language" : "Langue de l’interface"}>
               <Languages aria-hidden="true" className="h-3.5 w-3.5" />
-              <span className={lang === "en" ? "font-black text-text-main" : undefined}>EN</span>
-              <span aria-hidden="true" className="text-text-subtle">/</span>
-              <span className={lang === "fr" ? "font-black text-text-main" : undefined}>FR</span>
-            </button>
+              <button
+                type="button"
+                onClick={() => setLanguage("en")}
+                aria-pressed={lang === "en"}
+                aria-label="English"
+                title="English"
+                className={`ml-1 min-h-7 rounded px-2 font-bold transition-colors ${lang === "en" ? "bg-primary text-[#050b08]" : "text-text-muted hover:bg-surface hover:text-text-main"}`}
+              >
+                EN
+              </button>
+              <button
+                type="button"
+                onClick={() => setLanguage("fr")}
+                aria-pressed={lang === "fr"}
+                aria-label="Français"
+                title="Français"
+                className={`min-h-7 rounded px-2 font-bold transition-colors ${lang === "fr" ? "bg-primary text-[#050b08]" : "text-text-muted hover:bg-surface hover:text-text-main"}`}
+              >
+                FR
+              </button>
+            </div>
           </div>
         </div>
       </div>
@@ -109,7 +119,7 @@ export default function Navbar() {
               </span>
             </span>
             <span className="block truncate font-mono text-[9px] uppercase tracking-[0.14em] text-text-subtle sm:text-[10px]">
-              Independent economic intelligence
+              {lang === "en" ? "Independent economic intelligence" : "Veille économique indépendante"}
             </span>
           </span>
         </Link>

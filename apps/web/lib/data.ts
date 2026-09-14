@@ -138,11 +138,11 @@ export function normalizeProject(value: unknown): Project | null {
   }
 
   const scores = isRecord(raw.scores)
-    ? Object.fromEntries(
+    ? (Object.fromEntries(
         Object.entries(raw.scores).filter(
           ([, score]) => typeof score === "number" && Number.isFinite(score) && score >= 0 && score <= 100,
         ),
-      )
+      ) as Record<string, number>)
     : undefined;
   const coordinate = (candidate: unknown, min: number, max: number) =>
     typeof candidate === "number" && Number.isFinite(candidate) && candidate >= min && candidate <= max
@@ -226,6 +226,55 @@ export const FALLBACK_RADAR_STATS = SNAPSHOT_RADAR_STATS;
 export const FALLBACK_PROCUREMENTS: Procurement[] = [];
 export const FALLBACK_SIGNALS: Signal[] = [];
 
+export interface RadarData {
+  stats: RadarStats;
+  accelerating_projects: Project[];
+  recent_signals: Signal[];
+  cegs_version: string;
+  source_mode: "LIVE_UPSTREAM_API" | "BUNDLED_REVIEWED_SNAPSHOT";
+  generated_at?: string;
+}
+
+function normalizeNumberMap(value: unknown): Record<string, number> | null {
+  if (!isRecord(value)) return null;
+  const result: Record<string, number> = {};
+  for (const [key, raw] of Object.entries(value)) {
+    if (typeof raw !== "number" || !Number.isFinite(raw) || raw < 0) return null;
+    result[key] = raw;
+  }
+  return result;
+}
+
+function normalizeRadarStats(value: unknown): RadarStats | null {
+  if (!isRecord(value)) return null;
+  const numericKeys = [
+    "total_projects",
+    "total_capex_cad",
+    "capital_moving_week_cad",
+    "accelerating_projects_count",
+    "stalled_projects_count",
+    "active_procurements_count",
+  ] as const;
+  for (const key of numericKeys) {
+    if (typeof value[key] !== "number" || !Number.isFinite(value[key]) || value[key] < 0) return null;
+  }
+  const sectorBreakdown = normalizeNumberMap(value.sector_breakdown);
+  const provinceBreakdown = normalizeNumberMap(value.province_breakdown);
+  if (!sectorBreakdown || !provinceBreakdown) return null;
+  return {
+    total_projects: value.total_projects as number,
+    total_capex_cad: value.total_capex_cad as number,
+    capital_moving_week_cad: value.capital_moving_week_cad as number,
+    accelerating_projects_count: value.accelerating_projects_count as number,
+    stalled_projects_count: value.stalled_projects_count as number,
+    active_procurements_count: value.active_procurements_count as number,
+    unknown_capex_projects: typeof value.unknown_capex_projects === "number" ? value.unknown_capex_projects : undefined,
+    data_status: typeof value.data_status === "string" ? value.data_status as RadarStats["data_status"] : undefined,
+    sector_breakdown: sectorBreakdown,
+    province_breakdown: provinceBreakdown,
+  };
+}
+
 async function fetchExternalAPI(path: string): Promise<Response | null> {
   if (!API_BASE) return null;
   try {
@@ -247,13 +296,21 @@ async function fetchExternalAPI(path: string): Promise<Response | null> {
   }
 }
 
-export async function getRadarData() {
+export async function getRadarData(): Promise<RadarData> {
   const response = await fetchExternalAPI("/radar");
   if (response?.ok) {
     try {
       const data: unknown = await response.json();
-      if (isRecord(data) && isRecord(data.stats)) {
-        return { ...data, source_mode: "LIVE_UPSTREAM_API" };
+      const stats = isRecord(data) ? normalizeRadarStats(data.stats) : null;
+      if (stats) {
+        return {
+          stats,
+          accelerating_projects: [],
+          recent_signals: [],
+          cegs_version: typeof data.cegs_version === "string" ? data.cegs_version : "0.1",
+          source_mode: "LIVE_UPSTREAM_API",
+          generated_at: typeof data.generated_at === "string" ? data.generated_at : undefined,
+        };
       }
     } catch (error) {
       console.error("[data] Invalid radar response; serving vetted snapshot", {

@@ -105,7 +105,7 @@ export default function Footer() {
 
         <div className="mt-6 flex flex-col gap-2 border-t border-borderSubtle pt-5 text-[10px] leading-relaxed text-text-subtle sm:flex-row sm:items-center sm:justify-between">
           <p>© 2026 CanadaOpportunityGraph Open Consortium. Apache-2.0 software.</p>
-          <p className="font-mono uppercase tracking-wider">English interface · French navigation preview · WCAG 2.2 AA design target</p>
+          <p className="font-mono uppercase tracking-wider">English/French bilingual interface · WCAG 2.2 AA design target</p>
         </div>
       </div>
     </footer>
