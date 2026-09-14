@@ -156,6 +156,7 @@ func TestDomainToCEGSRoundtrip(t *testing.T) {
 		CapexCAD:     450000000,
 		CapexStatus:  domain.ConfidenceReported,
 		Confidence:   domain.ConfidenceVerified,
+		ProponentID:  "entity-123",
 		CreatedAt:    time.Now(),
 		UpdatedAt:    time.Now(),
 	}
@@ -166,6 +167,34 @@ func TestDomainToCEGSRoundtrip(t *testing.T) {
 	}
 	if cegsProj.Capex.Amount != 450000000 {
 		t.Errorf("expected capex amount 450000000, got %d", cegsProj.Capex.Amount)
+	}
+	if len(cegsProj.Proponents) != 1 || cegsProj.Proponents[0] != "cegs:org:ca:entity-123" {
+		t.Fatalf("project proponent reference is not canonical: %#v", cegsProj.Proponents)
+	}
+}
+
+func TestConvertersPreserveCanonicalReferencesWithoutMutatingDomain(t *testing.T) {
+	now := time.Now().UTC()
+	evidenceIDs := []string{"evidence-1"}
+	entity := &domain.Entity{ID: "entity-1", Slug: "shared-name", CommonName: "Shared Name", LegalName: "Shared Name Inc.", EvidenceID: "evidence-1", CreatedAt: now, UpdatedAt: now}
+	project := &domain.Project{ID: "project-1", Province: "ON", Name: "Project", ProponentID: entity.ID, EvidenceIDs: evidenceIDs, CreatedAt: now, UpdatedAt: now}
+	event := &domain.Event{ID: "event-1", ProjectID: project.ID, EventType: "stage_change", EventDate: now, Title: "Changed", Description: "Changed", EvidenceID: "evidence-1", CreatedAt: now}
+
+	exportedProject := cegs.ToCEGSProject(project, evidenceIDs)
+	exportedEntity := cegs.ToCEGSOrganization(entity)
+	exportedEvent := cegs.ToCEGSEvent(event, project)
+
+	if evidenceIDs[0] != "evidence-1" || project.EvidenceIDs[0] != "evidence-1" {
+		t.Fatalf("project conversion mutated domain evidence IDs: %#v", evidenceIDs)
+	}
+	if exportedProject.Proponents[0] != exportedEntity.ID {
+		t.Fatalf("orphaned proponent reference: project=%q organization=%q", exportedProject.Proponents[0], exportedEntity.ID)
+	}
+	if exportedEvent.Subject != exportedProject.ID {
+		t.Fatalf("orphaned event subject: event=%q project=%q", exportedEvent.Subject, exportedProject.ID)
+	}
+	if exportedEvent.Evidence[0] != exportedProject.Provenance[0] {
+		t.Fatalf("inconsistent evidence reference: event=%q project=%q", exportedEvent.Evidence[0], exportedProject.Provenance[0])
 	}
 }
 

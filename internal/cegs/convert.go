@@ -6,6 +6,38 @@ import (
 	"github.com/Hardonian/CEO-G-Canada-Economic-Opportunity-Graph/internal/domain"
 )
 
+// ProjectID returns the canonical CEGS identifier for a domain project. CEGS
+// references must use this helper rather than reconstructing IDs from slugs or
+// raw UUIDs, because the project jurisdiction is part of the identifier.
+func ProjectID(p *domain.Project) string {
+	jurisdiction := "ca"
+	if p != nil && p.Province != "" && p.Province != "Federal" {
+		jurisdiction = "ca:" + strings.ToLower(p.Province)
+	}
+	if p == nil {
+		return ""
+	}
+	return FormatID("project", jurisdiction, p.ID)
+}
+
+// OrganizationID returns the canonical CEGS identifier for a domain entity.
+// Domain UUIDs, rather than display slugs, keep references unique when two
+// legal entities normalize to the same human-readable slug.
+func OrganizationID(e *domain.Entity) string {
+	if e == nil {
+		return ""
+	}
+	return FormatID("org", "ca", e.ID)
+}
+
+// EvidenceID returns the canonical CEGS identifier for a domain evidence ID.
+func EvidenceID(id string) string {
+	if id == "" || strings.HasPrefix(id, "cegs:") {
+		return id
+	}
+	return FormatID("evidence", "ca", id)
+}
+
 // ToCEGSProject converts an internal domain Project into a canonical CEGS Project resource.
 func ToCEGSProject(p *domain.Project, evidenceIDs []string) *Project {
 	jur := "ca"
@@ -13,15 +45,18 @@ func ToCEGSProject(p *domain.Project, evidenceIDs []string) *Project {
 		jur = "ca:" + strings.ToLower(p.Province)
 	}
 
-	cegsID := FormatID("project", jur, p.ID)
+	cegsID := ProjectID(p)
 
 	var proponents []string
-	if p.Proponent != nil {
-		proponents = append(proponents, FormatID("org", "ca", p.Proponent.ID))
+	if p.ProponentID != "" {
+		proponents = append(proponents, FormatID("org", "ca", p.ProponentID))
+	} else if p.Proponent != nil {
+		proponents = append(proponents, OrganizationID(p.Proponent))
 	}
-	for i, evidenceID := range evidenceIDs {
-		if !strings.HasPrefix(evidenceID, "cegs:") {
-			evidenceIDs[i] = FormatID("evidence", "ca", evidenceID)
+	provenance := make([]string, 0, len(evidenceIDs))
+	for _, evidenceID := range evidenceIDs {
+		if normalized := EvidenceID(evidenceID); normalized != "" {
+			provenance = append(provenance, normalized)
 		}
 	}
 
@@ -54,7 +89,7 @@ func ToCEGSProject(p *domain.Project, evidenceIDs []string) *Project {
 			Jurisdiction:  strings.ToUpper(jur),
 			CreatedAt:     p.CreatedAt,
 			UpdatedAt:     p.UpdatedAt,
-			Provenance:    evidenceIDs,
+			Provenance:    provenance,
 			Extensions:    ext,
 		},
 		Description: p.Summary,
@@ -82,11 +117,11 @@ func ToCEGSOrganization(e *domain.Entity) *Organization {
 		}
 	}
 
-	cegsID := FormatID("org", "ca", e.Slug)
+	cegsID := OrganizationID(e)
 
 	var prov []string
 	if e.EvidenceID != "" {
-		prov = append(prov, FormatID("evidence", "ca", e.EvidenceID))
+		prov = append(prov, EvidenceID(e.EvidenceID))
 	}
 
 	return &Organization{
@@ -110,14 +145,15 @@ func ToCEGSOrganization(e *domain.Entity) *Organization {
 	}
 }
 
-// ToCEGSEvent converts an internal Event into a CEGS Event.
-func ToCEGSEvent(ev *domain.Event, projectSlug string) *Event {
-	subj := FormatID("project", "ca", projectSlug)
+// ToCEGSEvent converts an internal Event into a CEGS Event whose subject is
+// guaranteed to match the canonical ID emitted for the supplied project.
+func ToCEGSEvent(ev *domain.Event, project *domain.Project) *Event {
+	subj := ProjectID(project)
 	evID := FormatID("event", "ca", ev.ID)
 
 	var prov []string
 	if ev.EvidenceID != "" {
-		prov = append(prov, FormatID("evidence", "ca", ev.EvidenceID))
+		prov = append(prov, EvidenceID(ev.EvidenceID))
 	}
 
 	attrs := make(map[string]interface{})
@@ -145,7 +181,7 @@ func ToCEGSEvent(ev *domain.Event, projectSlug string) *Event {
 
 // ToCEGSEvidence converts an internal Evidence into a CEGS Evidence.
 func ToCEGSEvidence(ev *domain.Evidence) *Evidence {
-	evID := FormatID("evidence", "ca", ev.ID)
+	evID := EvidenceID(ev.ID)
 	lineage := make(map[string]interface{})
 	for key, value := range map[string]string{
 		"source_id":         ev.SourceID,
@@ -183,15 +219,17 @@ func ToCEGSEvidence(ev *domain.Evidence) *Evidence {
 	}
 }
 
-// ToCEGSRelationship converts an internal Relationship into a CEGS Relationship.
-func ToCEGSRelationship(r *domain.Relationship, sourceSlug, targetSlug string) *Relationship {
+// ToCEGSRelationship converts an internal Relationship into a CEGS
+// Relationship using the same canonical entity and project IDs as their
+// standalone resources.
+func ToCEGSRelationship(r *domain.Relationship, source *domain.Entity, target *domain.Project) *Relationship {
 	relID := FormatID("rel", "ca", r.ID)
-	from := FormatID("org", "ca", sourceSlug)
-	to := FormatID("project", "ca", targetSlug)
+	from := OrganizationID(source)
+	to := ProjectID(target)
 
 	var prov []string
 	if r.EvidenceID != "" {
-		prov = append(prov, FormatID("evidence", "ca", r.EvidenceID))
+		prov = append(prov, EvidenceID(r.EvidenceID))
 	}
 
 	return &Relationship{

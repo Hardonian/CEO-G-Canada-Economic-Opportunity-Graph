@@ -24,8 +24,8 @@ import (
 )
 
 const (
-	datasetVersion = "2026-09-13-3"
-	datasetTime    = "2026-09-13T00:00:00Z"
+	datasetVersion = "2026-09-14-1"
+	datasetTime    = "2026-09-14T00:00:00Z"
 )
 
 func main() {
@@ -84,7 +84,9 @@ func main() {
 	sort.Slice(scores, func(i, j int) bool { return scores[i].ID < scores[j].ID })
 
 	var cegsProjects []*cegs.Project
+	projectsByID := make(map[string]*domain.Project, len(projects))
 	for _, project := range projects {
+		projectsByID[project.ID] = project
 		cegsProjects = append(cegsProjects, cegs.ToCEGSProject(project, project.EvidenceIDs))
 	}
 	var cegsOrgs []*cegs.Organization
@@ -93,7 +95,11 @@ func main() {
 	}
 	var cegsEvents []*cegs.Event
 	for _, event := range events {
-		cegsEvents = append(cegsEvents, cegs.ToCEGSEvent(event, event.ProjectID))
+		project, ok := projectsByID[event.ProjectID]
+		if !ok {
+			must(fmt.Errorf("event %s references unknown project %s", event.ID, event.ProjectID))
+		}
+		cegsEvents = append(cegsEvents, cegs.ToCEGSEvent(event, project))
 	}
 	var cegsEvidence []*cegs.Evidence
 	for _, item := range evidence {
