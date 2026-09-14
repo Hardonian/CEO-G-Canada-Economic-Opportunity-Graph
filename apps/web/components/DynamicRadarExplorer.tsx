@@ -247,7 +247,7 @@ export default function DynamicRadarExplorer({ initialProjects }: DynamicRadarEx
     "amount": proj.capex_cad,
     "currency": "CAD",
   "epistemic_status": proj.confidence,
-  "evidence_count": proj.evidence_ids.length
+  "evidence_count": proj.evidence?.length ?? 0
   },
   "conformance_tier": "CEGS Provenance"
 }, null, 2)}
