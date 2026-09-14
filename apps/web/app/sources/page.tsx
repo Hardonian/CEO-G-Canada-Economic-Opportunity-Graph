@@ -82,6 +82,13 @@ export default async function SourcesPage({ searchParams }: { searchParams: Sear
         </div>
       </header>
 
+      {sourceResult.status === "available" && sourceResult.origin === "bundled-snapshot" && (
+        <div role="status" className="flex items-start gap-3 rounded-xl border border-primary/40 bg-primary/10 p-4 text-sm text-text-muted">
+          <Database aria-hidden="true" className="mt-0.5 h-5 w-5 shrink-0 text-aurora" />
+          <p><strong className="text-text-main">Reviewed source snapshot active.</strong> All canonical sources represented in the checksummed release remain browsable even when the optional upstream API is offline. Publisher links open the original records.</p>
+        </div>
+      )}
+
       {coverageResult.status === "available" ? (
         <section aria-labelledby="coverage-snapshot-title" className="space-y-3">
           <div className="flex flex-col gap-1 sm:flex-row sm:items-end sm:justify-between">
@@ -163,7 +170,7 @@ export default async function SourcesPage({ searchParams }: { searchParams: Sear
           pathname="/sources"
           query={queryForLinks}
           emptyTitle="No registered sources match these filters"
-          emptyBody="Try broadening a filter. This result is an actual empty API response; it is not an offline fallback."
+          emptyBody="Try broadening a filter. This is an actual empty result from the active source dataset; no placeholder records are added."
         />
       ) : (
         <section role="alert" className="rounded-2xl border border-crimson/50 bg-crimson/10 p-6">

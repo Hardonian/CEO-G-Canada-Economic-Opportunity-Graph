@@ -19,6 +19,8 @@ export default async function HomePage() {
   const stats = radarData.stats;
 
   const accelerating = projects.filter((p) => (p.scores?.buildability || 0) >= 50);
+  const sectorCount = new Set(projects.map((project) => project.sector)).size;
+  const snapshotMode = radarData.source_mode !== "LIVE_UPSTREAM_API";
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-10">
@@ -31,7 +33,7 @@ export default async function HomePage() {
         <div className="relative z-10 flex flex-col md:flex-row md:items-end justify-between gap-6">
           <div className="space-y-3">
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#050B08] border border-primary/40 text-xs font-mono text-aurora shadow-sm">
-              <span className="h-2 w-2 rounded-full bg-aurora animate-pulse shadow-[0_0_8px_#00F5A0]"></span>
+              <span className={`h-2 w-2 rounded-full bg-aurora shadow-[0_0_8px_#00F5A0] ${snapshotMode ? "" : "animate-pulse"}`}></span>
               FLAGSHIP MACRO RADAR — CANADIAN ECONOMIC INTELLIGENCE
             </div>
             <h1 className="text-3xl sm:text-5xl font-black tracking-tight text-text-main">
@@ -41,6 +43,12 @@ export default async function HomePage() {
               Tracking <span className="text-aurora font-bold">${(stats.total_capex_cad / 1e9).toFixed(2)} Billion CAD</span> in 
               Canada's major projects cycle. High-provenance data capturing capital commitments, regulatory milestones, procurement tenders, and downstream industrial opportunities.
             </p>
+          </div>
+
+          <div className="mt-5 inline-flex flex-wrap items-center gap-x-3 gap-y-1 rounded-lg border border-primary/30 bg-background/80 px-3 py-2 font-mono text-[10px] text-text-muted">
+            <span className="font-bold text-aurora">{snapshotMode ? "REVIEWED SNAPSHOT" : "LIVE UPSTREAM API"}</span>
+            <span>{projects.length} projects · {radarData.source_mode === "BUNDLED_REVIEWED_SNAPSHOT" ? "301 evidence records" : "upstream response"}</span>
+            <span>Data through {new Intl.DateTimeFormat("en-CA", { dateStyle: "medium", timeZone: "UTC" }).format(new Date(radarData.generated_at ?? "2026-09-13T00:00:00Z"))} UTC</span>
           </div>
 
           <div className="flex items-center gap-3 shrink-0">
@@ -68,7 +76,7 @@ export default async function HomePage() {
             </div>
             <div className="text-[10px] text-text-muted mt-1 flex items-center gap-1">
               <ShieldCheck className="h-3 w-3 text-aurora" />
-              Verified CAD Base
+              Source-reported CAD base
             </div>
           </div>
 
@@ -78,7 +86,7 @@ export default async function HomePage() {
               {stats.total_projects} <span className="text-xs text-text-subtle font-normal">Projects</span>
             </div>
             <div className="text-[10px] text-text-muted mt-1">
-              Across 5 Key Sectors
+              Across {sectorCount} tracked sectors
             </div>
           </div>
 
@@ -157,12 +165,12 @@ export default async function HomePage() {
                 </h3>
               </div>
               <span className="text-[10px] font-mono text-aurora font-semibold px-2 py-0.5 rounded bg-primary/20 border border-primary/30">
-                LIVE
+                {snapshotMode ? "NO LIVE FEED" : "LIVE"}
               </span>
             </div>
 
             <div className="space-y-3">
-              {radarData.recent_signals?.map((sig: any) => (
+              {radarData.recent_signals?.map((sig: { id: string; type: string; timestamp: string; project_name: string; description: string }) => (
                 <div key={sig.id} className="text-xs border-l-2 border-aurora pl-3 py-1 space-y-1 bg-surface/50 rounded-r-lg">
                   <div className="flex items-center justify-between text-[10px] font-mono text-text-subtle">
                     <span className="text-aurora font-semibold">{sig.type}</span>
@@ -176,6 +184,11 @@ export default async function HomePage() {
                   </p>
                 </div>
               ))}
+              {!radarData.recent_signals?.length && (
+                <p className="rounded-lg border border-borderSubtle bg-surface/50 p-3 text-[11px] leading-relaxed text-text-muted">
+                  No current signal feed is configured. The reviewed project and evidence snapshot remains available; no live events are implied.
+                </p>
+              )}
             </div>
           </div>
 

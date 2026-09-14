@@ -64,6 +64,12 @@ export default async function APIDirectoryPage({ searchParams }: { searchParams:
         </div>
       </header>
 
+      {sourceResult.status === "available" && sourceResult.origin === "bundled-snapshot" && (
+        <div role="status" className="rounded-xl border border-primary/40 bg-primary/10 p-4 text-sm text-text-muted">
+          <strong className="text-text-main">Reviewed API snapshot active.</strong> Machine-readable sources are filtered from the same checksummed evidence registry used by the project graph.
+        </div>
+      )}
+
       <section aria-labelledby="api-filter-title" className="glass-panel rounded-2xl p-5">
         <div className="mb-4 flex items-center gap-2">
           <Filter aria-hidden="true" className="h-4 w-4 text-gold" />
