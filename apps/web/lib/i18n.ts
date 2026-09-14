@@ -304,7 +304,6 @@ const translations: Record<string, string> = {
   "Registered · not yet joined to scores": "Enregistrées · pas encore intégrées aux notes",
   "Official publisher": "Éditeur officiel",
   "Registered, not ingested": "Enregistrée, non ingérée",
-  "Source profile": "Profil de la source",
   "Open official service": "Ouvrir le service officiel",
   "Integration boundary": "Limite d’intégration",
   "These services are registered, classified and link-checked. They are not yet active ingestion inputs and do not alter project facts, scores or opportunities. Promotion to active requires a versioned adapter, licence review, schema mapping, freshness monitoring, reconciliation tests and immutable evidence lineage.": "Ces services sont enregistrés, classifiés et leurs liens ont été vérifiés. Ils ne sont pas encore des intrants d’ingestion active et ne modifient ni les faits, ni les notes, ni les possibilités des projets. Le passage au statut actif exige un adaptateur versionné, l’examen des licences, le mappage du schéma, la surveillance de la fraîcheur, des tests de rapprochement et une traçabilité immuable des preuves.",
