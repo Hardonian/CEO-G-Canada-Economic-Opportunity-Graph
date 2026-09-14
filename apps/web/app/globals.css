@@ -11,12 +11,15 @@
   --panel-hover: #193126;
   --border-strong: #5c7d6d;
   --border-subtle: #314b40;
-  --text-muted: #bbcbc3;
-  --text-subtle: #91aa9e;
+  --text-muted: #d0ddd6;
+  --text-subtle: #a8c4b8;
   --aurora: #00f5a0;
+  --aurora-on-dark: #00d488;
   --gold: #f6c453;
+  --gold-on-dark: #e8b840;
   --maple: #ff5d73;
   --focus: #7df8ca;
+  --focus-ring: #050b08;
 }
 
 html {
@@ -55,15 +58,15 @@ body {
 /* The first tab stop remains off-canvas until a keyboard user reaches it. */
 .skip-link {
   position: fixed;
-  inset-block-start: 0.75rem;
-  inset-inline-start: 0.75rem;
+  inset-block-start: 1rem;
+  inset-inline-start: 1rem;
   z-index: 100;
   transform: translateY(-160%);
-  border: 2px solid var(--focus);
+  border: 3px solid var(--focus);
   border-radius: 0.5rem;
-  background: #07110d;
-  color: #ffffff;
-  padding: 0.7rem 1rem;
+  background: var(--background);
+  color: var(--foreground);
+  padding: 0.75rem 1.25rem;
   font-size: 0.875rem;
   font-weight: 800;
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.45);
@@ -72,17 +75,18 @@ body {
 
 .skip-link:focus {
   transform: translateY(0);
+  outline: none;
 }
 
 /* A two-ring treatment stays legible on green, gold, dark, and image surfaces. */
 :where(a, button, input, select, textarea, summary, [tabindex]):focus-visible {
   outline: 3px solid var(--focus);
   outline-offset: 3px;
-  box-shadow: 0 0 0 5px var(--background);
+  box-shadow: 0 0 0 5px var(--focus-ring), 0 0 0 8px var(--focus);
 }
 
 :where(button, [role="button"], input, select, textarea) {
-  min-height: 2.25rem;
+  min-height: 2.5rem;
 }
 
 :where(button, [role="button"], select) {
@@ -148,11 +152,11 @@ body {
 
 /* Solid signal colours are crisper and more predictable than clipped text gradients. */
 .text-aurora {
-  color: #50f2bd;
+  color: var(--aurora-on-dark);
 }
 
 .text-gold-gradient {
-  color: var(--gold);
+  color: var(--gold-on-dark);
 }
 
 .legal-rule {
@@ -235,6 +239,12 @@ body {
   :where(a, button, input, select, textarea, summary, [tabindex]):focus-visible {
     outline: 3px solid Highlight;
     box-shadow: none;
+  }
+
+  .skip-link {
+    border-color: Highlight;
+    background: Canvas;
+    color: CanvasText;
   }
 }
 
