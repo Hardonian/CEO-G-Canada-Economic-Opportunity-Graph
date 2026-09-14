@@ -9,6 +9,7 @@ import (
 	"syscall"
 
 	"github.com/Hardonian/CEO-G-Canada-Economic-Opportunity-Graph/adapters"
+	"github.com/Hardonian/CEO-G-Canada-Economic-Opportunity-Graph/adapters/global_trade"
 	"github.com/Hardonian/CEO-G-Canada-Economic-Opportunity-Graph/adapters/nrcan_major_projects"
 	"github.com/Hardonian/CEO-G-Canada-Economic-Opportunity-Graph/adapters/official"
 	"github.com/Hardonian/CEO-G-Canada-Economic-Opportunity-Graph/internal/api"
@@ -30,6 +31,7 @@ func main() {
 	adapterList := []adapters.Adapter{
 		nrcan_major_projects.NewNRCanAdapter("data/fixtures/nrcan_mpi_2025.json"),
 		official.NewAdapter(""),
+		global_trade.NewFromEnv(),
 	}
 
 	pipeline := ingestion.NewPipeline(store, adapterList)

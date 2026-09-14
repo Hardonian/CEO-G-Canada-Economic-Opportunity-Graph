@@ -40,6 +40,7 @@ type IngestionReport struct {
 	EventsRecorded       int                       `json:"events_recorded"`
 	ProcurementsIngested int                       `json:"procurements_ingested"`
 	CapitalItemsIngested int                       `json:"capital_items_ingested"`
+	TradeMetricsIngested int                       `json:"trade_metrics_ingested"`
 	OpportunitiesDerived int                       `json:"opportunities_derived"`
 	SignalsGenerated     int                       `json:"signals_generated"`
 	SourceHealths        []*adapters.SourceHealth  `json:"source_healths"`
@@ -200,6 +201,13 @@ func (p *Pipeline) Run(ctx context.Context) (*IngestionReport, error) {
 			report.CapitalItemsIngested++
 		}
 
+		for _, metric := range parsed.TradeMetrics {
+			if err := p.store.SaveTradeMetric(ctx, metric); err != nil {
+				return report, fmt.Errorf("save trade metric %s: %w", metric.ID, err)
+			}
+			report.TradeMetricsIngested++
+		}
+
 		// Advance the last-known-good payload only after parsing and every
 		// source-owned graph mutation have succeeded. Advancing it before
 		// Parse would poison the checkpoint: an unchanged malformed payload
@@ -242,9 +250,23 @@ func (p *Pipeline) Run(ctx context.Context) (*IngestionReport, error) {
 			return report, err
 		}
 
-		scoreContext := &scoring.ProjectContext{Project: project, CapitalItems: capitalItems, Events: events, Relationships: relationships, Procurements: procurements, Opportunities: opportunities}
-		if err := p.store.SaveScore(ctx, scoring.CalculateBuildability(scoreContext)); err != nil {
+		tradeMetrics, err := p.store.ListTradeMetrics(ctx, "CAN")
+		if err != nil {
 			return report, err
+		}
+
+		scoreContext := &scoring.ProjectContext{Project: project, CapitalItems: capitalItems, Events: events, Relationships: relationships, Procurements: procurements, Opportunities: opportunities, TradeMetrics: tradeMetrics}
+		projectScores := []*domain.ProjectScore{
+			scoring.CalculateBuildability(scoreContext),
+			scoring.CalculateInvestability(scoreContext),
+			scoring.CalculateSupplierability(scoreContext),
+			scoring.CalculateStrategicity(scoreContext),
+			scoring.CalculateTradeResilience(scoreContext),
+		}
+		for _, score := range projectScores {
+			if err := p.store.SaveScore(ctx, score); err != nil {
+				return report, err
+			}
 		}
 
 		for _, signal := range signals.DetectSignals(project, events, capitalItems, procurements) {

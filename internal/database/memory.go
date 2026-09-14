@@ -199,32 +199,18 @@ func (m *MemoryStore) ListProjects(ctx context.Context, filter ProjectFilter) ([
 				return result[i].Name > result[j].Name
 			}
 			return result[i].Name < result[j].Name
-		case "buildability":
-			bI := 0.0
-			bJ := 0.0
+		case "buildability", "investability", "supplierability", "strategicity", "trade_resilience":
+			scoreI, scoreJ := 0.0, 0.0
 			if result[i].Scores != nil {
-				bI = result[i].Scores["buildability"]
+				scoreI = result[i].Scores[filter.SortBy]
 			}
 			if result[j].Scores != nil {
-				bJ = result[j].Scores["buildability"]
+				scoreJ = result[j].Scores[filter.SortBy]
 			}
 			if filter.SortDir == "asc" {
-				return bI < bJ
+				return scoreI < scoreJ
 			}
-			return bI > bJ
-		case "investability":
-			invI := 0.0
-			invJ := 0.0
-			if result[i].Scores != nil {
-				invI = result[i].Scores["investability"]
-			}
-			if result[j].Scores != nil {
-				invJ = result[j].Scores["investability"]
-			}
-			if filter.SortDir == "asc" {
-				return invI < invJ
-			}
-			return invI > invJ
+			return scoreI > scoreJ
 		default:
 			return result[i].LastMeaningfulUpdate.After(result[j].LastMeaningfulUpdate)
 		}

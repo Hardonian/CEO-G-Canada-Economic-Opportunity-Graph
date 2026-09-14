@@ -13,6 +13,7 @@ import (
 	"time"
 
 	"github.com/Hardonian/CEO-G-Canada-Economic-Opportunity-Graph/adapters"
+	"github.com/Hardonian/CEO-G-Canada-Economic-Opportunity-Graph/adapters/global_trade"
 	"github.com/Hardonian/CEO-G-Canada-Economic-Opportunity-Graph/adapters/nrcan_major_projects"
 	"github.com/Hardonian/CEO-G-Canada-Economic-Opportunity-Graph/adapters/official"
 	"github.com/Hardonian/CEO-G-Canada-Economic-Opportunity-Graph/internal/cegs"
@@ -22,8 +23,8 @@ import (
 	"github.com/Hardonian/CEO-G-Canada-Economic-Opportunity-Graph/internal/ingestion"
 )
 
-const (
-	datasetVersion = "2026-09-13-1"
+	const (
+	datasetVersion = "2026-09-13-2"
 	datasetTime    = "2026-09-13T00:00:00Z"
 )
 
@@ -33,6 +34,7 @@ func main() {
 	pipeline := ingestion.NewPipeline(store, []adapters.Adapter{
 		nrcan_major_projects.NewNRCanAdapter("data/fixtures/nrcan_mpi_2025.json"),
 		official.NewAdapter("data/fixtures/official_records.json"),
+		global_trade.NewAdapter("data/fixtures/world_bank_trade_canada.json"),
 	})
 	ctx := context.Background()
 	report, err := pipeline.Run(ctx)
@@ -59,6 +61,20 @@ func main() {
 		history, err := store.ListScoreHistory(ctx, project.ID, "")
 		must(err)
 		scores = append(scores, history...)
+		for _, score := range history {
+			for _, evidenceID := range score.EvidenceIDs {
+				evidence, err := store.GetEvidence(ctx, evidenceID)
+				must(err)
+				evidenceByID[evidence.ID] = evidence
+			}
+		}
+	}
+	tradeMetrics, err := store.ListTradeMetrics(ctx, "CAN")
+	must(err)
+	for _, metric := range tradeMetrics {
+		evidence, err := store.GetEvidence(ctx, metric.EvidenceID)
+		must(err)
+		evidenceByID[evidence.ID] = evidence
 	}
 	var evidence []*domain.Evidence
 	for _, item := range evidenceByID {
@@ -90,6 +106,7 @@ func main() {
 	files["public/events.jsonl"] = mustJSONL(events)
 	files["public/evidence.jsonl"] = mustJSONL(evidence)
 	files["public/scores.jsonl"] = mustJSONL(scores)
+	files["public/trade_metrics.jsonl"] = mustJSONL(tradeMetrics)
 	files["cegs/projects.jsonl"] = mustJSONL(cegsProjects)
 	files["cegs/organizations.jsonl"] = mustJSONL(cegsOrgs)
 	files["cegs/events.jsonl"] = mustJSONL(cegsEvents)
@@ -126,15 +143,15 @@ func main() {
 		"dataset_id":       "cegs-canada-reviewed-primary-sources",
 		"dataset_version":  datasetVersion,
 		"title":            "CEGS reviewed Canadian economic project snapshot",
-		"description":      "A nationwide planning snapshot combining the NRCan Major Projects Inventory with individually reviewed primary-source records; it is not a complete census of Canadian projects.",
+		"description":      "A nationwide planning snapshot combining the NRCan Major Projects Inventory, individually reviewed primary-source records, and official World Bank trade and logistics observations; it is not a complete census of Canadian projects.",
 		"publisher":        "CanadaOpportunityGraph",
 		"license":          "LicenseRef-COG-Generated-Data",
 		"generated_at":     generatedAt.Format(time.RFC3339),
-		"record_counts":    map[string]int{"projects": len(projects), "organizations": len(entities), "events": len(events), "evidence": len(evidence), "scores": len(scores)},
+		"record_counts":    map[string]int{"projects": len(projects), "organizations": len(entities), "events": len(events), "evidence": len(evidence), "scores": len(scores), "trade_metrics": len(tradeMetrics)},
 		"jurisdictions":    jurisdictions,
 		"checksums_sha256": checksums,
-		"coverage_note":    "Coverage includes the 2025-2035 NRCan Major Projects Inventory point layer plus curated primary-source records. It remains incomplete and source-reported values are not independently audited.",
-		"source_mode":      "OFFICIAL_SNAPSHOT_ENSEMBLE",
+		"coverage_note":    "Coverage includes the 2025-2035 NRCan Major Projects Inventory point layer, curated primary-source project records, and credential-free World Bank Indicators API observations for Canada. Other registered trade sources remain explicitly marked as not yet ingested.",
+		"source_mode":      "OFFICIAL_SNAPSHOT_WITH_GLOBAL_TRADE",
 	}
 	manifestBytes, err := json.MarshalIndent(manifest, "", "  ")
 	must(err)

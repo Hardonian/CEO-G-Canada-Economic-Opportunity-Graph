@@ -475,7 +475,7 @@ func (s *Server) handleListProjects(w http.ResponseWriter, r *http.Request) {
 		writeError(w, r, http.StatusBadRequest, "invalid_sort", err.Error())
 		return
 	}
-	if !oneOf(sortBy, "", "updated", "capex", "name", "buildability", "investability") {
+	if !oneOf(sortBy, "", "updated", "capex", "name", "buildability", "investability", "supplierability", "strategicity", "trade_resilience") {
 		writeError(w, r, http.StatusBadRequest, "invalid_sort", "sort_by is not supported")
 		return
 	}
@@ -595,7 +595,7 @@ func (s *Server) handleGetProjectScoreHistory(w http.ResponseWriter, r *http.Req
 		return
 	}
 	scoreType, err := boundedText(r.URL.Query().Get("type"), "type", 32)
-	if err != nil || !oneOf(scoreType, "", "buildability", "investability", "supplierability", "strategicity") {
+	if err != nil || !oneOf(scoreType, "", "buildability", "investability", "supplierability", "strategicity", "trade_resilience") {
 		writeError(w, r, http.StatusBadRequest, "invalid_score_type", "Score type is not supported.")
 		return
 	}

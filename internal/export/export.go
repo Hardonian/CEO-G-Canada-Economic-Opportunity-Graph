@@ -107,6 +107,13 @@ func ExportProjectBundle(ctx context.Context, store database.Store, projectID st
 			}
 		}
 	}
+	for _, score := range scoreHistory {
+		for _, evidenceID := range score.EvidenceIDs {
+			if e, err := store.GetEvidence(ctx, evidenceID); err == nil && e != nil {
+				evidenceMap[e.ID] = e
+			}
+		}
+	}
 
 	var evidenceList []*domain.Evidence
 	for _, e := range evidenceMap {
