@@ -292,6 +292,7 @@ const [projects, evidence, tradeMetrics, manifest] = await Promise.all([
 ]);
 
 const evidenceById = new Map(evidence.map((item) => [item.id, item]));
+const normalizeEvidenceId = (id) => String(id).replace(/^cegs:evidence:ca:/, "");
 const compactProjects = projects.map((project) => ({
   id: project.id,
   slug: project.slug,
@@ -328,8 +329,8 @@ const compactProjects = projects.map((project) => ({
   evidence: [...new Set([
     ...(project.evidence_ids || []),
     ...(project.score_details || []).flatMap((score) => score.evidence_ids || []),
-  ])]
-    .map((id) => evidenceById.get(String(id).replace(/^cegs:evidence:ca:/, "")))
+  ].map(normalizeEvidenceId))]
+    .map((id) => evidenceById.get(id))
     .filter(Boolean)
     .map((item) => ({
       id: item.id,
@@ -345,6 +346,13 @@ const compactProjects = projects.map((project) => ({
       pipeline_version: item.pipeline_version,
     })),
 }));
+
+for (const project of compactProjects) {
+  const evidenceIds = project.evidence.map((item) => item.id);
+  if (new Set(evidenceIds).size !== evidenceIds.length) {
+    throw new Error(`Duplicate evidence IDs in generated project ${project.id}`);
+  }
+}
 
 const sourceGroups = new Map();
 for (const item of evidence) {
