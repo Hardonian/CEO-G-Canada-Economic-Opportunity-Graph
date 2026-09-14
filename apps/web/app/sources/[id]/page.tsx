@@ -67,9 +67,9 @@ export default async function SourceDetailPage({ params }: SourcePageProps) {
 
   const source = result.data;
   const qualityEntries = Object.entries(source.quality).filter((entry): entry is [string, number] => typeof entry[1] === "number");
-  const useStatement = source.lifecycle === "ACTIVE"
+  const useStatement = source.integration_status === "EVIDENCE_LINKED"
     ? "This source is explicitly marked active in the registry. Activity does not by itself establish complete or current downstream coverage."
-    : `This source is catalogued at the ${humanize(source.lifecycle)} lifecycle stage and is not represented here as an active ingestion source.`;
+    : `This source is registered at the ${humanize(source.lifecycle)} lifecycle stage and is not an active ingestion input. It does not affect project facts or scores.`;
 
   return (
     <div className="mx-auto max-w-6xl space-y-7 px-4 py-8 sm:px-6 lg:px-8">
@@ -86,6 +86,7 @@ export default async function SourceDetailPage({ params }: SourcePageProps) {
             <span className="rounded-full border border-primary/40 bg-primary/10 px-2.5 py-1 font-bold text-aurora">{humanize(source.health)}</span>
             <span className="rounded-full border border-borderSubtle bg-background px-2.5 py-1 text-text-muted">{humanize(source.lifecycle)}</span>
             <span className="rounded-full border border-gold/40 bg-gold/10 px-2.5 py-1 text-gold">Authority tier {source.authority_tier}</span>
+            <span className="rounded-full border border-borderSubtle bg-background px-2.5 py-1 text-text-muted">{source.integration_status === "EVIDENCE_LINKED" ? "Evidence linked" : "Registered · not ingested"}</span>
           </div>
           <p className="mt-5 font-mono text-xs uppercase tracking-wider text-aurora">{source.publisher_name}</p>
           <h1 className="mt-1 max-w-4xl text-3xl font-black tracking-tight text-text-main sm:text-5xl">{source.name}</h1>
@@ -119,6 +120,8 @@ export default async function SourceDetailPage({ params }: SourcePageProps) {
               <Detail label="Licence" value={source.license} />
               <Detail label="Coverage class" value={humanize(source.coverage_class)} />
               <Detail label="Registry ID" value={source.id} mono />
+              {source.authentication_required && <Detail label="Authentication" value="Free API key required" />}
+              {source.evidence_record_count !== undefined && <Detail label="Evidence records" value={String(source.evidence_record_count)} />}
             </dl>
           </section>
 

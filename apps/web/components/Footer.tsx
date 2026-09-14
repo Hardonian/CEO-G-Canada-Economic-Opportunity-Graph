@@ -56,6 +56,7 @@ export default function Footer() {
               <li><Link href="/procurement" className={footerLinkClass}>Procurement Pipeline</Link></li>
               <li><Link href="/sources" className={footerLinkClass}>Public Data Explorer</Link></li>
               <li><Link href="/apis" className={footerLinkClass}>Public API Directory</Link></li>
+              <li><Link href="/trade" className={footerLinkClass}>Global Trade & Supply Chains</Link></li>
               <li><Link href="/ai-sovereignty" className={footerLinkClass}>AI Sovereignty Index</Link></li>
             </ul>
           </nav>

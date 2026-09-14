@@ -96,6 +96,9 @@ export default function SourceResults({
               <span className="rounded-full border border-gold/40 bg-gold/10 px-2.5 py-1 text-gold">
                 Authority tier {source.authority_tier}
               </span>
+              <span className="rounded-full border border-borderSubtle bg-background px-2.5 py-1 text-text-muted">
+                {source.integration_status === "EVIDENCE_LINKED" ? "Evidence linked" : "Registered · not ingested"}
+              </span>
             </div>
 
             <div className="mt-4 flex-1">
@@ -127,6 +130,12 @@ export default function SourceResults({
                 <dt className="font-mono text-[9px] uppercase tracking-wider text-text-subtle">Update pattern</dt>
                 <dd className="mt-0.5 text-text-main">{humanize(source.update_frequency)}</dd>
               </div>
+              {source.evidence_record_count !== undefined && source.evidence_record_count > 0 && (
+                <div>
+                  <dt className="font-mono text-[9px] uppercase tracking-wider text-text-subtle">Evidence records</dt>
+                  <dd className="mt-0.5 font-tabular text-text-main">{source.evidence_record_count}</dd>
+                </div>
+              )}
             </dl>
 
             <div className="mt-4 flex flex-wrap items-center justify-between gap-3 text-xs">

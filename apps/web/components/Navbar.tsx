@@ -9,6 +9,7 @@ import {
   Database,
   FileCode2,
   FolderGit2,
+  Globe2,
   Landmark,
   Languages,
   Layers,
@@ -47,6 +48,7 @@ export default function Navbar() {
     { href: "/capital", label: lang === "en" ? "Capital Stack" : "Structure du capital", icon: Layers },
     { href: "/procurement", label: lang === "en" ? "Procurement" : "Approvisionnement", icon: Activity },
     { href: "/sources", label: lang === "en" ? "Public Data" : "Données publiques", icon: Database },
+    { href: "/trade", label: lang === "en" ? "Trade Flows" : "Flux commerciaux", icon: Globe2 },
     { href: "/ai-sovereignty", label: lang === "en" ? "AI Sovereignty" : "Souveraineté IA", icon: Cpu },
     { href: "/cegs", label: lang === "en" ? "CEGS Standard" : "Norme CEGS", icon: FileCode2, badge: "0.1" },
   ];
@@ -154,9 +156,9 @@ export default function Navbar() {
         <nav
           lang={lang === "fr" ? "fr-CA" : "en-CA"}
           aria-label={lang === "en" ? "Primary navigation" : "Navigation principale"}
-          className="mx-auto max-w-7xl overflow-x-auto px-3 sm:px-5 lg:px-7"
+          className="mx-auto w-full max-w-[1600px] overflow-visible px-3 sm:px-5 lg:px-7"
         >
-          <ul className="flex min-w-max list-none items-center gap-1 py-1.5 lg:py-2" role="list">
+          <ul className="flex list-none flex-wrap items-center justify-center gap-1 py-1.5 lg:py-2" role="list">
             {navItems.map((item) => {
               const Icon = item.icon;
               const isActive = pathname === item.href || (item.href !== "/" && pathname.startsWith(item.href));
