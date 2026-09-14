@@ -9,11 +9,24 @@ import type {
   SourceListResponse,
   SourceQuality,
 } from "./types";
+import sourceSnapshot from "@/data/sources.snapshot.json";
+import manifestSnapshot from "@/data/manifest.snapshot.json";
 
-const API_BASE =
-  process.env.COG_API_BASE ||
-  process.env.NEXT_PUBLIC_API_BASE ||
-  "http://localhost:8080/api/v1";
+const EXTERNAL_API_BASE = process.env.COG_API_BASE || process.env.NEXT_PUBLIC_API_BASE;
+
+function configuredAPIBase(): string | null {
+  if (!EXTERNAL_API_BASE) return null;
+  try {
+    const parsed = new URL(EXTERNAL_API_BASE);
+    if (parsed.protocol !== "https:" && parsed.protocol !== "http:") return null;
+    return parsed.toString().replace(/\/$/, "");
+  } catch {
+    console.error("[sources] Ignoring invalid API base URL", { configured: true });
+    return null;
+  }
+}
+
+const API_BASE = configuredAPIBase();
 
 const SOURCE_LIFECYCLES = new Set<SourceLifecycle>([
   "DISCOVERED",
@@ -68,9 +81,9 @@ export type SourceQuery = Partial<Record<SourceQueryKey, string>> & {
 };
 
 export type SourceDataResult<T> =
-  | { status: "available"; data: T }
-  | { status: "not_found"; data: null }
-  | { status: "unavailable"; data: null };
+  | { status: "available"; data: T; origin: "live-api" | "bundled-snapshot" }
+  | { status: "not_found"; data: null; origin: "live-api" | "bundled-snapshot" }
+  | { status: "unavailable"; data: null; origin: "live-api" };
 
 function isRecord(value: unknown): value is Record<string, unknown> {
   return Boolean(value) && typeof value === "object" && !Array.isArray(value);
@@ -163,6 +176,9 @@ function normalizeSource(value: unknown): PublicSource | null {
   const quality = normalizeQuality(value.quality);
   const coverageClass = boundedString(value.coverage_class, 100);
   const description = boundedString(value.description, 4_000);
+  const evidenceRecordCount = value.evidence_record_count === undefined
+    ? undefined
+    : nonNegativeInteger(value.evidence_record_count);
 
   if (
     !id ||
@@ -192,7 +208,8 @@ function normalizeSource(value: unknown): PublicSource | null {
     !license ||
     !quality ||
     !coverageClass ||
-    !description
+    !description ||
+    evidenceRecordCount === null
   ) {
     return null;
   }
@@ -222,6 +239,7 @@ function normalizeSource(value: unknown): PublicSource | null {
     quality,
     coverage_class: coverageClass,
     description,
+    evidence_record_count: evidenceRecordCount,
   };
 }
 
@@ -325,13 +343,22 @@ function normalizeCoverage(value: unknown): SourceCoverageReport | null {
 }
 
 async function fetchSourceAPI(path: string, revalidate: number): Promise<Response | null> {
+  if (!API_BASE) return null;
   try {
-    return await fetch(`${API_BASE}${path}`, {
+    const response = await fetch(`${API_BASE}${path}`, {
       headers: { Accept: "application/json" },
       next: { revalidate },
       signal: AbortSignal.timeout(5_000),
     });
-  } catch {
+    if (!response.ok && response.status !== 404) {
+      console.warn("[sources] Upstream source API returned a non-success response", { path, status: response.status });
+    }
+    return response;
+  } catch (error) {
+    console.error("[sources] Upstream source API failed; serving vetted snapshot", {
+      path,
+      error: error instanceof Error ? error.message : String(error),
+    });
     return null;
   }
 }
@@ -340,6 +367,97 @@ function boundedQueryValue(value: string | undefined): string | null {
   if (!value) return null;
   const normalized = value.trim();
   return normalized && normalized.length <= 200 ? normalized : null;
+}
+
+const normalizedSnapshotSources = (sourceSnapshot as unknown[]).flatMap((candidate) => {
+  const source = normalizeSource(candidate);
+  return source ? [source] : [];
+});
+
+if (normalizedSnapshotSources.length !== sourceSnapshot.length) {
+  throw new Error("Bundled source snapshot failed validation");
+}
+
+export const VETTED_SOURCES: PublicSource[] = normalizedSnapshotSources;
+
+function includesText(value: string | string[], query: string): boolean {
+  const haystack = Array.isArray(value) ? value.join(" ") : value;
+  return haystack.toLocaleLowerCase("en-CA").includes(query.toLocaleLowerCase("en-CA"));
+}
+
+function matchesSnapshotQuery(source: PublicSource, query: SourceQuery): boolean {
+  if (query.q) {
+    const searchable = [
+      source.name,
+      source.publisher_name,
+      source.description,
+      source.subject_tags.join(" "),
+      source.sector_tags.join(" "),
+    ].join(" ");
+    if (!includesText(searchable, query.q)) return false;
+  }
+  if (query.publisher && !includesText(source.publisher_name, query.publisher)) return false;
+  if (query.jurisdiction && !includesText([source.jurisdiction, ...source.geography], query.jurisdiction)) return false;
+  if (query.sector && !includesText(source.sector_tags, query.sector)) return false;
+  if (query.format && !includesText(source.content_type, query.format)) return false;
+  if (query.update_frequency && !includesText(source.update_frequency, query.update_frequency)) return false;
+  if (query.authority && String(source.authority_tier) !== query.authority) return false;
+  if (query.lifecycle && source.lifecycle !== query.lifecycle.toUpperCase()) return false;
+  if (query.health && source.health !== query.health.toUpperCase()) return false;
+  if (query.family) {
+    const family = query.family.toLocaleLowerCase("en-CA");
+    const isAPI = source.access_method.includes("API") || source.source_family === "CKAN";
+    if (family === "api" ? !isAPI : !includesText([source.source_family, source.access_method], family)) return false;
+  }
+  return true;
+}
+
+function snapshotSourceList(query: SourceQuery, limit: number, offset: number): SourceListResponse {
+  const filtered = VETTED_SOURCES.filter((source) => matchesSnapshotQuery(source, query));
+  return {
+    sources: filtered.slice(offset, offset + limit),
+    total: filtered.length,
+    limit,
+    offset,
+  };
+}
+
+export function getSnapshotSource(id: string): PublicSource | null {
+  return VETTED_SOURCES.find((source) => source.id === id) || null;
+}
+
+export function getSnapshotCoverage(): SourceCoverageReport {
+  const byJurisdiction: Record<string, number> = {};
+  const bySector: Record<string, number> = {};
+  const byFamily: Record<string, number> = {};
+  for (const source of VETTED_SOURCES) {
+    byJurisdiction[source.jurisdiction] = (byJurisdiction[source.jurisdiction] || 0) + 1;
+    for (const sector of source.sector_tags) bySector[sector] = (bySector[sector] || 0) + 1;
+    byFamily[source.source_family] = (byFamily[source.source_family] || 0) + 1;
+  }
+  const active = VETTED_SOURCES.filter((source) => source.lifecycle === "ACTIVE").length;
+  const broken = VETTED_SOURCES.filter((source) => source.health === "BROKEN").length;
+  return {
+    generated_at: String(manifestSnapshot.generated_at),
+    lifecycle_counts: {
+      discovered: VETTED_SOURCES.length,
+      registered: VETTED_SOURCES.length,
+      tested: VETTED_SOURCES.length,
+      active,
+      broken,
+    },
+    by_jurisdiction: byJurisdiction,
+    by_sector: bySector,
+    by_family: byFamily,
+    primary_source_ratio: { status: "MEASURED", value: 1 },
+    signal_latency: { status: "NOT_MEASURED" },
+    dead_letters: { status: "NOT_APPLICABLE", count: 0 },
+    blind_spots: [
+      "The bundled snapshot is a reviewed planning dataset, not a complete census of every Canadian economic project.",
+      "Publisher availability is independent of snapshot integrity and may change between checks.",
+      "Procurement coverage is not yet represented as a live, complete CanadaBuys feed.",
+    ],
+  };
 }
 
 export async function getSources(query: SourceQuery = {}): Promise<SourceDataResult<SourceListResponse>> {
@@ -353,38 +471,59 @@ export async function getSources(query: SourceQuery = {}): Promise<SourceDataRes
   params.set("limit", String(limit));
   params.set("offset", String(offset));
 
-  const response = await fetchSourceAPI(`/sources?${params.toString()}`, 60);
-  if (!response?.ok) return { status: "unavailable", data: null };
-  try {
-    const sources = normalizeSourceList(await response.json());
-    return sources ? { status: "available", data: sources } : { status: "unavailable", data: null };
-  } catch {
-    return { status: "unavailable", data: null };
+  if (API_BASE) {
+    const response = await fetchSourceAPI(`/sources?${params.toString()}`, 60);
+    if (response?.ok) {
+      try {
+        const sources = normalizeSourceList(await response.json());
+        if (sources) return { status: "available", data: sources, origin: "live-api" };
+      } catch (error) {
+        console.error("[sources] Invalid source list response; serving vetted snapshot", {
+          error: error instanceof Error ? error.message : String(error),
+        });
+      }
+    }
   }
+  return { status: "available", data: snapshotSourceList(query, limit, offset), origin: "bundled-snapshot" };
 }
 
 export async function getSource(id: string): Promise<SourceDataResult<PublicSource>> {
   const normalizedID = boundedQueryValue(id);
-  if (!normalizedID) return { status: "not_found", data: null };
-  const response = await fetchSourceAPI(`/sources/${encodeURIComponent(normalizedID)}`, 60);
-  if (response?.status === 404) return { status: "not_found", data: null };
-  if (!response?.ok) return { status: "unavailable", data: null };
-  try {
-    const payload: unknown = await response.json();
-    const source = normalizeSource(isRecord(payload) && payload.source ? payload.source : payload);
-    return source ? { status: "available", data: source } : { status: "unavailable", data: null };
-  } catch {
-    return { status: "unavailable", data: null };
+  if (!normalizedID) return { status: "not_found", data: null, origin: "bundled-snapshot" };
+  if (API_BASE) {
+    const response = await fetchSourceAPI(`/sources/${encodeURIComponent(normalizedID)}`, 60);
+    if (response?.ok) {
+      try {
+        const payload: unknown = await response.json();
+        const source = normalizeSource(isRecord(payload) && payload.source ? payload.source : payload);
+        if (source) return { status: "available", data: source, origin: "live-api" };
+      } catch (error) {
+        console.error("[sources] Invalid source detail response; serving vetted snapshot", {
+          id: normalizedID,
+          error: error instanceof Error ? error.message : String(error),
+        });
+      }
+    }
   }
+  const source = getSnapshotSource(normalizedID);
+  return source
+    ? { status: "available", data: source, origin: "bundled-snapshot" }
+    : { status: "not_found", data: null, origin: "bundled-snapshot" };
 }
 
 export async function getSourceCoverage(): Promise<SourceDataResult<SourceCoverageReport>> {
-  const response = await fetchSourceAPI("/sources/coverage", 60);
-  if (!response?.ok) return { status: "unavailable", data: null };
-  try {
-    const coverage = normalizeCoverage(await response.json());
-    return coverage ? { status: "available", data: coverage } : { status: "unavailable", data: null };
-  } catch {
-    return { status: "unavailable", data: null };
+  if (API_BASE) {
+    const response = await fetchSourceAPI("/sources/coverage", 60);
+    if (response?.ok) {
+      try {
+        const coverage = normalizeCoverage(await response.json());
+        if (coverage) return { status: "available", data: coverage, origin: "live-api" };
+      } catch (error) {
+        console.error("[sources] Invalid coverage response; serving vetted snapshot", {
+          error: error instanceof Error ? error.message : String(error),
+        });
+      }
+    }
   }
+  return { status: "available", data: getSnapshotCoverage(), origin: "bundled-snapshot" };
 }

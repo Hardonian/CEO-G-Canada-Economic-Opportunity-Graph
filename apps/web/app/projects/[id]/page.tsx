@@ -19,7 +19,7 @@ import {
   Cpu,
   Radio
 } from "lucide-react";
-import { getProjectBySlug, FALLBACK_PROJECTS } from "@/lib/data";
+import { getProjectBySlug } from "@/lib/data";
 
 interface Props {
   params: Promise<{ id: string }>;
@@ -33,12 +33,17 @@ export default async function ProjectProfilePage({ params }: Props) {
     notFound();
   }
 
-  const scores = project.scores || {
-    buildability: 50.0,
-    investability: 60.0,
-    supplierability: 55.0,
-    strategicity: 75.0,
+  // Scores are sparse by design. Never substitute an unevidenced score: doing
+  // so both caused the production crash and overstated analytical coverage.
+  const score = (name: string) => {
+    const value = project.scores?.[name];
+    return typeof value === "number" && Number.isFinite(value) ? value : null;
   };
+  const buildability = score("buildability");
+  const investability = score("investability");
+  const supplierability = score("supplierability");
+  const strategicity = score("strategicity");
+  const evidence = project.evidence ?? [];
 
   const stages = [
     "ANNOUNCED",
@@ -63,7 +68,7 @@ export default async function ProjectProfilePage({ params }: Props) {
         </Link>
         <div className="flex items-center gap-2">
           <a
-            href={`http://localhost:8080/api/v1/export/project/${project.slug}?format=markdown`}
+            href={`/api/v1/export/project/${project.slug}?format=markdown`}
             target="_blank"
             rel="noreferrer"
             className="px-3.5 py-1.5 rounded-xl bg-surface border border-border hover:border-aurora text-text-muted hover:text-aurora text-xs transition-all flex items-center gap-1.5 font-mono shadow-sm"
@@ -71,7 +76,7 @@ export default async function ProjectProfilePage({ params }: Props) {
             <Download className="h-3.5 w-3.5" /> Markdown
           </a>
           <a
-            href={`http://localhost:8080/api/v1/export/project/${project.slug}?format=cegs`}
+            href={`/api/v1/export/project/${project.slug}?format=cegs`}
             target="_blank"
             rel="noreferrer"
             className="px-3.5 py-1.5 rounded-xl bg-card border border-primary/40 text-aurora text-xs transition-all flex items-center gap-1.5 font-mono hover:bg-cardHover shadow-sm"
@@ -157,11 +162,11 @@ export default async function ProjectProfilePage({ params }: Props) {
           <div className="flex items-center justify-between">
             <span className="text-xs font-mono uppercase text-text-subtle">Buildability</span>
             <span className="text-xs font-bold font-tabular text-aurora">
-              {scores.buildability.toFixed(1)}/100
+              {buildability == null ? "NOT SCORED" : `${buildability.toFixed(1)}/100`}
             </span>
           </div>
           <div className="w-full h-2 rounded-full bg-surface overflow-hidden border border-borderSubtle">
-            <div className="h-full bg-primary rounded-full" style={{ width: `${scores.buildability}%` }}></div>
+            <div className="h-full bg-primary rounded-full" style={{ width: `${buildability ?? 0}%` }}></div>
           </div>
           <p className="text-[11px] text-text-subtle leading-tight pt-1">
             Execution likelihood based on regulatory clearance, site control, and Indigenous consensus.
@@ -173,11 +178,11 @@ export default async function ProjectProfilePage({ params }: Props) {
           <div className="flex items-center justify-between">
             <span className="text-xs font-mono uppercase text-text-subtle">Investability</span>
             <span className="text-xs font-bold font-tabular text-gold">
-              {scores.investability.toFixed(1)}/100
+              {investability == null ? "NOT SCORED" : `${investability.toFixed(1)}/100`}
             </span>
           </div>
           <div className="w-full h-2 rounded-full bg-surface overflow-hidden border border-borderSubtle">
-            <div className="h-full bg-gold rounded-full" style={{ width: `${scores.investability}%` }}></div>
+            <div className="h-full bg-gold rounded-full" style={{ width: `${investability ?? 0}%` }}></div>
           </div>
           <p className="text-[11px] text-text-subtle leading-tight pt-1">
             Capital opportunity appeal, federal de-risking participation, and offtake strength.
@@ -189,11 +194,11 @@ export default async function ProjectProfilePage({ params }: Props) {
           <div className="flex items-center justify-between">
             <span className="text-xs font-mono uppercase text-text-subtle">Supplierability</span>
             <span className="text-xs font-bold font-tabular text-aurora-mint">
-              {scores.supplierability.toFixed(1)}/100
+              {supplierability == null ? "NOT SCORED" : `${supplierability.toFixed(1)}/100`}
             </span>
           </div>
           <div className="w-full h-2 rounded-full bg-surface overflow-hidden border border-borderSubtle">
-            <div className="h-full bg-aurora-mint rounded-full" style={{ width: `${scores.supplierability}%` }}></div>
+            <div className="h-full bg-aurora-mint rounded-full" style={{ width: `${supplierability ?? 0}%` }}></div>
           </div>
           <p className="text-[11px] text-text-subtle leading-tight pt-1">
             Downstream tender density and specialized equipment/engineering requirements.
@@ -205,11 +210,11 @@ export default async function ProjectProfilePage({ params }: Props) {
           <div className="flex items-center justify-between">
             <span className="text-xs font-mono uppercase text-text-subtle">Strategicity</span>
             <span className="text-xs font-bold font-tabular text-aurora">
-              {scores.strategicity.toFixed(1)}/100
+              {strategicity == null ? "NOT SCORED" : `${strategicity.toFixed(1)}/100`}
             </span>
           </div>
           <div className="w-full h-2 rounded-full bg-surface overflow-hidden border border-borderSubtle">
-            <div className="h-full bg-primary rounded-full shadow-[0_0_8px_#00F5A0]" style={{ width: `${scores.strategicity}%` }}></div>
+            <div className="h-full bg-primary rounded-full shadow-[0_0_8px_#00F5A0]" style={{ width: `${strategicity ?? 0}%` }}></div>
           </div>
           <p className="text-[11px] text-text-subtle leading-tight pt-1">
             Importance to Canadian critical minerals, clean baseload power, and Arctic sovereignty.
@@ -257,45 +262,8 @@ export default async function ProjectProfilePage({ params }: Props) {
             <span className="text-[10px] font-mono text-text-subtle">CEGS Ontology</span>
           </div>
 
-          <div className="space-y-3 text-xs">
-            <div className="p-3.5 rounded-xl bg-surface border border-borderSubtle space-y-1">
-              <div className="flex items-center justify-between">
-                <span className="font-semibold text-text-main">High-Voltage Substation Interconnect</span>
-                <span className="px-2 py-0.5 rounded-full bg-primary/10 text-aurora border border-primary/30 text-[9px] font-mono font-bold">
-                  CONFIRMED
-                </span>
-              </div>
-              <p className="text-text-subtle text-[11px] leading-relaxed">
-                Dedicated 230kV switchgear, transformer installation, and protection automation.
-              </p>
-              <div className="text-[10px] font-mono text-gold pt-1">Est. Value: $85,000,000 CAD</div>
-            </div>
-
-            <div className="p-3.5 rounded-xl bg-surface border border-borderSubtle space-y-1">
-              <div className="flex items-center justify-between">
-                <span className="font-semibold text-text-main">Civil Heavy Shielding & Specialized Foundations</span>
-                <span className="px-2 py-0.5 rounded-full bg-surface border border-borderSubtle text-text-muted text-[9px] font-mono">
-                  DERIVED
-                </span>
-              </div>
-              <p className="text-text-subtle text-[11px] leading-relaxed">
-                High-density aggregate seismic containment concrete and deep water intake/outfall tunnels.
-              </p>
-              <div className="text-[10px] font-mono text-gold pt-1">Est. Value: $250,000,000 CAD</div>
-            </div>
-
-            <div className="p-3.5 rounded-xl bg-surface border border-borderSubtle space-y-1">
-              <div className="flex items-center justify-between">
-                <span className="font-semibold text-text-main">Environmental Baseline & Community Guardian Surveillance</span>
-                <span className="px-2 py-0.5 rounded-full bg-primary/10 text-aurora border border-primary/30 text-[9px] font-mono font-bold">
-                  CONFIRMED
-                </span>
-              </div>
-              <p className="text-text-subtle text-[11px] leading-relaxed">
-                Continuous aquatic thermal dissipation tracking and Indigenous environmental oversight.
-              </p>
-              <div className="text-[10px] font-mono text-gold pt-1">Est. Value: $12,000,000 CAD</div>
-            </div>
+          <div className="rounded-xl border border-gold/40 bg-gold/10 p-4 text-xs leading-relaxed text-text-muted">
+            No project-specific procurement opportunity is asserted by the reviewed snapshot. Derived opportunities require disclosed rules and project evidence before publication; use the source dossier beside this panel for primary-record diligence.
           </div>
         </div>
 
@@ -312,55 +280,43 @@ export default async function ProjectProfilePage({ params }: Props) {
           <div className="space-y-3 text-xs">
             <div className="grid grid-cols-2 gap-3 text-center">
               <div className="p-3 rounded-xl bg-surface border border-borderSubtle">
-                <div className="text-[10px] font-mono text-text-subtle uppercase">Primary Tier 1 Sources</div>
-                <div className="text-xl font-black text-aurora mt-0.5 font-tabular">100%</div>
-                <div className="text-[10px] text-text-muted">Statutory Registry Corroborated</div>
+                <div className="text-[10px] font-mono text-text-subtle uppercase">Linked evidence records</div>
+                <div className="text-xl font-black text-aurora mt-0.5 font-tabular">{evidence.length}</div>
+                <div className="text-[10px] text-text-muted">Bundled in the reviewed release</div>
               </div>
               <div className="p-3 rounded-xl bg-surface border border-borderSubtle">
-                <div className="text-[10px] font-mono text-text-subtle uppercase">Conflicting Claims</div>
-                <div className="text-xl font-black text-text-main mt-0.5 font-tabular">0</div>
-                <div className="text-[10px] text-aurora">Reconciled</div>
+                <div className="text-[10px] font-mono text-text-subtle uppercase">Tier 1 records</div>
+                <div className="text-xl font-black text-text-main mt-0.5 font-tabular">{evidence.filter((item) => item.source_tier === 1).length}</div>
+                <div className="text-[10px] text-aurora">Publisher-controlled sources</div>
               </div>
             </div>
 
             <div className="space-y-2 pt-2 border-t border-borderSubtle">
               <div className="text-[11px] font-semibold text-text-main">Sourced Evidence References:</div>
-              
-              <div className="p-3 rounded-xl bg-surface border border-borderSubtle space-y-1 font-mono text-[11px]">
-                <div className="flex items-center justify-between text-text-main">
-                  <span>Impact Assessment Agency of Canada</span>
-                  <span className="text-[10px] text-aurora font-bold">Tier 1</span>
+              {evidence.length > 0 ? evidence.map((item) => (
+                <div key={item.id} className="p-3 rounded-xl bg-surface border border-borderSubtle space-y-1 font-mono text-[11px]">
+                  <div className="flex items-center justify-between gap-3 text-text-main">
+                    <span>{item.publisher}</span>
+                    <span className="shrink-0 text-[10px] text-aurora font-bold">Tier {item.source_tier}</span>
+                  </div>
+                  {item.locator && <div className="text-[10px] text-text-muted">{item.locator}</div>}
+                  <div className="text-[10px] text-text-subtle break-all">
+                    SHA-256: {item.content_hash}
+                  </div>
+                  <a
+                    href={item.source_url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-aurora hover:underline text-[10px] flex items-center gap-1 pt-0.5"
+                  >
+                    Open source record <ExternalLink className="h-2.5 w-2.5" />
+                  </a>
                 </div>
-                <div className="text-[10px] text-text-subtle truncate">
-                  SHA-256: e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855
-                </div>
-                <a
-                  href="https://iaac-aeic.gc.ca"
-                  target="_blank"
-                  rel="noreferrer"
-                  className="text-aurora hover:underline text-[10px] flex items-center gap-1 pt-0.5"
-                >
-                  Verify Source Document <ExternalLink className="h-2.5 w-2.5" />
-                </a>
-              </div>
-
-              <div className="p-3 rounded-xl bg-surface border border-borderSubtle space-y-1 font-mono text-[11px]">
-                <div className="flex items-center justify-between text-text-main">
-                  <span>Canada Infrastructure Bank Financing Registry</span>
-                  <span className="text-[10px] text-aurora font-bold">Tier 1</span>
-                </div>
-                <div className="text-[10px] text-text-subtle truncate">
-                  SHA-256: 8a4b2c1d9f8e7a6b5c4d3e2f1a0b9c8d7e6f5a4b3c2d1e0f9a8b7c6d5e4f3a2b
-                </div>
-                <a
-                  href="https://cib-bic.ca"
-                  target="_blank"
-                  rel="noreferrer"
-                  className="text-aurora hover:underline text-[10px] flex items-center gap-1 pt-0.5"
-                >
-                  Verify Source Document <ExternalLink className="h-2.5 w-2.5" />
-                </a>
-              </div>
+              )) : (
+                <p className="rounded-xl border border-borderSubtle bg-surface p-3 text-[11px] text-text-muted">
+                  No evidence record was bundled for this project. The project remains visible, but no source claim is substituted.
+                </p>
+              )}
             </div>
           </div>
         </div>

@@ -8,7 +8,8 @@
     "build": "next build",
     "start": "next start -p 3000",
     "lint": "next lint",
-    "typecheck": "tsc --noEmit --incremental false"
+    "typecheck": "tsc --noEmit --incremental false",
+    "snapshot:generate": "node scripts/generate-web-snapshot.mjs"
   },
   "dependencies": {
     "lucide-react": "^1.16.0",

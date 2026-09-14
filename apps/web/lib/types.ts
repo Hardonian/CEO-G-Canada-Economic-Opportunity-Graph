@@ -45,10 +45,26 @@ export interface Project {
   current_stage: LifecycleStage;
   capex_cad: number;
   proponent_id?: string;
+  proponent_name?: string;
   capex_status?: "VERIFIED" | "SUPPORTED" | "REPORTED" | "INFERRED" | "CONFLICTED" | "UNKNOWN" | "STALE" | "RETRACTED";
   confidence: "VERIFIED" | "SUPPORTED" | "REPORTED" | "INFERRED" | "CONFLICTED" | "UNKNOWN" | "STALE" | "RETRACTED";
   scores?: Record<string, number>;
   last_meaningful_update: string;
+  evidence?: ProjectEvidence[];
+}
+
+export interface ProjectEvidence {
+  id: string;
+  source_url: string;
+  publisher: string;
+  source_tier: number;
+  retrieval_timestamp: string;
+  effective_date?: string;
+  confidence: string;
+  content_hash: string;
+  locator?: string;
+  source_record_id?: string;
+  pipeline_version?: string;
 }
 
 export interface ProjectScore {
@@ -182,6 +198,7 @@ export interface PublicSource {
   quality: SourceQuality;
   coverage_class: string;
   description: string;
+  evidence_record_count?: number;
 }
 
 export interface SourceListResponse {
