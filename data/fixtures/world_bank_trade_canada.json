@@ -1,0 +1,128 @@
+{
+  "schema_version": "world-bank-canada-trade-v1",
+  "publisher": "World Bank",
+  "source_id": "world-bank-indicators-api",
+  "license": "Creative Commons Attribution 4.0",
+  "retrieved_at": "2026-09-13T21:30:00Z",
+  "publisher_last_updated": "2026-07-13T00:00:00Z",
+  "geography": "CAN",
+  "observations": [
+    {
+      "metric_code": "LP.LPI.OVRL.XQ",
+      "metric_name": "Logistics performance index: Overall (1=low to 5=high)",
+      "reference_period": "2022",
+      "value": 4.0,
+      "unit": "index_1_to_5",
+      "scale_min": 1,
+      "scale_max": 5,
+      "source_url": "https://api.worldbank.org/v2/country/CAN/indicator/LP.LPI.OVRL.XQ?format=json&per_page=100",
+      "locator": "country=CAN; indicator=LP.LPI.OVRL.XQ; date=2022"
+    },
+    {
+      "metric_code": "LP.LPI.CUST.XQ",
+      "metric_name": "Logistics performance index: Efficiency of customs clearance process (1=low to 5=high)",
+      "reference_period": "2022",
+      "value": 4.0,
+      "unit": "index_1_to_5",
+      "scale_min": 1,
+      "scale_max": 5,
+      "source_url": "https://api.worldbank.org/v2/country/CAN/indicator/LP.LPI.CUST.XQ?format=json&per_page=100",
+      "locator": "country=CAN; indicator=LP.LPI.CUST.XQ; date=2022"
+    },
+    {
+      "metric_code": "LP.LPI.INFR.XQ",
+      "metric_name": "Logistics performance index: Quality of trade and transport-related infrastructure (1=low to 5=high)",
+      "reference_period": "2022",
+      "value": 4.3,
+      "unit": "index_1_to_5",
+      "scale_min": 1,
+      "scale_max": 5,
+      "source_url": "https://api.worldbank.org/v2/country/CAN/indicator/LP.LPI.INFR.XQ?format=json&per_page=100",
+      "locator": "country=CAN; indicator=LP.LPI.INFR.XQ; date=2022"
+    },
+    {
+      "metric_code": "LP.LPI.ITRN.XQ",
+      "metric_name": "Logistics performance index: Ease of arranging competitively priced shipments (1=low to 5=high)",
+      "reference_period": "2022",
+      "value": 3.6,
+      "unit": "index_1_to_5",
+      "scale_min": 1,
+      "scale_max": 5,
+      "source_url": "https://api.worldbank.org/v2/country/CAN/indicator/LP.LPI.ITRN.XQ?format=json&per_page=100",
+      "locator": "country=CAN; indicator=LP.LPI.ITRN.XQ; date=2022"
+    },
+    {
+      "metric_code": "LP.LPI.LOGS.XQ",
+      "metric_name": "Logistics performance index: Competence and quality of logistics services (1=low to 5=high)",
+      "reference_period": "2022",
+      "value": 4.2,
+      "unit": "index_1_to_5",
+      "scale_min": 1,
+      "scale_max": 5,
+      "source_url": "https://api.worldbank.org/v2/country/CAN/indicator/LP.LPI.LOGS.XQ?format=json&per_page=100",
+      "locator": "country=CAN; indicator=LP.LPI.LOGS.XQ; date=2022"
+    },
+    {
+      "metric_code": "LP.LPI.TRAC.XQ",
+      "metric_name": "Logistics performance index: Ability to track and trace consignments (1=low to 5=high)",
+      "reference_period": "2022",
+      "value": 4.1,
+      "unit": "index_1_to_5",
+      "scale_min": 1,
+      "scale_max": 5,
+      "source_url": "https://api.worldbank.org/v2/country/CAN/indicator/LP.LPI.TRAC.XQ?format=json&per_page=100",
+      "locator": "country=CAN; indicator=LP.LPI.TRAC.XQ; date=2022"
+    },
+    {
+      "metric_code": "LP.LPI.TIME.XQ",
+      "metric_name": "Logistics performance index: Frequency with which shipments reach consignee within scheduled or expected time (1=low to 5=high)",
+      "reference_period": "2022",
+      "value": 4.1,
+      "unit": "index_1_to_5",
+      "scale_min": 1,
+      "scale_max": 5,
+      "source_url": "https://api.worldbank.org/v2/country/CAN/indicator/LP.LPI.TIME.XQ?format=json&per_page=100",
+      "locator": "country=CAN; indicator=LP.LPI.TIME.XQ; date=2022"
+    },
+    {
+      "metric_code": "NE.TRD.GNFS.ZS",
+      "metric_name": "Trade (% of GDP)",
+      "reference_period": "2025",
+      "value": 63.5105049692227,
+      "unit": "percent",
+      "scale_min": 0,
+      "scale_max": 100,
+      "source_url": "https://api.worldbank.org/v2/country/CAN/indicator/NE.TRD.GNFS.ZS?format=json&per_page=100",
+      "locator": "country=CAN; indicator=NE.TRD.GNFS.ZS; date=2025"
+    },
+    {
+      "metric_code": "TX.VAL.MRCH.CD.WT",
+      "metric_name": "Merchandise exports (current US$)",
+      "reference_period": "2025",
+      "value": 554676000000,
+      "unit": "current_USD",
+      "source_url": "https://api.worldbank.org/v2/country/CAN/indicator/TX.VAL.MRCH.CD.WT?format=json&per_page=100",
+      "locator": "country=CAN; indicator=TX.VAL.MRCH.CD.WT; date=2025"
+    },
+    {
+      "metric_code": "TM.VAL.MRCH.CD.WT",
+      "metric_name": "Merchandise imports (current US$)",
+      "reference_period": "2025",
+      "value": 577441000000,
+      "unit": "current_USD",
+      "source_url": "https://api.worldbank.org/v2/country/CAN/indicator/TM.VAL.MRCH.CD.WT?format=json&per_page=100",
+      "locator": "country=CAN; indicator=TM.VAL.MRCH.CD.WT; date=2025"
+    },
+    {
+      "metric_code": "TX.VAL.TECH.MF.ZS",
+      "metric_name": "High-technology exports (% of manufactured exports)",
+      "reference_period": "2024",
+      "value": 16.7779029827711,
+      "unit": "percent",
+      "scale_min": 0,
+      "scale_max": 100,
+      "source_url": "https://api.worldbank.org/v2/country/CAN/indicator/TX.VAL.TECH.MF.ZS?format=json&per_page=100",
+      "locator": "country=CAN; indicator=TX.VAL.TECH.MF.ZS; date=2024"
+    }
+  ]
+}
