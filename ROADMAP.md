@@ -18,18 +18,19 @@ This document outlines the phased milestone roadmap for CanadaOpportunityGraph a
 
 ## Phase 2: Live Expansion & Provable Provenance (v0.2) — Next 90 Days
 
-* [ ] **Automated Gazette Polling**: Recurring scheduled workers scraping provincial gazettes (Ontario Gazette, Gazette officielle du Québec, BC Gazette).
-* [ ] **Cryptographic Merkle Proofs**: Publish daily Merkle tree roots of all ingested evidence hashes to an append-only transparency log.
-* [ ] **Expanded Capital Stack Intelligence**: Integrate detailed provincial financing programs (Emissions Reduction Alberta, Investissement Québec, BC InBC).
-* [ ] **Indigenous Business Directory Cross-Referencing**: Automated linkage to Indigenous Services Canada (ISC) Indigenous Business Directory for procurement set-asides.
-* [ ] **Multi-Jurisdiction Reconciliation**: Automated resolution of overlapping federal-provincial regulatory filings.
+* [x] **Automated Gazette Polling**: Recurring scheduled workers scraping provincial gazettes (Ontario Gazette, Gazette officielle du Québec, BC Gazette). Implemented in `internal/gazettepoll/` with change detection, wired into `cmd/worker/main.go`.
+* [x] **Cryptographic Merkle Proofs**: Publish daily Merkle tree roots of all ingested evidence hashes to an append-only transparency log. Implemented in `internal/merkle/` with deterministic empty-tree root, wired into `cmd/worker/main.go` and `cmd/api/main.go`.
+* [x] **Expanded Capital Stack Intelligence**: Detailed provincial financing programs integrated (Emissions Reduction Alberta, Investissement Québec, BC InBC, and 30+ more). Implemented in `internal/capitalstack/engine.go` with stacking evaluation, mutual exclusivity checks, and CAPEX conflict detection.
+* [x] **Indigenous Business Directory Cross-Referencing**: Automated linkage to Indigenous Services Canada (ISC) Indigenous Business Directory for procurement set-asides. Implemented in `adapters/indigenous/` and `internal/indigenouslinker/`, wired into `cmd/worker/main.go`.
+* [x] **Multi-Jurisdiction Reconciliation**: Automated resolution of overlapping federal-provincial regulatory filings. Implemented in `internal/reconciliation/` with merge/link/conflict actions, wired into `cmd/worker/main.go` and `cmd/api/main.go`.
 
 ---
 
 ## Phase 3: CEGS 1.0 Stability & Ecosystem Adoption (v1.0) — Q3/Q4
 
-* [ ] **CEGS 1.0 Final Standardization**: Lock core vocabulary and release formal migration toolkits.
+* [x] **CEGS 1.0 Migration Toolkit**: Migration toolkit for converting legacy JSON Schemas to canonical CEGS 1.0 vocabulary. Implemented in `internal/cegs/migration.go`.
+* [ ] **CEGS 1.0 Final Standardization**: Lock core vocabulary and release formal migration toolkits. Add conformance test suite for all CEGS resource types.
 * [ ] **Python & Rust SDKs**: Standalone CEGS client libraries for data science, notebooks, and backend pipelines.
-* [ ] **Enterprise GraphQL API**: High-throughput graph query API with fine-grained subscription webhooks for moving projects.
-* [ ] **Community-Contributed Adapters**: Sandbox registry for community-maintained regional and municipal adapters.
-* [ ] **Decentralized Verifier Nodes**: Multi-party notarization of major project milestone occurrences.
+* [ ] **Enterprise GraphQL API**: High-throughput graph query API with fine-grained subscription webhooks for moving projects. Foundation in `internal/api/server.go`; needs `internal/graphql/` package.
+* [x] **Community-Contributed Adapters**: Sandbox registry for community-maintained regional and municipal adapters. Implemented in `internal/adaptersandbox/registry.go` with validation.
+* [x] **Decentralized Verifier Nodes**: Multi-party notarization of major project milestone occurrences. Implemented in `internal/verifier/verifier.go` with quorum-based attestation.
