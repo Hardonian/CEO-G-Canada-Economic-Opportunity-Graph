@@ -174,3 +174,42 @@ Represents public metadata for a catalogue, dataset, distribution, API, feed, re
 - `incremental_capabilities`: Public protocol capabilities such as ETag, Last-Modified, cursor, delta, or change feed.
 
 See CEGS-RFC-0007. Registration, testing, approval, activation, and health MUST NOT be inferred from one another.
+
+---
+
+## 10. CEGS 1.0 Locked Vocabulary
+
+> **Status: LOCKED** — This section was frozen on 2026-09-15 as part of the CEGS 1.0 release.
+> No breaking changes may be introduced to the core vocabulary without a new major version (2.0).
+
+### 10.1 Canonical Resource Types
+
+The following resource types are normative in CEGS 1.0:
+
+| Type | Envelope Required | Description |
+|------|-------------------|-------------|
+| `project` | yes | Capital infrastructure project |
+| `organization` | yes | Entity (company, government, First Nation) |
+| `event` | no | Immutable historical state transition |
+| `relationship` | no | Typed directed graph edge between two resources |
+| `evidence` | no | Cryptographically verifiable source provenance |
+| `source` | yes | Public data source metadata (no runtime credentials) |
+| `capital_item` | yes | Financing instrument or capital commitment |
+| `procurement` | yes | Contract or procurement opportunity |
+| `opportunity` | yes | Supply-chain or investment opportunity |
+| `signal` | no | Calculated economic momentum signal |
+| `manifest` | no | Dataset publication manifest |
+
+### 10.2 Vocabulary Stability Guarantees
+
+- **Field names**: All field names listed in this specification are frozen. Implementations MUST NOT rename existing fields.
+- **Type values**: Enumerated values for `stage`, `entity_type`, `source_kind`, `lifecycle`, and `health` are frozen. New values MAY be added in minor versions; implementations MUST handle unknown values gracefully.
+- **CEGS URI format**: The `cegs:<type>:<jurisdiction>:<slug>` scheme is frozen.
+- **Conformance levels**: Core, Provenance, Historical, and Intelligence conformance levels are frozen.
+
+### 10.3 Migration from 0.1-beta / 0.1
+
+Use the `cegs-migration-v1.0` toolkit (`internal/cegs/migration.go`) to convert legacy schemas.
+All migrated schemas will carry `"vocabulary": ["cegs-1.0"]` and a `migrated_from` provenance field.
+
+See [`CHANGELOG.md`](CHANGELOG.md) for a complete list of changes from 0.1 to 1.0.

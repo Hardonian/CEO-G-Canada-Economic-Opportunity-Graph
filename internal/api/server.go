@@ -21,6 +21,7 @@ import (
 	"github.com/Hardonian/CEO-G-Canada-Economic-Opportunity-Graph/internal/domain"
 	"github.com/Hardonian/CEO-G-Canada-Economic-Opportunity-Graph/internal/export"
 	"github.com/Hardonian/CEO-G-Canada-Economic-Opportunity-Graph/internal/forecast"
+	graphqlhandler "github.com/Hardonian/CEO-G-Canada-Economic-Opportunity-Graph/internal/graphql"
 	"github.com/Hardonian/CEO-G-Canada-Economic-Opportunity-Graph/internal/matching"
 	"github.com/Hardonian/CEO-G-Canada-Economic-Opportunity-Graph/internal/publication"
 	"github.com/Hardonian/CEO-G-Canada-Economic-Opportunity-Graph/internal/readiness"
@@ -382,6 +383,11 @@ func (s *Server) registerRoutes() {
 
 	// Multi-Jurisdiction Reconciliation
 	s.mux.HandleFunc("GET /api/v1/reconciliation", s.handleReconciliation)
+
+	// Enterprise GraphQL API
+	gqlHandler := graphqlhandler.NewHandler(s.store)
+	s.mux.Handle("GET /api/v1/graphql", gqlHandler)
+	s.mux.Handle("POST /api/v1/graphql", gqlHandler)
 
 	// Exports & CEGS Open Standard Endpoints
 	s.mux.HandleFunc("GET /api/v1/export/project/{id}", s.handleExportProject)

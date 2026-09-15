@@ -29,8 +29,8 @@ This document outlines the phased milestone roadmap for CanadaOpportunityGraph a
 ## Phase 3: CEGS 1.0 Stability & Ecosystem Adoption (v1.0) — Q3/Q4
 
 * [x] **CEGS 1.0 Migration Toolkit**: Migration toolkit for converting legacy JSON Schemas to canonical CEGS 1.0 vocabulary. Implemented in `internal/cegs/migration.go`.
-* [ ] **CEGS 1.0 Final Standardization**: Lock core vocabulary and release formal migration toolkits. Add conformance test suite for all CEGS resource types.
-* [ ] **Python & Rust SDKs**: Standalone CEGS client libraries for data science, notebooks, and backend pipelines.
-* [ ] **Enterprise GraphQL API**: High-throughput graph query API with fine-grained subscription webhooks for moving projects. Foundation in `internal/api/server.go`; needs `internal/graphql/` package.
+* [x] **CEGS 1.0 Final Standardization**: Lock core vocabulary and release formal migration toolkits. Add conformance test suite for all CEGS resource types.
+* [x] **Python & Rust SDKs**: Standalone CEGS client libraries for data science, notebooks, and backend pipelines.
+* [x] **Enterprise GraphQL API**: High-throughput graph query API with fine-grained subscription webhooks for moving projects. Implemented in `internal/graphql/` with GET+POST handler, introspection, and all root Query fields wired into `cmd/api/main.go` at `/api/v1/graphql`.
 * [x] **Community-Contributed Adapters**: Sandbox registry for community-maintained regional and municipal adapters. Implemented in `internal/adaptersandbox/registry.go` with validation.
 * [x] **Decentralized Verifier Nodes**: Multi-party notarization of major project milestone occurrences. Implemented in `internal/verifier/verifier.go` with quorum-based attestation.

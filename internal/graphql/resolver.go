@@ -204,9 +204,9 @@ func marshalSignals(signals []*domain.Signal) []interface{} {
 		out = append(out, map[string]interface{}{
 			"id":          s.ID,
 			"projectId":   s.ProjectID,
-			"signalType":  string(s.SignalType),
-			"strength":    s.Strength,
-			"detectedAt":  s.DetectedAt.UTC().Format(time.RFC3339),
+			"signalType":  string(s.Type),
+			"strength":    s.Magnitude,
+			"detectedAt":  s.Timestamp.UTC().Format(time.RFC3339),
 			"description": s.Description,
 		})
 	}
