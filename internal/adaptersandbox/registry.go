@@ -115,8 +115,12 @@ func validateEntry(entry *AdapterEntry) error {
 	if strings.TrimSpace(entry.SourceURL) == "" {
 		return fmt.Errorf("source_url is required")
 	}
-	if _, err := url.Parse(entry.SourceURL); err != nil {
+	parsed, err := url.Parse(entry.SourceURL)
+	if err != nil {
 		return fmt.Errorf("invalid source_url: %w", err)
+	}
+	if parsed.Scheme == "" || parsed.Host == "" {
+		return fmt.Errorf("source_url must have a scheme and host: %q", entry.SourceURL)
 	}
 	if entry.Tier == 0 {
 		return fmt.Errorf("tier is required")
