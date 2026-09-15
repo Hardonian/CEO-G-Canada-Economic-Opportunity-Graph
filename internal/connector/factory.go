@@ -19,11 +19,11 @@ import (
 // breaker short-circuits without further attempts.
 func DefaultMiddlewares() []middleware.AdapterMiddleware {
 	return []middleware.AdapterMiddleware{
-		middleware.Retry(3),
-		middleware.CircuitBreaker(5, 30*time.Second),
-		middleware.Cache(5*time.Minute),
-		middleware.Dedupe(),
-		middleware.Instrument(),
+		middleware.Retry(middleware.DefaultRetryConfig()),
+		middleware.CircuitBreaker(middleware.DefaultCircuitBreakerConfig()),
+		middleware.Cache(middleware.DefaultCacheConfig()),
+		middleware.Dedup(),
+		middleware.Instrumented(),
 	}
 }
 

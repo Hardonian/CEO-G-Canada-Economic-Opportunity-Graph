@@ -7,6 +7,7 @@ import (
 	"os"
 	"os/signal"
 	"syscall"
+	"time"
 
 	"github.com/Hardonian/CEO-G-Canada-Economic-Opportunity-Graph/adapters"
 	"github.com/Hardonian/CEO-G-Canada-Economic-Opportunity-Graph/adapters/global_trade"
@@ -14,8 +15,12 @@ import (
 	"github.com/Hardonian/CEO-G-Canada-Economic-Opportunity-Graph/adapters/official"
 	"github.com/Hardonian/CEO-G-Canada-Economic-Opportunity-Graph/internal/api"
 	"github.com/Hardonian/CEO-G-Canada-Economic-Opportunity-Graph/internal/config"
+	"github.com/Hardonian/CEO-G-Canada-Economic-Opportunity-Graph/internal/connector"
 	"github.com/Hardonian/CEO-G-Canada-Economic-Opportunity-Graph/internal/database"
 	"github.com/Hardonian/CEO-G-Canada-Economic-Opportunity-Graph/internal/ingestion"
+	"github.com/Hardonian/CEO-G-Canada-Economic-Opportunity-Graph/internal/merkle"
+	"github.com/Hardonian/CEO-G-Canada-Economic-Opportunity-Graph/internal/reconciliation"
+	"github.com/Hardonian/CEO-G-Canada-Economic-Opportunity-Graph/internal/sources"
 )
 
 func main() {
@@ -27,14 +32,19 @@ func main() {
 	defer stopSignals()
 	store := database.NewMemoryStore()
 
-	// Register authoritative adapters
+	// Register authoritative adapters (raw, unwrapped).
 	adapterList := []adapters.Adapter{
 		nrcan_major_projects.NewNRCanAdapter("data/fixtures/nrcan_mpi_2025.json"),
 		official.NewAdapter(""),
 		global_trade.NewFromEnv(),
 	}
 
-	pipeline := ingestion.NewPipeline(store, adapterList)
+	// Wrap with production middleware (retry, circuit-breaker, cache, dedup,
+	// instrumentation) via the connector registry. The registry preserves
+	// insertion order and exposes aggregate health.
+	reg := connector.BuildRegistry(adapterList)
+	pipelineAdapters := reg.BuildPipelineAdapters()
+	pipeline := ingestion.NewPipeline(store, pipelineAdapters)
 	ingestContext, cancelIngest := context.WithTimeout(processContext, cfg.InitialIngestTimeout)
 
 	log.Println("[INFO] Bootstrapping initial ingestion from authoritative adapters...")
@@ -54,6 +64,23 @@ func main() {
 	if statsErr != nil || stats == nil || stats.TotalProjects == 0 {
 		log.Fatalf("[FATAL] Authoritative snapshot bootstrap produced no usable projects")
 	}
+
+	// Run multi-jurisdiction reconciliation across ingested records.
+	reconReport := reconciliation.Reconcile(processContext, store)
+	log.Printf("[INFO] Reconciliation: %d records, %d merges, %d links, %d conflicts\n",
+		reconReport.TotalRecords, reconReport.Summary.Merged, reconReport.Summary.Linked, reconReport.Summary.Conflicts)
+
+	// Publish daily Merkle root of all evidence hashes to the transparency log.
+	merkleRoot := merkle.PublishRoot(processContext, store)
+	log.Printf("[INFO] Merkle transparency root published: %s\n", merkleRoot)
+
+	// Load public data mesh configuration (publishers, sources, policies).
+	if meshConfig, meshErr := sources.LoadDirectory("sources"); meshErr != nil {
+		log.Printf("[WARN] Data mesh configuration: %v\n", meshErr)
+	} else if meshErr := sources.ApplyConfiguration(processContext, store, meshConfig, time.Now().UTC()); meshErr != nil {
+		log.Printf("[WARN] Data mesh configuration: %v\n", meshErr)
+	}
+
 	log.Printf("[INFO] Runtime configuration: %s", cfg)
 
 	server, err := api.NewServerWithOptions(store, api.Options{
