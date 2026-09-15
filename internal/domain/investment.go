@@ -332,3 +332,156 @@ type CandidateProject struct {
 	ClaimIDs       []string        `json:"claim_ids"`
 	CreatedAt      time.Time       `json:"created_at"`
 }
+
+// OpportunityFunnelState tracks the lifecycle of an opportunity from initial
+// discovery through to financing close or death. This is the pipeline state
+// machine that transforms the graph from a static database into an active
+// investment intelligence surface.
+type OpportunityFunnelState string
+
+const (
+	FunnelDiscovered         OpportunityFunnelState = "DISCOVERED"
+	FunnelQualifying         OpportunityFunnelState = "QUALIFYING"
+	FunnelResearching        OpportunityFunnelState = "RESEARCHING"
+	FunnelCorroborated       OpportunityFunnelState = "CORROBORATED"
+	FunnelActiveOpportunity  OpportunityFunnelState = "ACTIVE_OPPORTUNITY"
+	FunnelFinancingProgress  OpportunityFunnelState = "FINANCING_IN_PROGRESS"
+	FunnelClosed             OpportunityFunnelState = "CLOSED"
+	FunnelStale              OpportunityFunnelState = "STALE"
+	FunnelDead               OpportunityFunnelState = "DEAD"
+)
+
+// FIDStatus classifies the Final Investment Decision state.
+type FIDStatus string
+
+const (
+	FIDNotApplicable FIDStatus = "NOT_APPLICABLE"
+	FIDUnknown       FIDStatus = "UNKNOWN"
+	FIDTarget        FIDStatus = "TARGET"
+	FIDExpected      FIDStatus = "EXPECTED"
+	FIDAchieved      FIDStatus = "ACHIEVED"
+	FIDDelayed       FIDStatus = "DELAYED"
+	FIDDeferred      FIDStatus = "DEFERRED"
+	FIDNegative      FIDStatus = "NEGATIVE" // project decided NOT to proceed
+)
+
+// FIDIntelligence tracks the Final Investment Decision trajectory. FID is the
+// single most important inflection point for capital deployment: before FID,
+// the project is speculative; after FID, capital flows start.
+type FIDIntelligence struct {
+	ProjectID     string          `json:"project_id"`
+	Status        FIDStatus       `json:"status"`
+	TargetDate    *time.Time      `json:"target_date,omitempty"`
+	EarliestDate  *time.Time      `json:"earliest_date,omitempty"`
+	LatestDate    *time.Time      `json:"latest_date,omitempty"`
+	ActualDate    *time.Time      `json:"actual_date,omitempty"`
+	Confidence    ConfidenceLevel `json:"confidence"`
+	Revisions     []FIDRevision   `json:"revisions,omitempty"`
+	EvidenceIDs   []string        `json:"evidence_ids,omitempty"`
+	Visibility    VisibilityClass `json:"visibility"`
+	Publishable   bool            `json:"publishable"`
+	UpdatedAt     time.Time       `json:"updated_at"`
+}
+
+// FIDRevision records a change in FID expectations, creating an auditable
+// history of schedule evolution.
+type FIDRevision struct {
+	PreviousTarget *time.Time      `json:"previous_target,omitempty"`
+	NewTarget      *time.Time      `json:"new_target,omitempty"`
+	PreviousStatus FIDStatus       `json:"previous_status"`
+	NewStatus      FIDStatus       `json:"new_status"`
+	Reason         string          `json:"reason,omitempty"`
+	EvidenceID     string          `json:"evidence_id,omitempty"`
+	ObservedAt     time.Time       `json:"observed_at"`
+}
+
+// InvestorProfile extends Entity with investment-specific metadata for
+// counterparty matching. This never stores personal contact data or
+// subscription preferences — it records public sector mandates, deal
+// history, and instrument preferences that are discoverable from public
+// disclosures and regulatory filings.
+type InvestorProfile struct {
+	EntityID              string             `json:"entity_id"`
+	InvestorTypes         []CounterpartyType `json:"investor_types"`
+	TargetSectors         []Sector           `json:"target_sectors,omitempty"`
+	TargetGeographies     []string           `json:"target_geographies,omitempty"` // province codes
+	MinTicketCAD          int64              `json:"min_ticket_cad,omitempty"`
+	MaxTicketCAD          int64              `json:"max_ticket_cad,omitempty"`
+	PreferredInstruments  []CapitalNeedType  `json:"preferred_instruments,omitempty"`
+	PreferredStages       []LifecycleStage   `json:"preferred_stages,omitempty"`
+	CanadianExposureCAD   int64              `json:"canadian_exposure_cad,omitempty"`
+	ActiveInvestments     int                `json:"active_investments,omitempty"`
+	PublicDealHistory     []DealPrecedent    `json:"public_deal_history,omitempty"`
+	EvidenceIDs           []string           `json:"evidence_ids,omitempty"`
+	Visibility            VisibilityClass    `json:"visibility"`
+	Publishable           bool               `json:"publishable"`
+	UpdatedAt             time.Time          `json:"updated_at"`
+}
+
+// DealPrecedent records a public historical transaction for deal-matching.
+type DealPrecedent struct {
+	DealID          string          `json:"deal_id"`
+	ProjectName     string          `json:"project_name"`
+	Sector          Sector          `json:"sector"`
+	Province        string          `json:"province,omitempty"`
+	AmountCAD       int64           `json:"amount_cad,omitempty"`
+	Instrument      CapitalNeedType `json:"instrument,omitempty"`
+	Stage           LifecycleStage  `json:"stage,omitempty"`
+	Year            int             `json:"year,omitempty"`
+	EvidenceID      string          `json:"evidence_id,omitempty"`
+}
+
+// RequirementType classifies the infrastructure or service dependency of a
+// project. These produce the dependency graph that drives opportunity
+// propagation: a mine needs power, which needs transmission, which needs
+// an environmental assessment, each of which is an opportunity.
+type RequirementType string
+
+const (
+	RequirePower         RequirementType = "POWER"
+	RequireTransmission  RequirementType = "TRANSMISSION"
+	RequireFiber         RequirementType = "FIBER"
+	RequireRoad          RequirementType = "ROAD"
+	RequireRail          RequirementType = "RAIL"
+	RequirePort          RequirementType = "PORT"
+	RequireWater         RequirementType = "WATER"
+	RequireNaturalGas    RequirementType = "NATURAL_GAS"
+	RequireHydrogen      RequirementType = "HYDROGEN"
+	RequireWastewater    RequirementType = "WASTEWATER"
+	RequireAirport       RequirementType = "AIRPORT"
+	RequireHousing       RequirementType = "WORKFORCE_HOUSING"
+	RequireCooling       RequirementType = "COOLING"
+	RequireInterconnect  RequirementType = "INTERCONNECTION"
+	RequireStorage       RequirementType = "STORAGE"
+	RequireProcessing    RequirementType = "PROCESSING"
+	RequireLogistics     RequirementType = "LOGISTICS"
+)
+
+// RequirementConfidence classifies how the requirement was established.
+type RequirementConfidence string
+
+const (
+	RequirementStated    RequirementConfidence = "STATED"
+	RequirementInferred  RequirementConfidence = "INFERRED"
+	RequirementOntology  RequirementConfidence = "ONTOLOGY_DERIVED"
+)
+
+// ProjectRequirement models a typed infrastructure or service dependency.
+// These are the edges in the dependency graph that drive opportunity
+// propagation: if a project requires POWER, that requirement propagates
+// as a confirmed or inferred opportunity for power generation or
+// transmission in the same geography.
+type ProjectRequirement struct {
+	ID             string                `json:"id"`
+	ProjectID      string                `json:"project_id"`
+	Type           RequirementType       `json:"type"`
+	Description    string                `json:"description,omitempty"`
+	CapacityNeeded *CapacityMetric       `json:"capacity_needed,omitempty"`
+	Confidence     RequirementConfidence `json:"confidence"`
+	SatisfiedBy    string                `json:"satisfied_by,omitempty"` // project ID of satisfying project
+	EvidenceIDs    []string              `json:"evidence_ids,omitempty"`
+	Visibility     VisibilityClass       `json:"visibility"`
+	Publishable    bool                  `json:"publishable"`
+	CreatedAt      time.Time             `json:"created_at"`
+}
+

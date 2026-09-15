@@ -191,6 +191,7 @@ func ClassifyCapitalNeeds(raw string) []domain.CapitalNeedType {
 				result = append(result, item.kind)
 				break
 			}
+		}
 	}
 	sort.Slice(result, func(i, j int) bool { return result[i] < result[j] })
 	return result
@@ -220,6 +221,7 @@ func ClassifyCounterparties(raw string) []domain.CounterpartyType {
 			seen[kind] = true
 			result = append(result, kind)
 		}
+	}
 	sort.Slice(result, func(i, j int) bool { return result[i] < result[j] })
 	return result
 }
