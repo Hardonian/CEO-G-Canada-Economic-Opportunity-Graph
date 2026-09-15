@@ -43,8 +43,7 @@ type PollResult struct {
 	Err              error
 }
 
-// FetchFunc fetches raw bytes for a province. Returning nil, nil signals
-// "no change" to the polling loop.
+// FetchFunc fetches raw bytes for a province.
 type FetchFunc func(ctx context.Context, province string) ([]byte, *adapters.SourceHealth, error)
 
 // Worker runs the gazette polling loop until ctx is cancelled.
@@ -65,7 +64,6 @@ func NewWorker(config Config) *Worker {
 }
 
 // NewTestWorker constructs a polling worker that uses a custom fetch function.
-// This is useful for unit tests that inject inline fixtures.
 func NewTestWorker(config Config, fetcher FetchFunc) *Worker {
 	return &Worker{
 		config:     config,
@@ -145,7 +143,6 @@ func (w *Worker) pollProvince(ctx context.Context, province string) PollResult {
 		return result
 	}
 
-	// Parse the changed document.
 	fixturePath := fmt.Sprintf(w.config.FixtureBase, strings.ToLower(province))
 	adp := gazette.NewGazetteAdapter(province, fixturePath)
 	parsed, err := adp.Parse(raw)
