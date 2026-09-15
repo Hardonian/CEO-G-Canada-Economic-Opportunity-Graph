@@ -33,6 +33,14 @@ type MemoryStore struct {
 	capitalItems            map[string]*domain.CapitalItem
 	signals                 map[string]*domain.Signal
 	opportunities           map[string]*domain.Opportunity
+	claims                  map[string]*domain.Claim
+	candidateProjects       map[string]*domain.CandidateProject
+	projectPhases           map[string]*domain.ProjectPhase
+	capitalRequirements     map[string]*domain.CapitalRequirement
+	capitalNeeds            map[string]*domain.CapitalNeed
+	milestones              map[string]*domain.Milestone
+	readinessAssessments    map[string][]*domain.ReadinessAssessment
+	auditEntries            map[string]*domain.AuditEntry
 	evidence                map[string]*domain.Evidence
 	tradeMetrics            map[string]*domain.TradeMetric
 	slugIndex               map[string]string // slug -> project ID
@@ -71,6 +79,14 @@ func NewMemoryStore() *MemoryStore {
 		capitalItems:            make(map[string]*domain.CapitalItem),
 		signals:                 make(map[string]*domain.Signal),
 		opportunities:           make(map[string]*domain.Opportunity),
+		claims:                  make(map[string]*domain.Claim),
+		candidateProjects:       make(map[string]*domain.CandidateProject),
+		projectPhases:           make(map[string]*domain.ProjectPhase),
+		capitalRequirements:     make(map[string]*domain.CapitalRequirement),
+		capitalNeeds:            make(map[string]*domain.CapitalNeed),
+		milestones:              make(map[string]*domain.Milestone),
+		readinessAssessments:    make(map[string][]*domain.ReadinessAssessment),
+		auditEntries:            make(map[string]*domain.AuditEntry),
 		evidence:                make(map[string]*domain.Evidence),
 		tradeMetrics:            make(map[string]*domain.TradeMetric),
 		publishers:              make(map[string]*domain.Publisher),
@@ -583,10 +599,24 @@ func (m *MemoryStore) ListSignals(ctx context.Context, since time.Duration, limi
 }
 
 func (m *MemoryStore) SaveOpportunity(ctx context.Context, o *domain.Opportunity) error {
+	if o == nil || o.ID == "" || o.ProjectID == "" {
+		return errors.New("opportunity id and project id are required")
+	}
+	if o.Publishable && !o.Visibility.Public() {
+		return errors.New("restricted opportunity cannot be publishable")
+	}
 	m.mu.Lock()
 	defer m.mu.Unlock()
 	m.opportunities[o.ID] = o
 	return nil
+}
+
+func (m *MemoryStore) GetOpportunity(ctx context.Context, id string) (*domain.Opportunity, error) {
+	m.mu.RLock()
+	defer m.mu.RUnlock()
+	o, ok := m.opportunities[id]
+	if !ok { return nil, ErrNotFound }
+	return o, nil
 }
 
 func (m *MemoryStore) ListOpportunitiesByProject(ctx context.Context, projectID string) ([]*domain.Opportunity, error) {
@@ -609,6 +639,126 @@ func (m *MemoryStore) ListAllOpportunities(ctx context.Context) ([]*domain.Oppor
 		list = append(list, o)
 	}
 	return list, nil
+}
+
+func (m *MemoryStore) SaveClaim(ctx context.Context, claim *domain.Claim) error {
+	if claim == nil || claim.ID == "" || claim.SubjectID == "" || claim.Predicate == "" || !claim.SourceVisibility.Valid() {
+		return errors.New("claim id, subject, predicate, and explicit visibility are required")
+	}
+	if claim.Publishable && !claim.SourceVisibility.Public() {
+		return errors.New("restricted claim cannot be publishable")
+	}
+	m.mu.Lock(); defer m.mu.Unlock()
+	m.claims[claim.ID] = claim
+	return nil
+}
+
+func (m *MemoryStore) GetClaim(ctx context.Context, id string) (*domain.Claim, error) {
+	m.mu.RLock(); defer m.mu.RUnlock()
+	claim, ok := m.claims[id]
+	if !ok { return nil, ErrNotFound }
+	return claim, nil
+}
+
+func (m *MemoryStore) ListClaimsBySubject(ctx context.Context, subjectID string) ([]*domain.Claim, error) {
+	m.mu.RLock(); defer m.mu.RUnlock()
+	list := []*domain.Claim{}
+	for _, claim := range m.claims { if claim.SubjectID == subjectID { list = append(list, claim) } }
+	sort.Slice(list, func(i, j int) bool { return list[i].ObservedAt.Before(list[j].ObservedAt) })
+	return list, nil
+}
+
+func (m *MemoryStore) SaveCandidateProject(ctx context.Context, candidate *domain.CandidateProject) error {
+	if candidate == nil || candidate.ID == "" || candidate.SourceID == "" || !candidate.Visibility.Valid() || candidate.Visibility.Public() {
+		return errors.New("candidate project requires a private or restricted source visibility")
+	}
+	m.mu.Lock(); defer m.mu.Unlock()
+	m.candidateProjects[candidate.ID] = candidate
+	return nil
+}
+
+func (m *MemoryStore) GetCandidateProject(ctx context.Context, id string) (*domain.CandidateProject, error) {
+	m.mu.RLock(); defer m.mu.RUnlock()
+	candidate, ok := m.candidateProjects[id]
+	if !ok { return nil, ErrNotFound }
+	return candidate, nil
+}
+
+func (m *MemoryStore) SaveProjectPhase(ctx context.Context, phase *domain.ProjectPhase) error {
+	if phase == nil || phase.ID == "" || phase.ProjectID == "" { return errors.New("phase id and project id are required") }
+	if phase.Publishable && !phase.Visibility.Public() { return errors.New("restricted phase cannot be publishable") }
+	m.mu.Lock(); defer m.mu.Unlock(); m.projectPhases[phase.ID] = phase; return nil
+}
+
+func (m *MemoryStore) ListProjectPhases(ctx context.Context, projectID string) ([]*domain.ProjectPhase, error) {
+	m.mu.RLock(); defer m.mu.RUnlock(); list := []*domain.ProjectPhase{}
+	for _, value := range m.projectPhases { if value.ProjectID == projectID { list = append(list, value) } }
+	sort.Slice(list, func(i, j int) bool { return list[i].Sequence < list[j].Sequence }); return list, nil
+}
+
+func (m *MemoryStore) SaveCapitalRequirement(ctx context.Context, requirement *domain.CapitalRequirement) error {
+	if requirement == nil || requirement.ID == "" || requirement.ProjectID == "" { return errors.New("capital requirement id and project id are required") }
+	if requirement.Publishable && !requirement.Visibility.Public() { return errors.New("restricted capital requirement cannot be publishable") }
+	m.mu.Lock(); defer m.mu.Unlock(); m.capitalRequirements[requirement.ID] = requirement; return nil
+}
+
+func (m *MemoryStore) ListCapitalRequirements(ctx context.Context, projectID string) ([]*domain.CapitalRequirement, error) {
+	m.mu.RLock(); defer m.mu.RUnlock(); list := []*domain.CapitalRequirement{}
+	for _, value := range m.capitalRequirements { if value.ProjectID == projectID { list = append(list, value) } }
+	sort.Slice(list, func(i, j int) bool { return list[i].CreatedAt.Before(list[j].CreatedAt) }); return list, nil
+}
+
+func (m *MemoryStore) SaveCapitalNeed(ctx context.Context, need *domain.CapitalNeed) error {
+	if need == nil || need.ID == "" || need.ProjectID == "" { return errors.New("capital need id and project id are required") }
+	if need.Publishable && !need.Visibility.Public() { return errors.New("restricted capital need cannot be publishable") }
+	m.mu.Lock(); defer m.mu.Unlock(); m.capitalNeeds[need.ID] = need; return nil
+}
+
+func (m *MemoryStore) GetCapitalNeed(ctx context.Context, id string) (*domain.CapitalNeed, error) {
+	m.mu.RLock(); defer m.mu.RUnlock(); need, ok := m.capitalNeeds[id]; if !ok { return nil, ErrNotFound }; return need, nil
+}
+
+func (m *MemoryStore) ListCapitalNeeds(ctx context.Context, projectID string) ([]*domain.CapitalNeed, error) {
+	m.mu.RLock(); defer m.mu.RUnlock(); list := []*domain.CapitalNeed{}
+	for _, value := range m.capitalNeeds { if projectID == "" || value.ProjectID == projectID { list = append(list, value) } }
+	sort.Slice(list, func(i, j int) bool { return list[i].UpdatedAt.After(list[j].UpdatedAt) }); return list, nil
+}
+
+func (m *MemoryStore) SaveMilestone(ctx context.Context, milestone *domain.Milestone) error {
+	if milestone == nil || milestone.ID == "" || milestone.ProjectID == "" { return errors.New("milestone id and project id are required") }
+	if milestone.Publishable && !milestone.Visibility.Public() { return errors.New("restricted milestone cannot be publishable") }
+	m.mu.Lock(); defer m.mu.Unlock(); m.milestones[milestone.ID] = milestone; return nil
+}
+
+func (m *MemoryStore) ListMilestones(ctx context.Context, projectID string) ([]*domain.Milestone, error) {
+	m.mu.RLock(); defer m.mu.RUnlock(); list := []*domain.Milestone{}
+	for _, value := range m.milestones { if projectID == "" || value.ProjectID == projectID { list = append(list, value) } }
+	sort.Slice(list, func(i, j int) bool {
+		if list[i].TargetDate == nil { return false }; if list[j].TargetDate == nil { return true }; return list[i].TargetDate.Before(*list[j].TargetDate)
+	}); return list, nil
+}
+
+func (m *MemoryStore) SaveReadinessAssessment(ctx context.Context, assessment *domain.ReadinessAssessment) error {
+	if assessment == nil || assessment.ID == "" || assessment.ProjectID == "" || assessment.MethodologyVersion == "" { return errors.New("readiness id, project id, and methodology are required") }
+	m.mu.Lock(); defer m.mu.Unlock()
+	for _, value := range m.readinessAssessments[assessment.ProjectID] { if value.InputHash == assessment.InputHash && value.MethodologyVersion == assessment.MethodologyVersion { return nil } }
+	m.readinessAssessments[assessment.ProjectID] = append(m.readinessAssessments[assessment.ProjectID], assessment); return nil
+}
+
+func (m *MemoryStore) GetLatestReadinessAssessment(ctx context.Context, projectID string) (*domain.ReadinessAssessment, error) {
+	m.mu.RLock(); defer m.mu.RUnlock(); values := m.readinessAssessments[projectID]; if len(values) == 0 { return nil, ErrNotFound }
+	latest := values[0]; for _, value := range values[1:] { if value.CalculatedAt.After(latest.CalculatedAt) { latest = value } }; return latest, nil
+}
+
+func (m *MemoryStore) SaveAuditEntry(ctx context.Context, entry *domain.AuditEntry) error {
+	if entry == nil || entry.ID == "" || entry.SubjectID == "" { return errors.New("audit id and subject id are required") }
+	m.mu.Lock(); defer m.mu.Unlock(); m.auditEntries[entry.ID] = entry; return nil
+}
+
+func (m *MemoryStore) ListAuditEntries(ctx context.Context, subjectID string) ([]*domain.AuditEntry, error) {
+	m.mu.RLock(); defer m.mu.RUnlock(); list := []*domain.AuditEntry{}
+	for _, value := range m.auditEntries { if subjectID == "" || value.SubjectID == subjectID { list = append(list, value) } }
+	sort.Slice(list, func(i, j int) bool { return list[i].OccurredAt.Before(list[j].OccurredAt) }); return list, nil
 }
 
 func (m *MemoryStore) SaveEvidence(ctx context.Context, e *domain.Evidence) error {

@@ -72,8 +72,28 @@ type Store interface {
 	ListSignals(ctx context.Context, since time.Duration, limit int) ([]*domain.Signal, error)
 
 	SaveOpportunity(ctx context.Context, o *domain.Opportunity) error
+	GetOpportunity(ctx context.Context, id string) (*domain.Opportunity, error)
 	ListOpportunitiesByProject(ctx context.Context, projectID string) ([]*domain.Opportunity, error)
 	ListAllOpportunities(ctx context.Context) ([]*domain.Opportunity, error)
+
+	SaveClaim(ctx context.Context, claim *domain.Claim) error
+	GetClaim(ctx context.Context, id string) (*domain.Claim, error)
+	ListClaimsBySubject(ctx context.Context, subjectID string) ([]*domain.Claim, error)
+	SaveCandidateProject(ctx context.Context, candidate *domain.CandidateProject) error
+	GetCandidateProject(ctx context.Context, id string) (*domain.CandidateProject, error)
+	SaveProjectPhase(ctx context.Context, phase *domain.ProjectPhase) error
+	ListProjectPhases(ctx context.Context, projectID string) ([]*domain.ProjectPhase, error)
+	SaveCapitalRequirement(ctx context.Context, requirement *domain.CapitalRequirement) error
+	ListCapitalRequirements(ctx context.Context, projectID string) ([]*domain.CapitalRequirement, error)
+	SaveCapitalNeed(ctx context.Context, need *domain.CapitalNeed) error
+	GetCapitalNeed(ctx context.Context, id string) (*domain.CapitalNeed, error)
+	ListCapitalNeeds(ctx context.Context, projectID string) ([]*domain.CapitalNeed, error)
+	SaveMilestone(ctx context.Context, milestone *domain.Milestone) error
+	ListMilestones(ctx context.Context, projectID string) ([]*domain.Milestone, error)
+	SaveReadinessAssessment(ctx context.Context, assessment *domain.ReadinessAssessment) error
+	GetLatestReadinessAssessment(ctx context.Context, projectID string) (*domain.ReadinessAssessment, error)
+	SaveAuditEntry(ctx context.Context, entry *domain.AuditEntry) error
+	ListAuditEntries(ctx context.Context, subjectID string) ([]*domain.AuditEntry, error)
 
 	SaveEvidence(ctx context.Context, e *domain.Evidence) error
 	GetEvidence(ctx context.Context, id string) (*domain.Evidence, error)

@@ -12,6 +12,7 @@ import (
 	"github.com/Hardonian/CEO-G-Canada-Economic-Opportunity-Graph/internal/cegs"
 	"github.com/Hardonian/CEO-G-Canada-Economic-Opportunity-Graph/internal/database"
 	"github.com/Hardonian/CEO-G-Canada-Economic-Opportunity-Graph/internal/domain"
+	"github.com/Hardonian/CEO-G-Canada-Economic-Opportunity-Graph/internal/publication"
 )
 
 // ProjectExportBundle aggregates a project with its full provenance, events, and scores.
@@ -24,6 +25,11 @@ type ProjectExportBundle struct {
 	Relationships []*domain.Relationship `json:"relationships"`
 	ScoreHistory  []*domain.ProjectScore `json:"score_history"`
 	Opportunities []*domain.Opportunity  `json:"opportunities"`
+	CapitalNeeds  []*domain.CapitalNeed  `json:"capital_needs"`
+	CapitalRequirements []*domain.CapitalRequirement `json:"capital_requirements"`
+	Milestones    []*domain.Milestone    `json:"milestones"`
+	Readiness     *domain.ReadinessAssessment `json:"readiness,omitempty"`
+	Claims        []*domain.Claim        `json:"claims"`
 	Evidence      []*domain.Evidence     `json:"evidence"`
 	ExportedAt    time.Time              `json:"exported_at"`
 }
@@ -59,6 +65,15 @@ func ExportProjectBundle(ctx context.Context, store database.Store, projectID st
 	if err != nil {
 		return nil, err
 	}
+	capitalNeeds, err := store.ListCapitalNeeds(ctx, projectID)
+	if err != nil { return nil, err }
+	capitalRequirements, err := store.ListCapitalRequirements(ctx, projectID)
+	if err != nil { return nil, err }
+	milestones, err := store.ListMilestones(ctx, projectID)
+	if err != nil { return nil, err }
+	claims, err := store.ListClaimsBySubject(ctx, projectID)
+	if err != nil { return nil, err }
+	readiness, _ := store.GetLatestReadinessAssessment(ctx, projectID)
 	scores, err := store.GetLatestScores(ctx, projectID)
 	if err != nil {
 		return nil, err
@@ -74,45 +89,73 @@ func ExportProjectBundle(ctx context.Context, store database.Store, projectID st
 	}
 
 	evidenceMap := make(map[string]*domain.Evidence)
+	publicEvidence := func(evidenceID string) bool {
+		if evidenceID == "" { return false }
+		e, getErr := store.GetEvidence(ctx, evidenceID)
+		if getErr != nil || !publication.PublicEvidence(e) { return false }
+		evidenceMap[e.ID] = e
+		return true
+	}
 	for _, evidenceID := range proj.EvidenceIDs {
-		if e, err := store.GetEvidence(ctx, evidenceID); err == nil && e != nil {
-			evidenceMap[e.ID] = e
-		}
+		publicEvidence(evidenceID)
 	}
+	publicEvents := make([]*domain.Event, 0, len(events))
 	for _, ev := range events {
-		if ev.EvidenceID != "" {
-			if e, err := store.GetEvidence(ctx, ev.EvidenceID); err == nil && e != nil {
-				evidenceMap[e.ID] = e
-			}
-		}
+		if publicEvidence(ev.EvidenceID) { publicEvents = append(publicEvents, ev) }
 	}
+	publicCapital := make([]*domain.CapitalItem, 0, len(capital))
 	for _, c := range capital {
-		if c.EvidenceID != "" {
-			if e, err := store.GetEvidence(ctx, c.EvidenceID); err == nil && e != nil {
-				evidenceMap[e.ID] = e
-			}
-		}
+		if publication.PublicCapitalItem(c) && publicEvidence(c.EvidenceID) { publicCapital = append(publicCapital, c) }
 	}
+	publicProcs := make([]*domain.Procurement, 0, len(procs))
 	for _, procurement := range procs {
-		if procurement.EvidenceID != "" {
-			if e, err := store.GetEvidence(ctx, procurement.EvidenceID); err == nil && e != nil {
-				evidenceMap[e.ID] = e
-			}
-		}
+		if publicEvidence(procurement.EvidenceID) { publicProcs = append(publicProcs, procurement) }
 	}
+	publicRelationships := make([]*domain.Relationship, 0, len(relationships))
 	for _, relationship := range relationships {
-		if relationship.EvidenceID != "" {
-			if e, err := store.GetEvidence(ctx, relationship.EvidenceID); err == nil && e != nil {
-				evidenceMap[e.ID] = e
-			}
-		}
+		if publicEvidence(relationship.EvidenceID) { publicRelationships = append(publicRelationships, relationship) }
 	}
+	publicScoreHistory := make([]*domain.ProjectScore, 0, len(scoreHistory))
 	for _, score := range scoreHistory {
+		publishScore := len(score.EvidenceIDs) > 0
 		for _, evidenceID := range score.EvidenceIDs {
-			if e, err := store.GetEvidence(ctx, evidenceID); err == nil && e != nil {
-				evidenceMap[e.ID] = e
-			}
+			if !publicEvidence(evidenceID) { publishScore = false }
 		}
+		if publishScore { publicScoreHistory = append(publicScoreHistory, score) }
+	}
+	publicOpps := make([]*domain.Opportunity, 0, len(opps))
+	for _, opportunity := range opps {
+		if !publication.PublicOpportunity(opportunity) { continue }
+		valid := true
+		for _, evidenceID := range opportunity.EvidenceIDs { if !publicEvidence(evidenceID) { valid = false } }
+		// Ontology-derived opportunities can be public without their own evidence,
+		// provided they are explicitly labelled DERIVED rather than a tender.
+		if valid && (len(opportunity.EvidenceIDs) > 0 || opportunity.RequirementClass == domain.RequirementDerived) { publicOpps = append(publicOpps, opportunity) }
+	}
+	publicNeeds := make([]*domain.CapitalNeed, 0, len(capitalNeeds))
+	for _, need := range capitalNeeds {
+		if !publication.PublicCapitalNeed(need) { continue }
+		valid := len(need.EvidenceIDs) > 0
+		for _, evidenceID := range need.EvidenceIDs { if !publicEvidence(evidenceID) { valid = false } }
+		if valid { publicNeeds = append(publicNeeds, need) }
+	}
+	publicRequirements := make([]*domain.CapitalRequirement, 0, len(capitalRequirements))
+	for _, requirement := range capitalRequirements {
+		if !publication.PublicCapitalRequirement(requirement) { continue }
+		valid := len(requirement.EvidenceIDs) > 0
+		for _, evidenceID := range requirement.EvidenceIDs { if !publicEvidence(evidenceID) { valid = false } }
+		if valid { publicRequirements = append(publicRequirements, requirement) }
+	}
+	publicMilestones := make([]*domain.Milestone, 0, len(milestones))
+	for _, milestone := range milestones {
+		if !publication.PublicMilestone(milestone) { continue }
+		valid := len(milestone.EvidenceIDs) > 0
+		for _, evidenceID := range milestone.EvidenceIDs { if !publicEvidence(evidenceID) { valid = false } }
+		if valid { publicMilestones = append(publicMilestones, milestone) }
+	}
+	publicClaims := make([]*domain.Claim, 0, len(claims))
+	for _, claim := range claims {
+		if publication.PublicClaim(claim) && publicEvidence(claim.EvidenceID) { publicClaims = append(publicClaims, claim) }
 	}
 
 	var evidenceList []*domain.Evidence
@@ -121,15 +164,24 @@ func ExportProjectBundle(ctx context.Context, store database.Store, projectID st
 	}
 	sort.Slice(evidenceList, func(i, j int) bool { return evidenceList[i].ID < evidenceList[j].ID })
 
+	projectCopy := *proj
+	projectCopy.EvidenceIDs = make([]string, 0, len(evidenceMap))
+	for evidenceID := range evidenceMap { projectCopy.EvidenceIDs = append(projectCopy.EvidenceIDs, evidenceID) }
+	sort.Strings(projectCopy.EvidenceIDs)
 	return &ProjectExportBundle{
-		Project:       proj,
+		Project:       &projectCopy,
 		Scores:        scoreMap,
-		Events:        events,
-		CapitalItems:  capital,
-		Procurements:  procs,
-		Relationships: relationships,
-		ScoreHistory:  scoreHistory,
-		Opportunities: opps,
+		Events:        publicEvents,
+		CapitalItems:  publicCapital,
+		Procurements:  publicProcs,
+		Relationships: publicRelationships,
+		ScoreHistory:  publicScoreHistory,
+		Opportunities: publicOpps,
+		CapitalNeeds:  publicNeeds,
+		CapitalRequirements: publicRequirements,
+		Milestones:    publicMilestones,
+		Readiness:     readiness,
+		Claims:        publicClaims,
 		Evidence:      evidenceList,
 		ExportedAt:    time.Now(),
 	}, nil
