@@ -118,6 +118,9 @@ func DetectSignals(project *domain.Project, events []*domain.Event, capital []*d
 
 // CalculateMomentum evaluates detected signals across 7d, 30d, and 90d rolling windows.
 func CalculateMomentum(project *domain.Project, signals []*domain.Signal) *MomentumReport {
+	if project == nil {
+		return nil
+	}
 	now := time.Now()
 	w7 := now.Add(-7 * 24 * time.Hour)
 	w30 := now.Add(-30 * 24 * time.Hour)

@@ -187,8 +187,11 @@ func DefaultOntology() []DependencyRule {
 
 // PropagateOpportunities evaluates a project against the dependency ontology and generates downstream opportunities.
 func PropagateOpportunities(project *domain.Project) []*domain.Opportunity {
+	if project == nil {
+		return []*domain.Opportunity{}
+	}
 	rules := DefaultOntology()
-	var results []*domain.Opportunity
+	results := make([]*domain.Opportunity, 0)
 
 	for _, rule := range rules {
 		if rule.Sector != project.Sector {
