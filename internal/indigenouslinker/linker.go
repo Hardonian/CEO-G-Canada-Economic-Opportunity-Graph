@@ -33,6 +33,10 @@ type LinkResult struct {
 // entity identifiers.
 func Link(ctx context.Context, store database.Store) *LinkResult {
 	result := &LinkResult{}
+	if store == nil {
+		result.Errors = append(result.Errors, "store is nil")
+		return result
+	}
 
 	// Collect all Indigenous businesses from the store.
 	entities, err := store.ListEntities(ctx)
@@ -47,12 +51,9 @@ func Link(ctx context.Context, store database.Store) *LinkResult {
 			indigenousBusinesses = append(indigenousBusinesses, e)
 		}
 	}
-	if len(indigenousBusinesses) == 0 {
-		log.Printf("[INDIGENOUS-LINKER] No Indigenous businesses found in store; skipping cross-reference.")
-		return result
-	}
 
-	// Scan projects.
+	// Scan projects regardless of whether Indigenous businesses exist — the
+	// scan count is useful for diagnostics even when no matches are found.
 	projects, _, err := store.ListProjects(ctx, database.ProjectFilter{Limit: 10_000})
 	if err != nil {
 		result.Errors = append(result.Errors, fmt.Sprintf("list projects: %v", err))
