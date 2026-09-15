@@ -15,7 +15,8 @@ import (
 	"unicode"
 	"unicode/utf8"
 
-"github.com/Hardonian/CEO-G-Canada-Economic-Opportunity-Graph/internal/capitalstack"
+"github.com/Hardonian/CEO-G-Canada-Economic-Opportunity-Graph/internal/adaptersandbox"
+	"github.com/Hardonian/CEO-G-Canada-Economic-Opportunity-Graph/internal/capitalstack"
 	"github.com/Hardonian/CEO-G-Canada-Economic-Opportunity-Graph/internal/cegs"
 	"github.com/Hardonian/CEO-G-Canada-Economic-Opportunity-Graph/internal/database"
 	"github.com/Hardonian/CEO-G-Canada-Economic-Opportunity-Graph/internal/domain"
@@ -28,6 +29,7 @@ import (
 	"github.com/Hardonian/CEO-G-Canada-Economic-Opportunity-Graph/internal/reconciliation"
 	"github.com/Hardonian/CEO-G-Canada-Economic-Opportunity-Graph/internal/sovereignty"
 	"github.com/Hardonian/CEO-G-Canada-Economic-Opportunity-Graph/internal/trust"
+	"github.com/Hardonian/CEO-G-Canada-Economic-Opportunity-Graph/internal/verifier"
 	"github.com/google/uuid"
 	)
 
@@ -55,6 +57,15 @@ type Options struct {
 	RequestTimeout      time.Duration
 	ReadinessTimeout    time.Duration
 	Logger              Logger
+	// AdapterRegistry exposes the community adapter sandbox via REST endpoints.
+	// When nil, the sandbox endpoints respond with 503.
+	AdapterRegistry *adaptersandbox.Registry
+	// VerifierStore persists verifier attestations and is surfaced by
+	// GET /api/v1/verifier/attestations. When nil, the endpoint responds 503.
+	VerifierStore *verifier.AttestationStore
+	// VerifierNetwork is used to compute quorum vote results for
+	// GET /api/v1/verifier/milestones/{id}. When nil, the endpoint responds 503.
+	VerifierNetwork *verifier.Network
 }
 
 func DefaultOptions() Options {
@@ -80,6 +91,9 @@ type Server struct {
 	readinessTimeout time.Duration
 	limiter          *rateLimiter
 	logger           Logger
+	adapterRegistry  *adaptersandbox.Registry
+	attStore         *verifier.AttestationStore
+	verifierNet      *verifier.Network
 }
 
 func NewServer(store database.Store) *Server {
@@ -110,6 +124,9 @@ func NewServerWithOptions(store database.Store, options Options) (*Server, error
 		requestTimeout:   options.RequestTimeout,
 		readinessTimeout: options.ReadinessTimeout,
 		logger:           options.Logger,
+		adapterRegistry:  options.AdapterRegistry,
+		attStore:         options.VerifierStore,
+		verifierNet:      options.VerifierNetwork,
 	}
 	for _, origin := range options.AllowedOrigins {
 		origin = strings.TrimSpace(origin)
@@ -389,6 +406,15 @@ func (s *Server) registerRoutes() {
 	s.mux.Handle("GET /api/v1/graphql", gqlHandler)
 	s.mux.Handle("POST /api/v1/graphql", gqlHandler)
 
+	// Decentralized Verifier Endpoints
+	s.mux.HandleFunc("GET /api/v1/verifier/attestations", s.handleVerifierAttestations)
+	s.mux.HandleFunc("GET /api/v1/verifier/milestones/{id}", s.handleVerifierMilestone)
+
+	// Community Adapter Sandbox
+	s.mux.HandleFunc("GET /api/v1/adapters", s.handleListAdapters)
+	s.mux.HandleFunc("POST /api/v1/adapters/{name}/approve", s.handleApproveAdapter)
+	s.mux.HandleFunc("DELETE /api/v1/adapters/{name}", s.handleDeleteAdapter)
+
 	// Exports & CEGS Open Standard Endpoints
 	s.mux.HandleFunc("GET /api/v1/export/project/{id}", s.handleExportProject)
 	s.mux.HandleFunc("GET /api/v1/cegs/projects/{id}", s.handleCEGSProject)
@@ -424,6 +450,11 @@ func (s *Server) handleMetrics(w http.ResponseWriter, r *http.Request) {
 		writeError(w, r, http.StatusServiceUnavailable, "metrics_unavailable", "Metrics are temporarily unavailable.")
 		return
 	}
+	entities, _ := s.store.ListEntities(r.Context())
+	signals, _ := s.store.ListSignals(r.Context(), 30*24*time.Hour, 10000)
+	procurements, _ := s.store.ListProcurements(r.Context(), 0, 10000)
+	capitalItems, _ := s.store.ListAllCapitalItems(r.Context())
+
 	w.Header().Set("Content-Type", "text/plain; version=0.0.4")
 	fmt.Fprintf(w, "# HELP cog_total_projects Tracked major projects count\n")
 	fmt.Fprintf(w, "# TYPE cog_total_projects gauge\n")
@@ -431,6 +462,25 @@ func (s *Server) handleMetrics(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprintf(w, "# HELP cog_total_capex_cad Tracked total CAPEX in CAD\n")
 	fmt.Fprintf(w, "# TYPE cog_total_capex_cad gauge\n")
 	fmt.Fprintf(w, "cog_total_capex_cad %d\n", stats.TotalCapexCAD)
+	fmt.Fprintf(w, "# HELP cog_total_entities Tracked organizations count\n")
+	fmt.Fprintf(w, "# TYPE cog_total_entities gauge\n")
+	fmt.Fprintf(w, "cog_total_entities %d\n", len(entities))
+	fmt.Fprintf(w, "# HELP cog_total_signals Economic momentum signals count\n")
+	fmt.Fprintf(w, "# TYPE cog_total_signals gauge\n")
+	fmt.Fprintf(w, "cog_total_signals %d\n", len(signals))
+	fmt.Fprintf(w, "# HELP cog_total_procurements Tracked procurement records count\n")
+	fmt.Fprintf(w, "# TYPE cog_total_procurements gauge\n")
+	fmt.Fprintf(w, "cog_total_procurements %d\n", len(procurements))
+	fmt.Fprintf(w, "# HELP cog_total_capital_items Capital financing items count\n")
+	fmt.Fprintf(w, "# TYPE cog_total_capital_items gauge\n")
+	fmt.Fprintf(w, "cog_total_capital_items %d\n", len(capitalItems))
+	var attCount int
+	if s.attStore != nil {
+		attCount = s.attStore.Count()
+	}
+	fmt.Fprintf(w, "# HELP cog_verifier_attestations Total verifier attestations recorded\n")
+	fmt.Fprintf(w, "# TYPE cog_verifier_attestations counter\n")
+	fmt.Fprintf(w, "cog_verifier_attestations %d\n", attCount)
 }
 
 func (s *Server) handleRadar(w http.ResponseWriter, r *http.Request) {

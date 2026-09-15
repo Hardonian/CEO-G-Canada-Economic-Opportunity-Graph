@@ -52,18 +52,27 @@ type Node struct {
 	id       NodeID
 	quorum   float64
 	attstore []*Attestation
+	store    *AttestationStore // optional durable store; may be nil
 	mu       sync.RWMutex
 }
 
-// NewNode constructs a verifier node.
+// NewNode constructs a verifier node with only an in-process attestation slice.
 func NewNode(id NodeID) *Node {
 	return &Node{id: id, quorum: DefaultQuorum}
+}
+
+// NewNodeWithStore constructs a verifier node that additionally persists every
+// attestation to the provided AttestationStore. Pass nil to use the default
+// in-process slice only.
+func NewNodeWithStore(id NodeID, store *AttestationStore) *Node {
+	return &Node{id: id, quorum: DefaultQuorum, store: store}
 }
 
 // ID returns the node identifier.
 func (n *Node) ID() NodeID { return n.id }
 
-// Observe records an attestation for a milestone.
+// Observe records an attestation for a milestone. If the node was constructed
+// with NewNodeWithStore, the attestation is also saved to the shared store.
 func (n *Node) Observe(milestoneID, projectID, evidenceHash string) *Attestation {
 	now := time.Now().UTC()
 	at := &Attestation{
@@ -77,6 +86,10 @@ func (n *Node) Observe(milestoneID, projectID, evidenceHash string) *Attestation
 	n.mu.Lock()
 	n.attstore = append(n.attstore, at)
 	n.mu.Unlock()
+	// Persist to durable store if configured.
+	if n.store != nil {
+		n.store.Save(at)
+	}
 	return at
 }
 
