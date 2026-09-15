@@ -26,6 +26,9 @@ type Evidence struct {
 	ParserVersion      string          `json:"parser_version,omitempty"`
 	MappingVersion     string          `json:"mapping_version,omitempty"`
 	RawSnippet         string          `json:"raw_snippet,omitempty"`
+	Visibility         VisibilityClass `json:"visibility"`
+	Publishable        bool            `json:"publishable"`
+	Attribution        string          `json:"attribution,omitempty"`
 }
 
 // Entity represents an organization (company, government body, First Nation, regulator, investor, supplier).
@@ -155,12 +158,17 @@ type CapitalItem struct {
 	Category         CapitalCategory `json:"category"`
 	Status           CapitalStatus   `json:"status"`
 	AmountCAD        int64           `json:"amount_cad"`
+	OriginalAmount   *MonetaryAmount `json:"original_amount,omitempty"`
+	Instrument       CapitalNeedType `json:"instrument,omitempty"`
+	StackTreatment   string          `json:"stack_treatment,omitempty"` // ADDITIVE, OVERLAPPING, CONTINGENT, UNKNOWN
 	AmountType       string          `json:"amount_type"` // exact, maximum, estimated, unknown
 	ProviderEntityID string          `json:"provider_entity_id,omitempty"`
 	ProviderName     string          `json:"provider_name"`
 	Notes            string          `json:"notes,omitempty"`
 	EvidenceID       string          `json:"evidence_id"`
 	Evidence         *Evidence       `json:"evidence,omitempty"`
+	Visibility       VisibilityClass `json:"visibility,omitempty"`
+	Publishable      bool            `json:"publishable,omitempty"`
 	CreatedAt        time.Time       `json:"created_at"`
 }
 
@@ -198,6 +206,14 @@ type Opportunity struct {
 	EstimateStatus   ConfidenceLevel  `json:"estimate_status"`
 	Description      string           `json:"description"`
 	TriggerMilestone string           `json:"trigger_milestone"` // e.g., "FID", "ENVIRONMENTAL_APPROVAL"
+	OpportunityKind  string           `json:"opportunity_kind,omitempty"` // CAPITAL, OFFTAKE, TENANCY, PARTNERSHIP, PROCUREMENT
+	CapitalNeedID    string           `json:"capital_need_id,omitempty"`
+	Instruments      []CapitalNeedType `json:"instruments,omitempty"`
+	Counterparties   []CounterpartyType `json:"counterparties,omitempty"`
+	EvidenceIDs      []string         `json:"evidence_ids,omitempty"`
+	Visibility       VisibilityClass  `json:"visibility,omitempty"`
+	Publishable      bool             `json:"publishable,omitempty"`
+	PublicationState PublicationState `json:"publication_state,omitempty"`
 	CreatedAt        time.Time        `json:"created_at"`
 }
 

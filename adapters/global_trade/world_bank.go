@@ -276,6 +276,7 @@ func (a *Adapter) Parse(data []byte) (*adapters.IngestionResult, error) {
 		evidenceID := identity.StableID("evidence", adapterName, key+":"+hash)
 		evidence := &domain.Evidence{
 			ID: evidenceID, SourceURL: record.SourceURL, Publisher: doc.Publisher, SourceTier: domain.SourceTier1,
+			Visibility: domain.VisibilityPublicAttribution, Publishable: true,
 			RetrievalTimestamp: retrievedAt, PublicationDate: &publisherUpdated, EffectiveDate: &observedAt,
 			Confidence: domain.ConfidenceVerified, ExtractionMethod: "official_api_normalized_observation",
 			ContentHash: hash, HashScope: "normalized_source_record", SourceClass: "multilateral_official_statistics",

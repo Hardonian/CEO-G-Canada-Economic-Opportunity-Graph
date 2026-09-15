@@ -207,6 +207,10 @@ func PropagateOpportunities(project *domain.Project) []*domain.Opportunity {
 			EstimateStatus:   domain.ConfidenceUnknown,
 			Description:      rule.Description,
 			TriggerMilestone: string(rule.TriggerMilestone),
+			OpportunityKind:  "PROCUREMENT",
+			Visibility:       domain.VisibilityPublic,
+			Publishable:      true,
+			PublicationState: domain.PublicationPublicCanonical,
 			CreatedAt:        project.UpdatedAt,
 		}
 		results = append(results, opp)

@@ -188,6 +188,8 @@ func (a *IndigenousAdapter) Parse(data []byte) (*adapters.IngestionResult, error
 			SourceURL:          sourceURL,
 			Publisher:          "Indigenous Services Canada",
 			SourceTier:         domain.SourceTier1,
+			Visibility:         domain.VisibilityPublicAttribution,
+			Publishable:        true,
 			RetrievalTimestamp: retrieved,
 			EffectiveDate:      &effective,
 			Confidence:         domain.ConfidenceVerified,

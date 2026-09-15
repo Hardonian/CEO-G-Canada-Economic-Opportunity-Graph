@@ -315,6 +315,8 @@ func (a *NRCanAdapter) parseFeatures(features []arcFeature, retrievedRaw, effect
 			SourceURL:          sourceURL,
 			Publisher:          "Natural Resources Canada",
 			SourceTier:         domain.SourceTier1,
+			Visibility:         domain.VisibilityPublicAttribution,
+			Publishable:        true,
 			RetrievalTimestamp: retrieved,
 			EffectiveDate:      &effective,
 			Confidence:         domain.ConfidenceReported,

@@ -102,6 +102,8 @@ func (a *CERAdapter) Parse(data []byte) (*adapters.IngestionResult, error) {
 			SourceURL:          rec.FilingURL,
 			Publisher:          "Canada Energy Regulator (CER) / Régie de l'énergie du Canada",
 			SourceTier:         domain.SourceTier1,
+			Visibility:         domain.VisibilityPublicAttribution,
+			Publishable:        true,
 			RetrievalTimestamp: now,
 			Confidence:         domain.ConfidenceVerified,
 			ExtractionMethod:   "cer_regulatory_filing_adapter",

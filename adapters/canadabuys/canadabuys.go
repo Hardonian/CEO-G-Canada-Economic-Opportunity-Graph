@@ -95,6 +95,8 @@ func (a *CanadaBuysAdapter) Parse(data []byte) (*adapters.IngestionResult, error
 			SourceURL:          rec.SourceURL,
 			Publisher:          "CanadaBuys / Public Services and Procurement Canada",
 			SourceTier:         domain.SourceTier1,
+			Visibility:         domain.VisibilityPublicAttribution,
+			Publishable:        true,
 			RetrievalTimestamp: now,
 			Confidence:         domain.ConfidenceVerified,
 			ExtractionMethod:   "official_canadabuys_api",

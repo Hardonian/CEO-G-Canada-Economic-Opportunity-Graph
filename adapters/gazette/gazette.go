@@ -251,6 +251,8 @@ func (a *GazetteAdapter) Parse(data []byte) (*adapters.IngestionResult, error) {
 			SourceURL:          notice.SourceURL,
 			Publisher:          publisher,
 			SourceTier:         domain.SourceTier1,
+			Visibility:         domain.VisibilityPublicAttribution,
+			Publishable:        true,
 			RetrievalTimestamp: retrieved,
 			EffectiveDate:      &effective,
 			Confidence:         domain.ConfidenceReported,

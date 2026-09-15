@@ -106,6 +106,8 @@ func (a *IAACAdapter) Parse(data []byte) (*adapters.IngestionResult, error) {
 			SourceURL:          rec.RegistryURL,
 			Publisher:          "Impact Assessment Agency of Canada",
 			SourceTier:         domain.SourceTier1,
+			Visibility:         domain.VisibilityPublicAttribution,
+			Publishable:        true,
 			RetrievalTimestamp: now,
 			Confidence:         domain.ConfidenceVerified,
 			ExtractionMethod:   "official_iaac_json_adapter",

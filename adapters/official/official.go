@@ -170,6 +170,7 @@ func (a *Adapter) Parse(data []byte) (*adapters.IngestionResult, error) {
 			evidence := &domain.Evidence{
 				ID: evidenceID, SourceURL: src.SourceURL, Publisher: src.Publisher,
 				SourceTier: src.SourceTier, RetrievalTimestamp: retrieved,
+				Visibility: domain.VisibilityPublicAttribution, Publishable: true,
 				PublicationDate: &publication, EffectiveDate: &effective,
 				Confidence: src.Confidence, ExtractionMethod: "human_reviewed_primary_source_snapshot",
 				ContentHash: hash, HashScope: "normalized_source_record", SourceClass: src.SourceClass, SourceRecordID: src.SourceID,
@@ -262,7 +263,8 @@ func (a *Adapter) Parse(data []byte) (*adapters.IngestionResult, error) {
 				ID: identity.StableID("capital", adapterName, item.ExternalID), ProjectID: projectID,
 				Category: item.Category, Status: item.Status, AmountCAD: item.AmountCAD,
 				AmountType: item.AmountType, ProviderName: item.ProviderName, Notes: item.Notes,
-				EvidenceID: evidence.ID, Evidence: evidence, CreatedAt: eventDate,
+				EvidenceID: evidence.ID, Evidence: evidence, Visibility: domain.VisibilityPublicAttribution,
+				Publishable: true, CreatedAt: eventDate,
 			})
 		}
 	}

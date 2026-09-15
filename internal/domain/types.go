@@ -55,19 +55,26 @@ type LifecycleStage string
 const (
 	StageUnknown           LifecycleStage = "UNKNOWN"
 	StageDiscovered        LifecycleStage = "DISCOVERED"
+	StageConcept           LifecycleStage = "CONCEPT"
+	StagePreDevelopment    LifecycleStage = "PRE_DEVELOPMENT"
 	StageAnnounced         LifecycleStage = "ANNOUNCED"
 	StageReferred          LifecycleStage = "REFERRED"
 	StageEarlyDevelopment  LifecycleStage = "EARLY_DEVELOPMENT"
 	StageFeasibility       LifecycleStage = "FEASIBILITY"
+	StagePreFEED           LifecycleStage = "PRE_FEED"
+	StageFEED              LifecycleStage = "FEED"
+	StageDetailedEngineering LifecycleStage = "DETAILED_ENGINEERING"
 	StageFinancing         LifecycleStage = "FINANCING"
 	StageEnvironmentalReview LifecycleStage = "ENVIRONMENTAL_REVIEW"
 	StagePermitting        LifecycleStage = "PERMITTING"
 	StageProcurement       LifecycleStage = "PROCUREMENT"
 	StageFIDLikely         LifecycleStage = "FID_LIKELY"
 	StageFID               LifecycleStage = "FID"
+	StageConstructionReady LifecycleStage = "CONSTRUCTION_READY"
 	StageConstruction      LifecycleStage = "CONSTRUCTION"
 	StageCommissioning     LifecycleStage = "COMMISSIONING"
 	StageOperating         LifecycleStage = "OPERATING"
+	StageExpansion         LifecycleStage = "EXPANSION"
 	StageDelayed           LifecycleStage = "DELAYED"
 	StagePaused            LifecycleStage = "PAUSED"
 	StageCancelled         LifecycleStage = "CANCELLED"
@@ -75,11 +82,11 @@ const (
 
 // ValidLifecycleStages returns all valid lifecycle stages for validation.
 var ValidLifecycleStages = []LifecycleStage{
-	StageUnknown, StageDiscovered, StageAnnounced, StageReferred,
-	StageEarlyDevelopment, StageFeasibility, StageFinancing,
+	StageUnknown, StageDiscovered, StageConcept, StagePreDevelopment, StageAnnounced, StageReferred,
+	StageEarlyDevelopment, StageFeasibility, StagePreFEED, StageFEED, StageDetailedEngineering, StageFinancing,
 	StageEnvironmentalReview, StagePermitting, StageProcurement,
-	StageFIDLikely, StageFID, StageConstruction, StageCommissioning,
-	StageOperating, StageDelayed, StagePaused, StageCancelled,
+	StageFIDLikely, StageFID, StageConstructionReady, StageConstruction, StageCommissioning,
+	StageOperating, StageExpansion, StageDelayed, StagePaused, StageCancelled,
 }
 
 // CapitalCategory represents the type of capital event.
@@ -102,12 +109,16 @@ const (
 type CapitalStatus string
 
 const (
+	CapitalRumoured               CapitalStatus = "RUMOURED"
+	CapitalSeeking                CapitalStatus = "SEEKING"
 	CapitalProposed               CapitalStatus = "PROPOSED"
 	CapitalAnnounced              CapitalStatus = "ANNOUNCED"
 	CapitalCommitted              CapitalStatus = "COMMITTED"
 	CapitalConditionallyCommitted CapitalStatus = "CONDITIONALLY_COMMITTED"
 	CapitalClosed                 CapitalStatus = "CLOSED"
+	CapitalSigned                 CapitalStatus = "SIGNED"
 	CapitalDisbursed              CapitalStatus = "DISBURSED"
+	CapitalWithdrawn              CapitalStatus = "WITHDRAWN"
 	CapitalCancelled              CapitalStatus = "CANCELLED"
 )
 

@@ -103,6 +103,8 @@ func (a *IDEaSAdapter) Parse(data []byte) (*adapters.IngestionResult, error) {
 			SourceURL:          rec.SourceURL,
 			Publisher:          rec.Publisher,
 			SourceTier:         domain.SourceTier1,
+			Visibility:         domain.VisibilityPublicAttribution,
+			Publishable:        true,
 			RetrievalTimestamp: now,
 			Confidence:         domain.ConfidenceVerified,
 			ExtractionMethod:   "dnd_ideas_challenge_adapter",

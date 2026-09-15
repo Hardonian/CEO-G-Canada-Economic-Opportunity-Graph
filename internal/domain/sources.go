@@ -241,6 +241,8 @@ type Source struct {
 	AccessMethod          string                `json:"access_method,omitempty"`
 	ContentType           string                `json:"content_type,omitempty"`
 	AuthorityTier         SourceAuthorityTier   `json:"authority_tier"`
+	Visibility            VisibilityClass       `json:"visibility"`
+	Publishable           bool                  `json:"publishable"`
 	SubjectTags           []string              `json:"subject_tags,omitempty"`
 	SectorTags            []string              `json:"sector_tags,omitempty"`
 	Languages             []string              `json:"languages,omitempty"`
