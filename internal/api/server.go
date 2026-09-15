@@ -20,6 +20,8 @@ import (
 	"github.com/Hardonian/CEO-G-Canada-Economic-Opportunity-Graph/internal/database"
 	"github.com/Hardonian/CEO-G-Canada-Economic-Opportunity-Graph/internal/domain"
 	"github.com/Hardonian/CEO-G-Canada-Economic-Opportunity-Graph/internal/export"
+	"github.com/Hardonian/CEO-G-Canada-Economic-Opportunity-Graph/internal/publication"
+	"github.com/Hardonian/CEO-G-Canada-Economic-Opportunity-Graph/internal/readiness"
 	"github.com/Hardonian/CEO-G-Canada-Economic-Opportunity-Graph/internal/sovereignty"
 	"github.com/Hardonian/CEO-G-Canada-Economic-Opportunity-Graph/internal/trust"
 	"github.com/google/uuid"
@@ -345,9 +347,17 @@ func (s *Server) registerRoutes() {
 	s.mux.HandleFunc("GET /api/v1/projects/{id}/scores/history", s.handleGetProjectScoreHistory)
 	s.mux.HandleFunc("GET /api/v1/projects/{id}/provenance", s.handleGetProjectProvenance)
 	s.mux.HandleFunc("GET /api/v1/projects/{id}/trust", s.handleGetProjectTrust)
+	s.mux.HandleFunc("GET /api/v1/projects/{id}/capital-stack", s.handleProjectCapitalStack)
+	s.mux.HandleFunc("GET /api/v1/projects/{id}/opportunities", s.handleProjectOpportunities)
+	s.mux.HandleFunc("GET /api/v1/projects/{id}/readiness", s.handleProjectReadiness)
+	s.mux.HandleFunc("GET /api/v1/projects/{id}/corroboration", s.handleProjectCorroboration)
 
 	// Procurements & Opportunities
 	s.mux.HandleFunc("GET /api/v1/procurements", s.handleListProcurements)
+	s.mux.HandleFunc("GET /api/v1/opportunities", s.handleListOpportunities)
+	s.mux.HandleFunc("GET /api/v1/opportunities/{id}", s.handleGetOpportunity)
+	s.mux.HandleFunc("GET /api/v1/capital-needs", s.handleListCapitalNeeds)
+	s.mux.HandleFunc("GET /api/v1/milestones", s.handleListMilestones)
 	s.mux.HandleFunc("GET /api/v1/signals", s.handleListSignals)
 	s.mux.HandleFunc("GET /api/v1/search", s.handleSearch)
 
@@ -414,20 +424,25 @@ func (s *Server) handleRadar(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		accelerating = nil
 	}
-	signalList, err := s.store.ListSignals(ctx, 30*24*time.Hour, 10)
+	signalList, err := s.publicSignals(ctx, 30*24*time.Hour, 10)
 	if err != nil {
 		signalList = nil
 	}
-	recentEvents, err := s.store.ListRecentEvents(ctx, 5)
+	recentEvents, err := s.store.ListRecentEvents(ctx, 25)
 	if err != nil {
 		recentEvents = nil
+	}
+	filteredEvents := make([]*domain.Event, 0, 5)
+	for _, event := range recentEvents {
+		if s.publicEvidence(ctx, event.EvidenceID) { filteredEvents = append(filteredEvents, event) }
+		if len(filteredEvents) == 5 { break }
 	}
 
 	resp := map[string]interface{}{
 		"stats":                 stats,
 		"accelerating_projects": accelerating,
 		"recent_signals":        signalList,
-		"recent_events":         recentEvents,
+		"recent_events":         filteredEvents,
 		"cegs_version":          cegs.SpecVersion,
 	}
 	writeJSON(w, http.StatusOK, resp)
@@ -521,39 +536,23 @@ func (s *Server) handleGetProject(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	scores, err := s.store.GetLatestScores(ctx, proj.ID)
+	bundle, err := export.ExportProjectBundle(ctx, s.store, proj.ID)
 	if err != nil {
-		writeError(w, r, 503, "scores_unavailable", "Scores are temporarily unavailable.")
-		return
-	}
-	events, err := s.store.ListEventsByProject(ctx, proj.ID)
-	if err != nil {
-		writeError(w, r, 503, "events_unavailable", "Events are temporarily unavailable.")
-		return
-	}
-	relationships, err := s.store.ListRelationshipsByProject(ctx, proj.ID)
-	if err != nil {
-		writeError(w, r, 503, "relationships_unavailable", "Relationships are temporarily unavailable.")
-		return
-	}
-	capital, err := s.store.ListCapitalItemsByProject(ctx, proj.ID)
-	if err != nil {
-		writeError(w, r, 503, "capital_unavailable", "Capital records are temporarily unavailable.")
-		return
-	}
-	opps, err := s.store.ListOpportunitiesByProject(ctx, proj.ID)
-	if err != nil {
-		writeError(w, r, 503, "opportunities_unavailable", "Opportunities are temporarily unavailable.")
+		writeError(w, r, 503, "project_bundle_unavailable", "Project intelligence is temporarily unavailable.")
 		return
 	}
 
 	resp := map[string]interface{}{
-		"project":       proj,
-		"scores":        scores,
-		"events":        events,
-		"relationships": relationships,
-		"capital_items": capital,
-		"opportunities": opps,
+		"project":       bundle.Project,
+		"scores":        bundle.Scores,
+		"events":        bundle.Events,
+		"relationships": bundle.Relationships,
+		"capital_items": bundle.CapitalItems,
+		"capital_needs": bundle.CapitalNeeds,
+		"capital_requirements": bundle.CapitalRequirements,
+		"milestones":    bundle.Milestones,
+		"readiness":     bundle.Readiness,
+		"opportunities": bundle.Opportunities,
 		"status":        domain.StatusHealthy,
 	}
 
@@ -566,12 +565,12 @@ func (s *Server) handleGetProjectEvents(w http.ResponseWriter, r *http.Request) 
 		writeError(w, r, http.StatusNotFound, "project_not_found", "Project not found.")
 		return
 	}
-	events, err := s.store.ListEventsByProject(r.Context(), project.ID)
+	bundle, err := export.ExportProjectBundle(r.Context(), s.store, project.ID)
 	if err != nil {
 		writeError(w, r, http.StatusServiceUnavailable, "events_unavailable", "Events are temporarily unavailable.")
 		return
 	}
-	writeJSON(w, http.StatusOK, events)
+	writeJSON(w, http.StatusOK, bundle.Events)
 }
 
 func (s *Server) handleGetProjectScores(w http.ResponseWriter, r *http.Request) {
@@ -580,12 +579,12 @@ func (s *Server) handleGetProjectScores(w http.ResponseWriter, r *http.Request) 
 		writeError(w, r, http.StatusNotFound, "project_not_found", "Project not found.")
 		return
 	}
-	scores, err := s.store.GetLatestScores(r.Context(), project.ID)
+	bundle, err := export.ExportProjectBundle(r.Context(), s.store, project.ID)
 	if err != nil {
 		writeError(w, r, http.StatusServiceUnavailable, "scores_unavailable", "Scores are temporarily unavailable.")
 		return
 	}
-	writeJSON(w, http.StatusOK, scores)
+	writeJSON(w, http.StatusOK, bundle.Scores)
 }
 
 func (s *Server) handleGetProjectScoreHistory(w http.ResponseWriter, r *http.Request) {
@@ -599,11 +598,13 @@ func (s *Server) handleGetProjectScoreHistory(w http.ResponseWriter, r *http.Req
 		writeError(w, r, http.StatusBadRequest, "invalid_score_type", "Score type is not supported.")
 		return
 	}
-	history, err := s.store.ListScoreHistory(r.Context(), project.ID, scoreType)
+	bundle, err := export.ExportProjectBundle(r.Context(), s.store, project.ID)
 	if err != nil {
 		writeError(w, r, http.StatusServiceUnavailable, "score_history_unavailable", "Score history is temporarily unavailable.")
 		return
 	}
+	history := make([]*domain.ProjectScore, 0)
+	for _, score := range bundle.ScoreHistory { if scoreType == "" || score.ScoreType == scoreType { history = append(history, score) } }
 	writeJSON(w, http.StatusOK, map[string]any{"project_id": project.ID, "history": history})
 }
 
@@ -677,16 +678,19 @@ func (s *Server) handleListProcurements(w http.ResponseWriter, r *http.Request) 
 		writeError(w, r, http.StatusBadRequest, "invalid_offset", err.Error())
 		return
 	}
-	procs, err := s.store.ListProcurements(r.Context(), limit, offset)
+	procs, err := s.store.ListProcurements(r.Context(), 500, 0)
 	if err != nil {
 		writeError(w, r, http.StatusServiceUnavailable, "procurements_unavailable", "Procurements are temporarily unavailable.")
 		return
 	}
-	writeJSON(w, http.StatusOK, map[string]any{"procurements": procs, "limit": limit, "offset": offset, "status": domain.StatusHealthy})
+	public := make([]*domain.Procurement, 0, len(procs))
+	for _, procurement := range procs { if s.publicEvidence(r.Context(), procurement.EvidenceID) { public = append(public, procurement) } }
+	start := offset; if start > len(public) { start = len(public) }; end := start + limit; if end > len(public) { end = len(public) }
+	writeJSON(w, http.StatusOK, map[string]any{"procurements": public[start:end], "limit": limit, "offset": offset, "status": domain.StatusHealthy})
 }
 
 func (s *Server) handleListSignals(w http.ResponseWriter, r *http.Request) {
-	sigs, err := s.store.ListSignals(r.Context(), 90*24*time.Hour, 50)
+	sigs, err := s.publicSignals(r.Context(), 90*24*time.Hour, 50)
 	if err != nil {
 		writeError(w, r, http.StatusServiceUnavailable, "signals_unavailable", "Signals are temporarily unavailable.")
 		return
@@ -812,7 +816,10 @@ func (s *Server) handleCEGSExport(w http.ResponseWriter, r *http.Request) {
 	}
 	var cegsList []*cegs.Project
 	for _, p := range projects {
-		cegsList = append(cegsList, cegs.ToCEGSProject(p, p.EvidenceIDs))
+		bundle, bundleErr := export.ExportProjectBundle(r.Context(), s.store, p.ID)
+		if bundleErr != nil { continue }
+		cegsProject, convertErr := bundle.ToCEGSExport()
+		if convertErr == nil { cegsList = append(cegsList, cegsProject) }
 	}
 	writeJSON(w, http.StatusOK, map[string]interface{}{
 		"cegs":         cegs.SpecVersion,
@@ -846,6 +853,10 @@ func (s *Server) handleOpenAPI(w http.ResponseWriter, r *http.Request) {
 				},
 			},
 			"/api/v1/projects/{id}/trust":          map[string]interface{}{"get": map[string]interface{}{"summary": "Fetch deterministic evidence-quality assessment"}},
+			"/api/v1/opportunities": map[string]interface{}{"get": map[string]interface{}{"summary": "Query publication-safe investment and counterparty opportunities"}},
+			"/api/v1/capital-needs": map[string]interface{}{"get": map[string]interface{}{"summary": "Query publicly corroborated capital needs"}},
+			"/api/v1/milestones": map[string]interface{}{"get": map[string]interface{}{"summary": "Query sourced project milestones"}},
+			"/api/v1/projects/{id}/readiness": map[string]interface{}{"get": map[string]interface{}{"summary": "Fetch deterministic investment-readiness decomposition"}},
 			"/api/v1/projects/{id}/scores/history": map[string]interface{}{"get": map[string]interface{}{"summary": "Fetch append-only score history"}},
 			"/api/v1/cegs/projects/{id}": map[string]interface{}{
 				"get": map[string]interface{}{
