@@ -3,7 +3,9 @@ package database
 import (
 	"context"
 	"errors"
+	"fmt"
 	"testing"
+	"time"
 
 	"github.com/Hardonian/CEO-G-Canada-Economic-Opportunity-Graph/internal/domain"
 )
@@ -193,3 +195,167 @@ func BenchmarkListEventsByProject(b *testing.B) {
 		store.ListEventsByProject(ctx, "proj-bench")
 	}
 }
+
+// ─── Secondary Index Consistency ──────────────────────────────────────────────
+
+func TestSignalIndex_ConsistentAfterRepeatedSaves(t *testing.T) {
+	store := NewMemoryStore()
+	ctx := context.Background()
+	proj := &domain.Project{ID: "proj-idx", Name: "Idx Project", Sector: domain.SectorCleanEnergy, Province: "ON", CurrentStage: domain.StageConcept, CapexCAD: 100_000_000}
+	if err := store.SaveProject(ctx, proj); err != nil {
+		t.Fatal(err)
+	}
+	for i := 0; i < 20; i++ {
+		s := &domain.Signal{
+			ID:        fmt.Sprintf("sig-%d", i),
+			ProjectID: "proj-idx",
+			Type:      domain.SignalConstructionSignal,
+			Magnitude: 0.5,
+			Timestamp: time.Now().UTC(),
+		}
+		if err := store.SaveSignal(ctx, s); err != nil {
+			t.Fatal(err)
+		}
+	}
+	list, err := store.ListSignalsByProject(ctx, "proj-idx")
+	if err != nil {
+		t.Fatal(err)
+	}
+	if len(list) != 20 {
+		t.Fatalf("expected 20 signals via index, got %d", len(list))
+	}
+	// Rebuild index and verify consistency.
+	store.RebuildSignalIndex()
+	list2, err := store.ListSignalsByProject(ctx, "proj-idx")
+	if err != nil {
+		t.Fatal(err)
+	}
+	if len(list2) != 20 {
+		t.Fatalf("expected 20 signals after rebuild, got %d", len(list2))
+	}
+}
+
+func TestEventIndex_ConsistentAfterRepeatedSaves(t *testing.T) {
+	store := NewMemoryStore()
+	ctx := context.Background()
+	proj := &domain.Project{ID: "proj-ev-idx", Name: "Ev Idx Project", Sector: domain.SectorNuclearEnergy, Province: "QC", CurrentStage: domain.StageFEED, CapexCAD: 2_000_000_000}
+	if err := store.SaveProject(ctx, proj); err != nil {
+		t.Fatal(err)
+	}
+	ev := &domain.Evidence{ID: "ev-idx-1", ContentHash: "hash-1", SourceURL: "https://example.com", Publisher: "T", SourceTier: domain.SourceTier1, RetrievalTimestamp: time.Now().UTC(), Confidence: domain.ConfidenceVerified, ExtractionMethod: "test", Visibility: domain.VisibilityPublic, Publishable: true}
+	if err := store.SaveEvidence(ctx, ev); err != nil {
+		t.Fatal(err)
+	}
+	for i := 0; i < 15; i++ {
+		e := &domain.Event{
+			ID:          fmt.Sprintf("evt-%d", i),
+			ProjectID:   "proj-ev-idx",
+			EvidenceID:  "ev-idx-1",
+			EventType:   "stage_change",
+			EventDate:   time.Now().UTC(),
+			Title:       fmt.Sprintf("Event %d", i),
+		}
+		if err := store.SaveEvent(ctx, e); err != nil {
+			t.Fatal(err)
+		}
+	}
+	list, err := store.ListEventsByProject(ctx, "proj-ev-idx")
+	if err != nil {
+		t.Fatal(err)
+	}
+	if len(list) != 15 {
+		t.Fatalf("expected 15 events via index, got %d", len(list))
+	}
+	// Rebuild index and verify consistency.
+	store.RebuildEventIndex()
+	list2, err := store.ListEventsByProject(ctx, "proj-ev-idx")
+	if err != nil {
+		t.Fatal(err)
+	}
+	if len(list2) != 15 {
+		t.Fatalf("expected 15 events after rebuild, got %d", len(list2))
+	}
+}
+
+func TestCapexCache_InvalidatedOnSave(t *testing.T) {
+	store := NewMemoryStore()
+	ctx := context.Background()
+	p1 := &domain.Project{ID: "p-cache-1", Name: "Cache Project 1", Sector: domain.SectorCleanEnergy, Province: "ON", CurrentStage: domain.StageConcept, CapexCAD: 1_000_000_000, CapexStatus: domain.ConfidenceReported}
+	if err := store.SaveProject(ctx, p1); err != nil {
+		t.Fatal(err)
+	}
+	stats, err := store.GetRadarStats(ctx)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if stats.TotalCapexCAD != 1_000_000_000 {
+		t.Fatalf("expected 1B capex, got %d", stats.TotalCapexCAD)
+	}
+	// Second call should use cache.
+	stats2, err := store.GetRadarStats(ctx)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if stats2.TotalCapexCAD != 1_000_000_000 {
+		t.Fatalf("cached capex wrong: %d", stats2.TotalCapexCAD)
+	}
+	// Add a new project — cache should be invalidated.
+	p2 := &domain.Project{ID: "p-cache-2", Name: "Cache Project 2", Sector: domain.SectorNuclearEnergy, Province: "QC", CurrentStage: domain.StageFEED, CapexCAD: 2_000_000_000, CapexStatus: domain.ConfidenceReported}
+	if err := store.SaveProject(ctx, p2); err != nil {
+		t.Fatal(err)
+	}
+	stats3, err := store.GetRadarStats(ctx)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if stats3.TotalCapexCAD != 3_000_000_000 {
+		t.Fatalf("expected 3B capex after invalidation, got %d", stats3.TotalCapexCAD)
+	}
+}
+
+func TestListSignalsByProject_Empty(t *testing.T) {
+	store := NewMemoryStore()
+	ctx := context.Background()
+	list, err := store.ListSignalsByProject(ctx, "nonexistent")
+	if err != nil {
+		t.Fatal(err)
+	}
+	if len(list) != 0 {
+		t.Fatalf("expected 0 signals, got %d", len(list))
+	}
+}
+
+func TestListEventsByProject_Empty(t *testing.T) {
+	store := NewMemoryStore()
+	ctx := context.Background()
+	list, err := store.ListEventsByProject(ctx, "nonexistent")
+	if err != nil {
+		t.Fatal(err)
+	}
+	if len(list) != 0 {
+		t.Fatalf("expected 0 events, got %d", len(list))
+	}
+}
+
+func TestRebuildIndexes(t *testing.T) {
+	store := NewMemoryStore()
+	ctx := context.Background()
+	proj := &domain.Project{ID: "p-rebuild", Slug: "rebuild-project", Name: "Rebuild Project", Sector: domain.SectorCleanEnergy, Province: "ON", CurrentStage: domain.StageConcept, CapexCAD: 500_000_000}
+	if err := store.SaveProject(ctx, proj); err != nil {
+		t.Fatal(err)
+	}
+	// Directly corrupt the slug index to simulate inconsistency.
+	store.slugIndex = nil
+	store.RebuildIndexes()
+	got, err := store.GetProjectBySlug(ctx, "rebuild-project")
+	if err != nil {
+		t.Fatalf("GetProjectBySlug after rebuild: %v", err)
+	}
+	if got.ID != "p-rebuild" {
+		t.Errorf("expected p-rebuild, got %s", got.ID)
+	}
+}
+
+// Ensure fmt and time imports are used.
+var _ = fmt.Sprintf
+var _ = time.Now

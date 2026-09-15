@@ -182,21 +182,30 @@ func (m *MemoryStore) GetProject(ctx context.Context, id string) (*domain.Projec
 
 func (m *MemoryStore) GetProjectBySlug(ctx context.Context, slug string) (*domain.Project, error) {
 	m.mu.RLock()
-	defer m.mu.RUnlock()
 	if m.slugIndex == nil {
+		m.mu.RUnlock()
+		m.mu.Lock()
 		m.ensureSlugIndexLocked()
+		m.mu.Unlock()
+		m.mu.RLock()
 	}
-	if id, ok := m.slugIndex[slug]; ok {
+	id, ok := m.slugIndex[slug]
+	if ok {
 		if p, ok := m.projects[id]; ok {
+			m.mu.RUnlock()
 			return p, nil
 		}
 	}
-	// Fallback for any projects not captured by the index yet.
+	m.mu.RUnlock()
+	// Fallback: linear scan for any projects not captured by the index yet.
+	m.mu.RLock()
 	for _, p := range m.projects {
 		if p.Slug == slug {
+			m.mu.RUnlock()
 			return p, nil
 		}
 	}
+	m.mu.RUnlock()
 	return nil, ErrNotFound
 }
 
@@ -615,6 +624,24 @@ func (m *MemoryStore) ListSignals(ctx context.Context, since time.Duration, limi
 	if limit > 0 && len(list) > limit {
 		list = list[:limit]
 	}
+	return list, nil
+}
+
+// ListSignalsByProject returns all signals for the given project using the
+// secondary index for O(1) lookup rather than a full scan.
+func (m *MemoryStore) ListSignalsByProject(ctx context.Context, projectID string) ([]*domain.Signal, error) {
+	m.mu.RLock()
+	defer m.mu.RUnlock()
+	ids := m.signalsByProject[projectID]
+	list := make([]*domain.Signal, 0, len(ids))
+	for _, id := range ids {
+		if s, ok := m.signals[id]; ok {
+			list = append(list, s)
+		}
+	}
+	sort.Slice(list, func(i, j int) bool {
+		return list[i].Timestamp.After(list[j].Timestamp)
+	})
 	return list, nil
 }
 
