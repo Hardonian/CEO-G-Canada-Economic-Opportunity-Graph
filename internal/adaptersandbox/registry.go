@@ -105,6 +105,44 @@ func (r *Registry) Approved() []*AdapterEntry {
 	return list
 }
 
+// Approve marks an adapter entry as approved for production use.
+// Returns an error if the entry does not exist.
+func (r *Registry) Approve(name string) error {
+	r.mu.Lock()
+	defer r.mu.Unlock()
+	entry, exists := r.entries[name]
+	if !exists {
+		return fmt.Errorf("adapter %q not found", name)
+	}
+	entry.Approved = true
+	return nil
+}
+
+// Reject removes an adapter entry from the registry.
+// Returns false if the entry did not exist.
+func (r *Registry) Reject(name string) bool {
+	r.mu.Lock()
+	defer r.mu.Unlock()
+	if _, exists := r.entries[name]; !exists {
+		return false
+	}
+	delete(r.entries, name)
+	// Rebuild order slice preserving insertion order of remaining entries.
+	newOrder := make([]string, 0, len(r.order)-1)
+	for _, n := range r.order {
+		if n != name {
+			newOrder = append(newOrder, n)
+		}
+	}
+	r.order = newOrder
+	return true
+}
+
+// Delete is an alias for Reject.
+func (r *Registry) Delete(name string) bool {
+	return r.Reject(name)
+}
+
 func validateEntry(entry *AdapterEntry) error {
 	if entry == nil {
 		return fmt.Errorf("entry is nil")

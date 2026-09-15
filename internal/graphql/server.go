@@ -104,7 +104,7 @@ func (h *Handler) execute(ctx context.Context, req gqlRequest) (interface{}, []e
 	}
 
 	// Parse the selection set from the query.
-	fields, args, err := parseQuery(q)
+	fields, args, subFields, err := parseQuery(q)
 	if err != nil {
 		return nil, []error{fmt.Errorf("syntax error: %w", err)}
 	}
@@ -114,7 +114,7 @@ func (h *Handler) execute(ctx context.Context, req gqlRequest) (interface{}, []e
 
 	for _, field := range fields {
 		fieldArgs := mergeArgs(args[field], req.Variables)
-		value, err := h.resolveField(ctx, field, fieldArgs)
+		value, err := h.resolveField(ctx, field, fieldArgs, subFields[field])
 		if err != nil {
 			errs = append(errs, fmt.Errorf("field %s: %w", field, err))
 			result[field] = nil
@@ -129,22 +129,22 @@ func (h *Handler) execute(ctx context.Context, req gqlRequest) (interface{}, []e
 	return result, errs
 }
 
-func (h *Handler) resolveField(ctx context.Context, field string, args map[string]interface{}) (interface{}, error) {
+func (h *Handler) resolveField(ctx context.Context, field string, args map[string]interface{}, subFields []string) (interface{}, error) {
 	switch field {
 	case "projects":
-		return h.resolver.resolveProjects(ctx, args)
+		return h.resolver.resolveProjects(ctx, args, subFields)
 	case "project":
-		return h.resolver.resolveProject(ctx, args)
+		return h.resolver.resolveProject(ctx, args, subFields)
 	case "organizations":
-		return h.resolver.resolveOrganizations(ctx, args)
+		return h.resolver.resolveOrganizations(ctx, args, subFields)
 	case "events":
-		return h.resolver.resolveEvents(ctx, args)
+		return h.resolver.resolveEvents(ctx, args, subFields)
 	case "signals":
-		return h.resolver.resolveSignals(ctx, args)
+		return h.resolver.resolveSignals(ctx, args, subFields)
 	case "reconciliation":
-		return h.resolver.resolveReconciliation(ctx, args)
+		return h.resolver.resolveReconciliation(ctx, args, subFields)
 	case "aiSovereignty":
-		return h.resolver.resolveAISovereignty(ctx, args)
+		return h.resolver.resolveAISovereignty(ctx, args, subFields)
 	default:
 		return nil, fmt.Errorf("unknown field %q", field)
 	}
@@ -152,17 +152,17 @@ func (h *Handler) resolveField(ctx context.Context, field string, args map[strin
 
 // ─── query parser ─────────────────────────────────────────────────────────────
 
-// parseQuery extracts top-level field names and their inline arguments from a
-// simple GraphQL query. It does not handle fragments, directives, or nested
-// selections — those pass through opaquely and field data is returned flat.
+// parseQuery extracts top-level field names, their inline arguments, and the
+// sub-field selection set per field from a simple GraphQL query.
 //
 // Supported syntax examples:
 //
 //	{ projects { id name } }
 //	{ project(id: "abc") { id name stage } }
 //	query { projects(sector: "LNG", limit: 10) { id } }
-func parseQuery(q string) (fields []string, args map[string]map[string]interface{}, err error) {
+func parseQuery(q string) (fields []string, args map[string]map[string]interface{}, subFields map[string][]string, err error) {
 	args = make(map[string]map[string]interface{})
+	subFields = make(map[string][]string)
 
 	// Strip outer `query` keyword and whitespace.
 	q = strings.TrimSpace(q)
@@ -173,7 +173,7 @@ func parseQuery(q string) (fields []string, args map[string]map[string]interface
 	// Strip the outer braces.
 	q, err = stripOuterBraces(q)
 	if err != nil {
-		return nil, nil, err
+		return nil, nil, nil, err
 	}
 	q = strings.TrimSpace(q)
 
@@ -241,19 +241,20 @@ func parseQuery(q string) (fields []string, args map[string]map[string]interface
 		// Parse arguments if present.
 		var fieldArgs map[string]interface{}
 		if pos < len(q) && q[pos] == '(' {
-			end, a, parseErr := parseArgs(q, pos)
-			if parseErr != nil {
-				return nil, nil, parseErr
-			}
+end, a, parseErr := parseArgs(q, pos)
+		if parseErr != nil {
+			return nil, nil, nil, parseErr
+		}
 			fieldArgs = a
 			pos = end
 		}
 
-		// Skip sub-selection block.
+		// Capture sub-selection block if present.
 		for pos < len(q) && isWS(q[pos]) {
 			pos++
 		}
 		if pos < len(q) && q[pos] == '{' {
+			subStart := pos
 			depth := 1
 			pos++
 			for pos < len(q) && depth > 0 {
@@ -264,6 +265,8 @@ func parseQuery(q string) (fields []string, args map[string]map[string]interface
 				}
 				pos++
 			}
+			sub := q[subStart+1 : pos-1] // strip outer braces
+			subFields[fieldName] = parseSubFields(sub)
 		}
 
 		fields = append(fields, fieldName)
@@ -273,9 +276,98 @@ func parseQuery(q string) (fields []string, args map[string]map[string]interface
 	}
 
 	if len(fields) == 0 {
-		return nil, nil, fmt.Errorf("no fields found in query")
+		return nil, nil, nil, fmt.Errorf("no fields found in query")
 	}
-	return fields, args, nil
+	return fields, args, subFields, nil
+}
+
+// parseSubFields extracts bare field names from a sub-selection block body.
+// It ignores arguments, aliases, and nested sub-selections — only the leaf
+// field names are captured for projection.
+func parseSubFields(body string) []string {
+	var names []string
+	pos := 0
+	for pos < len(body) {
+		// Skip whitespace and commas.
+		for pos < len(body) && (isWS(body[pos]) || body[pos] == ',') {
+			pos++
+		}
+		if pos >= len(body) {
+			break
+		}
+		// Skip nested sub-selection braces.
+		if body[pos] == '{' {
+			depth := 1
+			pos++
+			for pos < len(body) && depth > 0 {
+				if body[pos] == '{' {
+					depth++
+				} else if body[pos] == '}' {
+					depth--
+				}
+				pos++
+			}
+			continue
+		}
+		// Read field name (possibly with alias "alias: name").
+		start := pos
+		for pos < len(body) && isIdent(body[pos]) {
+			pos++
+		}
+		if pos == start {
+			pos++
+			continue
+		}
+		name := body[start:pos]
+		// Skip whitespace.
+		for pos < len(body) && isWS(body[pos]) {
+			pos++
+		}
+		// If followed by ':', the identifier was an alias — read the real name.
+		if pos < len(body) && body[pos] == ':' {
+			pos++ // skip ':'
+			for pos < len(body) && isWS(body[pos]) {
+				pos++
+			}
+			start2 := pos
+			for pos < len(body) && isIdent(body[pos]) {
+				pos++
+			}
+			if pos > start2 {
+				name = body[start2:pos]
+			}
+		}
+		// Skip any arguments or nested sub-selection for this field.
+		for pos < len(body) && isWS(body[pos]) {
+			pos++
+		}
+		if pos < len(body) && body[pos] == '(' {
+			depth := 1
+			pos++
+			for pos < len(body) && depth > 0 {
+				if body[pos] == '(' {
+					depth++
+				} else if body[pos] == ')' {
+					depth--
+				}
+				pos++
+			}
+		}
+		if pos < len(body) && body[pos] == '{' {
+			depth := 1
+			pos++
+			for pos < len(body) && depth > 0 {
+				if body[pos] == '{' {
+					depth++
+				} else if body[pos] == '}' {
+					depth--
+				}
+				pos++
+			}
+		}
+		names = append(names, name)
+	}
+	return names
 }
 
 // parseArgs parses a GraphQL argument list "(key: value, ...)" starting at

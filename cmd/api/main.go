@@ -109,7 +109,7 @@ func main() {
 	}
 
 	log.Printf("[INFO] CanadaOpportunityGraph API running on %s\n", cfg.ListenAddress())
-	log.Printf("[INFO] CEGS 0.1 Specification active at /api/v1/cegs/export\n")
+	log.Printf("[INFO] CEGS 1.0 Specification active at /api/v1/cegs/export\n")
 
 	serverErrors := make(chan error, 1)
 	go func() {

@@ -398,10 +398,177 @@ func TestGraphQL_POST_BadContentType(t *testing.T) {
 	}
 }
 
-// min is a local helper for Go < 1.21 compat.
-func min(a, b int) int {
-	if a < b {
-		return a
+// ─── Field Projection ────────────────────────────────────────────────────────
+
+func TestGraphQL_FieldProjection_Projects(t *testing.T) {
+	h := newTestHandler(t)
+	body := `{"query":"{ projects { id name } }"}`
+	w := doPOST(t, h, body)
+	resp := decodeResponse(t, w)
+	data, ok := resp["data"].(map[string]interface{})
+	if !ok {
+		t.Fatalf("expected data object, got %T", resp["data"])
 	}
-	return b
+	projects, ok := data["projects"].([]interface{})
+	if !ok || len(projects) == 0 {
+		t.Fatalf("expected non-empty projects list, got %v", data["projects"])
+	}
+	first, ok := projects[0].(map[string]interface{})
+	if !ok {
+		t.Fatalf("expected project object, got %T", projects[0])
+	}
+	// Only id and name should be present.
+	if _, hasSlug := first["slug"]; hasSlug {
+		t.Errorf("field projection failed: slug present but not requested: %v", first)
+	}
+	if _, hasSector := first["sector"]; hasSector {
+		t.Errorf("field projection failed: sector present but not requested: %v", first)
+	}
+	if first["id"] == nil {
+		t.Error("id should be present")
+	}
+	if first["name"] == nil {
+		t.Error("name should be present")
+	}
+}
+
+func TestGraphQL_FieldProjection_SingleProject(t *testing.T) {
+	h := newTestHandler(t)
+	body := `{"query":"{ project(id: \"proj-test-1\") { id name stage } }"}`
+	w := doPOST(t, h, body)
+	resp := decodeResponse(t, w)
+	data, ok := resp["data"].(map[string]interface{})
+	if !ok {
+		t.Fatalf("expected data object, got %T", resp["data"])
+	}
+	proj, ok := data["project"].(map[string]interface{})
+	if !ok {
+		t.Fatalf("expected project object, got %T", data["project"])
+	}
+	if _, hasSlug := proj["slug"]; hasSlug {
+		t.Errorf("field projection failed: slug present but not requested: %v", proj)
+	}
+	if _, hasCapex := proj["capexCAD"]; hasCapex {
+		t.Errorf("field projection failed: capexCAD present but not requested: %v", proj)
+	}
+	if proj["id"] == nil {
+		t.Error("id should be present")
+	}
+	if proj["name"] == nil {
+		t.Error("name should be present")
+	}
+	if proj["stage"] == nil {
+		t.Error("stage should be present")
+	}
+}
+
+func TestGraphQL_FieldProjection_Organizations(t *testing.T) {
+	h := newTestHandler(t)
+	body := `{"query":"{ organizations { id commonName } }"}`
+	w := doPOST(t, h, body)
+	resp := decodeResponse(t, w)
+	data, ok := resp["data"].(map[string]interface{})
+	if !ok {
+		t.Fatalf("expected data object, got %T", resp["data"])
+	}
+	orgs, ok := data["organizations"].([]interface{})
+	if !ok || len(orgs) == 0 {
+		t.Fatalf("expected non-empty organizations list, got %v", data["organizations"])
+	}
+	first, ok := orgs[0].(map[string]interface{})
+	if !ok {
+		t.Fatalf("expected org object, got %T", orgs[0])
+	}
+	if _, hasLegal := first["legalName"]; hasLegal {
+		t.Errorf("field projection failed: legalName present but not requested: %v", first)
+	}
+	if first["id"] == nil {
+		t.Error("id should be present")
+	}
+	if first["commonName"] == nil {
+		t.Error("commonName should be present")
+	}
+}
+
+func TestGraphQL_FieldProjection_Signals(t *testing.T) {
+	h := newTestHandler(t)
+	body := `{"query":"{ signals { id signalType } }"}`
+	w := doPOST(t, h, body)
+	resp := decodeResponse(t, w)
+	data, ok := resp["data"].(map[string]interface{})
+	if !ok {
+		t.Fatalf("expected data object, got %T", resp["data"])
+	}
+	signals, ok := data["signals"].([]interface{})
+	if !ok || len(signals) == 0 {
+		t.Fatalf("expected non-empty signals list, got %v", data["signals"])
+	}
+	first, ok := signals[0].(map[string]interface{})
+	if !ok {
+		t.Fatalf("expected signal object, got %T", signals[0])
+	}
+	if _, hasDesc := first["description"]; hasDesc {
+		t.Errorf("field projection failed: description present but not requested: %v", first)
+	}
+	if first["id"] == nil {
+		t.Error("id should be present")
+	}
+	if first["signalType"] == nil {
+		t.Error("signalType should be present")
+	}
+}
+
+func TestGraphQL_FieldProjection_EmptySelection(t *testing.T) {
+	// Empty sub-selection should return all fields (backward compatible).
+	h := newTestHandler(t)
+	body := `{"query":"{ projects { } }"}`
+	w := doPOST(t, h, body)
+	resp := decodeResponse(t, w)
+	data, ok := resp["data"].(map[string]interface{})
+	if !ok {
+		t.Fatalf("expected data object, got %T", resp["data"])
+	}
+	projects, ok := data["projects"].([]interface{})
+	if !ok || len(projects) == 0 {
+		t.Fatalf("expected non-empty projects list, got %v", data["projects"])
+	}
+	first, ok := projects[0].(map[string]interface{})
+	if !ok {
+		t.Fatalf("expected project object, got %T", projects[0])
+	}
+	// With empty selection, all fields should be present.
+	if first["id"] == nil {
+		t.Error("id should be present with empty selection")
+	}
+	if first["name"] == nil {
+		t.Error("name should be present with empty selection")
+	}
+}
+
+func TestGraphQL_FieldProjection_Events(t *testing.T) {
+	h := newTestHandler(t)
+	body := `{"query":"{ events { id eventType } }"}`
+	w := doPOST(t, h, body)
+	resp := decodeResponse(t, w)
+	data, ok := resp["data"].(map[string]interface{})
+	if !ok {
+		t.Fatalf("expected data object, got %T", resp["data"])
+	}
+	events, ok := data["events"].([]interface{})
+	if !ok || len(events) == 0 {
+		t.Fatalf("expected non-empty events list, got %v", data["events"])
+	}
+	first, ok := events[0].(map[string]interface{})
+	if !ok {
+		t.Fatalf("expected event object, got %T", events[0])
+	}
+	if _, hasTitle := first["title"]; hasTitle {
+		t.Errorf("field projection failed: title present but not requested: %v", first)
+	}
+	if first["id"] == nil {
+		t.Error("id should be present")
+	}
+	if first["eventType"] == nil {
+		t.Error("eventType should be present")
+	}
 }
