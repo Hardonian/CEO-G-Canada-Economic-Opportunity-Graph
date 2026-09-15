@@ -4,8 +4,6 @@ import (
 	"context"
 	"testing"
 	"time"
-
-	"github.com/Hardonian/CEO-G-Canada-Economic-Opportunity-Graph/adapters"
 )
 
 func TestNewWorker_DefaultConfig(t *testing.T) {
@@ -37,7 +35,6 @@ func TestPollOnce_FirstRun(t *testing.T) {
 		if r.CurrentHash == "" {
 			t.Fatalf("expected non-empty hash for %s", r.Province)
 		}
-		// Health should be non-nil.
 		if r.Health == nil {
 			t.Fatalf("expected non-nil health for %s", r.Province)
 		}
@@ -46,9 +43,7 @@ func TestPollOnce_FirstRun(t *testing.T) {
 
 func TestPollOnce_IdempotentSecondRun(t *testing.T) {
 	w := NewWorker(DefaultConfig())
-	// First run populates lastHashes.
 	w.PollOnce(context.Background())
-	// Second run should report no changes.
 	results := w.PollOnce(context.Background())
 	if len(results) != 4 {
 		t.Fatalf("expected 4 results, got %d", len(results))
@@ -69,12 +64,10 @@ func TestPollOnce_IdempotentSecondRun(t *testing.T) {
 
 func TestPollOnce_ChangeDetection(t *testing.T) {
 	w := NewWorker(DefaultConfig())
-	// First run.
 	first := w.PollOnce(context.Background())
 	if len(first) == 0 {
 		t.Fatal("expected results from first run")
 	}
-	// Second run — no changes expected.
 	second := w.PollOnce(context.Background())
 	for i := range second {
 		if second[i].PreviousHash != first[i].CurrentHash {
@@ -101,11 +94,9 @@ func TestWorker_Health(t *testing.T) {
 
 func TestWorker_LastHash(t *testing.T) {
 	w := NewWorker(DefaultConfig())
-	// Before any polling, LastHash should be empty.
 	if h := w.LastHash("ON"); h != "" {
 		t.Fatalf("expected empty hash before polling, got %s", h)
 	}
-	// After polling, LastHash should be populated.
 	w.PollOnce(context.Background())
 	if h := w.LastHash("ON"); h == "" {
 		t.Fatal("expected non-empty hash after polling")
@@ -128,7 +119,6 @@ func TestWorker_RunCancel(t *testing.T) {
 	w.Run(ctx, func(results []PollResult) {
 		cycles++
 	})
-	// At least the initial cycle should have run.
 	if cycles == 0 {
 		t.Fatal("expected at least one cycle before cancellation")
 	}
@@ -153,6 +143,3 @@ func TestPollResult_Fields(t *testing.T) {
 		t.Error("CurrentHash field not set")
 	}
 }
-
-// Ensure adapters import is used.
-var _ = adapters.SourceHealth{}
