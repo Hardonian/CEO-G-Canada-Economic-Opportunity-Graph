@@ -15,6 +15,8 @@ import (
 	"github.com/Hardonian/CEO-G-Canada-Economic-Opportunity-Graph/adapters/official"
 	"github.com/Hardonian/CEO-G-Canada-Economic-Opportunity-Graph/internal/cegs"
 	"github.com/Hardonian/CEO-G-Canada-Economic-Opportunity-Graph/internal/database"
+	"github.com/Hardonian/CEO-G-Canada-Economic-Opportunity-Graph/internal/documentintelligence"
+	"github.com/Hardonian/CEO-G-Canada-Economic-Opportunity-Graph/internal/domain"
 	"github.com/Hardonian/CEO-G-Canada-Economic-Opportunity-Graph/internal/export"
 	"github.com/Hardonian/CEO-G-Canada-Economic-Opportunity-Graph/internal/ingestion"
 )
@@ -43,6 +45,8 @@ func main() {
 		handleExport(os.Args[2:])
 	case "demo":
 		handleDemo()
+	case "extract":
+		handleExtract(os.Args[2:])
 	default:
 		fmt.Printf("Unknown command: %s\n\n", cmd)
 		printUsage()
@@ -58,6 +62,7 @@ func printUsage() {
 	fmt.Println("  cog changes [--since 7d|30d]           List recent momentum signals and milestones")
 	fmt.Println("  cog rankings <dimension>               Rank projects (buildability, investability, etc.)")
 	fmt.Println("  cog export project <id> [--format json|md|cegs] Export dossier with provenance")
+	fmt.Println("  cog extract <file> [--source <id>]     Extract restricted portfolio cards from text")
 	fmt.Println("  cog cegs validate <file>               Validate document against CEGS 0.1 standard")
 	fmt.Println("  cog cegs inspect <file>                Inspect CEGS document & evidence trust profile")
 	fmt.Println("  cog cegs diff <old.json> <new.json>    Semantic diff between two CEGS states")
@@ -328,4 +333,45 @@ func handleDemo() {
 	}
 
 	fmt.Println("\nCEGS Standard Specification: 0.1 | Reference Implementation Verified.")
+}
+
+func handleExtract(args []string) {
+	if len(args) < 1 {
+		fmt.Println("Usage: cog extract <file> [--source <id>] [--visibility RESTRICTED]")
+		return
+	}
+	filePath := args[0]
+	sourceID := "workspace"
+	visibility := domain.VisibilityInternalRestricted
+	for i := 0; i < len(args); i++ {
+		switch args[i] {
+		case "--source":
+			if i+1 < len(args) {
+				sourceID = args[i+1]
+				i++
+			}
+		case "--visibility":
+			if i+1 < len(args) {
+				visibility = domain.VisibilityClass(strings.ToUpper(strings.TrimSpace(args[i+1])))
+				i++
+			}
+		}
+	}
+
+	data, err := os.ReadFile(filePath)
+	if err != nil {
+		fmt.Printf("Error reading file: %v\n", err)
+		os.Exit(1)
+	}
+	cards, err := documentintelligence.ExtractCards(string(data), sourceID, visibility, time.Now().UTC())
+	if err != nil {
+		fmt.Printf("Extraction error: %v\n", err)
+		os.Exit(1)
+	}
+	if len(cards) == 0 {
+		fmt.Println("No portfolio cards found in the supplied text.")
+		return
+	}
+	out, _ := json.MarshalIndent(cards, "", "  ")
+	fmt.Println(string(out))
 }

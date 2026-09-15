@@ -183,7 +183,10 @@ func ReconcileJurisdictions(records []*JurisdictionRecord) *ReconciliationReport
 			report.Summary.Pending++
 		}
 	}
-	
+	// Count unmatched records as NoMatch so the summary is complete.
+	report.Summary.NoMatch += len(report.UnmatchedProvincial) +
+		len(report.UnmatchedMunicipal) + len(report.UnmatchedIndigenous)
+
 	return report
 }
 

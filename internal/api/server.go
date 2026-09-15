@@ -15,17 +15,20 @@ import (
 	"unicode"
 	"unicode/utf8"
 
-	"github.com/Hardonian/CEO-G-Canada-Economic-Opportunity-Graph/internal/capitalstack"
+"github.com/Hardonian/CEO-G-Canada-Economic-Opportunity-Graph/internal/capitalstack"
 	"github.com/Hardonian/CEO-G-Canada-Economic-Opportunity-Graph/internal/cegs"
 	"github.com/Hardonian/CEO-G-Canada-Economic-Opportunity-Graph/internal/database"
 	"github.com/Hardonian/CEO-G-Canada-Economic-Opportunity-Graph/internal/domain"
 	"github.com/Hardonian/CEO-G-Canada-Economic-Opportunity-Graph/internal/export"
+	"github.com/Hardonian/CEO-G-Canada-Economic-Opportunity-Graph/internal/forecast"
+	"github.com/Hardonian/CEO-G-Canada-Economic-Opportunity-Graph/internal/matching"
 	"github.com/Hardonian/CEO-G-Canada-Economic-Opportunity-Graph/internal/publication"
 	"github.com/Hardonian/CEO-G-Canada-Economic-Opportunity-Graph/internal/readiness"
+	"github.com/Hardonian/CEO-G-Canada-Economic-Opportunity-Graph/internal/reconciliation"
 	"github.com/Hardonian/CEO-G-Canada-Economic-Opportunity-Graph/internal/sovereignty"
 	"github.com/Hardonian/CEO-G-Canada-Economic-Opportunity-Graph/internal/trust"
 	"github.com/google/uuid"
-)
+	)
 
 const (
 	maxRequestIDLength     = 64
@@ -364,9 +367,21 @@ func (s *Server) registerRoutes() {
 	// Capital Stack & AI Sovereignty
 	s.mux.HandleFunc("GET /api/v1/capital/stack", s.handleCapitalStack)
 	s.mux.HandleFunc("GET /api/v1/ai-sovereignty", s.handleAISovereignty)
+	s.mux.HandleFunc("GET /api/v1/ai-sovereignty/{id}", s.handleAISovereigntyEntity)
 
 	// Rankings
 	s.mux.HandleFunc("GET /api/v1/rankings/{dimension}", s.handleRankings)
+
+	// Forecasting & Scenario Planning
+	s.mux.HandleFunc("GET /api/v1/forecast/projects/{id}", s.handleForecastProject)
+	s.mux.HandleFunc("GET /api/v1/forecast/portfolio", s.handleForecastPortfolio)
+
+	// Counterparty Matching & Deal Precedents
+	s.mux.HandleFunc("GET /api/v1/projects/{id}/fit/{archetype}", s.handleProjectArchetypeFit)
+	s.mux.HandleFunc("GET /api/v1/projects/{id}/precedents", s.handleProjectPrecedents)
+
+	// Multi-Jurisdiction Reconciliation
+	s.mux.HandleFunc("GET /api/v1/reconciliation", s.handleReconciliation)
 
 	// Exports & CEGS Open Standard Endpoints
 	s.mux.HandleFunc("GET /api/v1/export/project/{id}", s.handleExportProject)
@@ -731,11 +746,24 @@ func (s *Server) handleCapitalStack(w http.ResponseWriter, r *http.Request) {
 }
 
 func (s *Server) handleAISovereignty(w http.ResponseWriter, r *http.Request) {
+	profiles := s.collectAISovereigntyProfiles()
+	if len(profiles) == 0 {
+		writeJSON(w, http.StatusOK, map[string]interface{}{
+			"methodology": sovereignty.VersionAISovereignty,
+			"status":      domain.StatusUnavailable,
+			"benchmarks":  []interface{}{},
+			"reason":      "No reviewed evidence-backed provider scorecards are published in the current dataset.",
+		})
+		return
+	}
+	benchmarks := make([]*domain.AISovereignty, 0, len(profiles))
+	for _, profile := range profiles {
+		benchmarks = append(benchmarks, sovereignty.EvaluateSovereignty(profile))
+	}
 	writeJSON(w, http.StatusOK, map[string]interface{}{
 		"methodology": sovereignty.VersionAISovereignty,
-		"status":      domain.StatusUnavailable,
-		"benchmarks":  []interface{}{},
-		"reason":      "No reviewed evidence-backed provider scorecards are published in the current dataset.",
+		"status":      domain.StatusHealthy,
+		"benchmarks":  benchmarks,
 	})
 }
 
@@ -1388,4 +1416,158 @@ func writeJSON(w http.ResponseWriter, status int, data interface{}) {
 	w.Header().Set("Content-Type", "application/json; charset=utf-8")
 	w.WriteHeader(status)
 	_ = json.NewEncoder(w).Encode(data)
+}
+
+// --- Forecasting, sovereignty, matching, and reconciliation handlers ---
+
+func (s *Server) handleForecastProject(w http.ResponseWriter, r *http.Request) {
+	id := r.PathValue("id")
+	project, err := s.resolveProject(r.Context(), id)
+	if err != nil {
+		writeError(w, r, http.StatusNotFound, "project_not_found", "Project not found.")
+		return
+	}
+	bundle, err := export.ExportProjectBundle(r.Context(), s.store, project.ID)
+	if err != nil {
+		writeError(w, r, http.StatusServiceUnavailable, "forecast_unavailable", "Forecast is temporarily unavailable.")
+		return
+	}
+	ctx := forecast.Context{
+		Project:        bundle.Project,
+		Events:         bundle.Events,
+		CapitalItems:   bundle.CapitalItems,
+		Relationships:  bundle.Relationships,
+		Procurements:   bundle.Procurements,
+		Opportunities:  bundle.Opportunities,
+	}
+	req := forecast.Request{AsOf: time.Now().UTC()}
+	report, err := forecast.Evaluate(ctx, req)
+	if err != nil {
+		writeError(w, r, http.StatusBadRequest, "invalid_forecast", err.Error())
+		return
+	}
+	writeJSON(w, http.StatusOK, report)
+}
+
+func (s *Server) handleForecastPortfolio(w http.ResponseWriter, r *http.Request) {
+	projects, _, err := s.store.ListProjects(r.Context(), database.ProjectFilter{Limit: 100})
+	if err != nil {
+		writeError(w, r, http.StatusServiceUnavailable, "portfolio_unavailable", "Portfolio forecast is temporarily unavailable.")
+		return
+	}
+	contexts := make([]forecast.Context, 0, len(projects))
+	for _, p := range projects {
+		bundle, bundleErr := export.ExportProjectBundle(r.Context(), s.store, p.ID)
+		if bundleErr != nil {
+			continue
+		}
+		contexts = append(contexts, forecast.Context{
+			Project:        bundle.Project,
+			Events:         bundle.Events,
+			CapitalItems:   bundle.CapitalItems,
+			Relationships:  bundle.Relationships,
+			Procurements:   bundle.Procurements,
+			Opportunities:  bundle.Opportunities,
+		})
+	}
+	if len(contexts) == 0 {
+		writeError(w, r, http.StatusServiceUnavailable, "portfolio_unavailable", "No projects available for portfolio forecast.")
+		return
+	}
+	req := forecast.Request{AsOf: time.Now().UTC()}
+	report, err := forecast.EvaluatePortfolio(contexts, req)
+	if err != nil {
+		writeError(w, r, http.StatusBadRequest, "invalid_portfolio", err.Error())
+		return
+	}
+	writeJSON(w, http.StatusOK, report)
+}
+
+func (s *Server) handleAISovereigntyEntity(w http.ResponseWriter, r *http.Request) {
+	id := r.PathValue("id")
+	entity, err := s.store.GetEntity(r.Context(), id)
+	if err != nil || entity == nil || entity.AISovereignty == nil {
+		writeError(w, r, http.StatusNotFound, "ai_sovereignty_not_found", "No AI sovereignty scorecard is published for this entity.")
+		return
+	}
+	writeJSON(w, http.StatusOK, entity.AISovereignty)
+}
+
+func (s *Server) handleProjectArchetypeFit(w http.ResponseWriter, r *http.Request) {
+	project, err := s.resolveProject(r.Context(), r.PathValue("id"))
+	if err != nil {
+		writeError(w, r, http.StatusNotFound, "project_not_found", "Project not found.")
+		return
+	}
+	bundle, err := export.ExportProjectBundle(r.Context(), s.store, project.ID)
+	if err != nil {
+		writeError(w, r, http.StatusServiceUnavailable, "fit_unavailable", "Fit scoring is temporarily unavailable.")
+		return
+	}
+	archetype := domain.CounterpartyType(strings.TrimSpace(r.PathValue("archetype")))
+	if archetype == "" {
+		writeError(w, r, http.StatusBadRequest, "invalid_archetype", "Archetype is required.")
+		return
+	}
+	ctx := matching.FitContext{
+		Project:      bundle.Project,
+		CapitalNeeds: bundle.CapitalNeeds,
+		Milestones:   bundle.Milestones,
+	}
+	writeJSON(w, http.StatusOK, matching.CalculateArchetypeFit(ctx, archetype, time.Now().UTC()))
+}
+
+func (s *Server) handleProjectPrecedents(w http.ResponseWriter, r *http.Request) {
+	project, err := s.resolveProject(r.Context(), r.PathValue("id"))
+	if err != nil {
+		writeError(w, r, http.StatusNotFound, "project_not_found", "Project not found.")
+		return
+	}
+	profiles := s.collectInvestorProfiles()
+	matches := matching.FindDealPrecedents(project, profiles, 10)
+	writeJSON(w, http.StatusOK, map[string]interface{}{
+		"project_id":  project.ID,
+		"precedents":  matches,
+		"status":      domain.StatusHealthy,
+	})
+}
+
+func (s *Server) handleReconciliation(w http.ResponseWriter, r *http.Request) {
+	report := reconciliation.Reconcile(r.Context(), s.store)
+	writeJSON(w, http.StatusOK, report)
+}
+
+func (s *Server) collectInvestorProfiles() []*domain.InvestorProfile {
+	// Investor profiles are derived from entity metadata; the store does not
+	// yet expose a separate profile index, so we surface an empty list
+	// rather than hallucinating matches.
+	_, _ = s.store.ListEntities(context.Background())
+	return nil
+}
+
+func (s *Server) collectAISovereigntyProfiles() []*sovereignty.AIProfile {
+	entities, err := s.store.ListEntities(context.Background())
+	if err != nil {
+		return nil
+	}
+	profiles := make([]*sovereignty.AIProfile, 0, len(entities))
+	for _, entity := range entities {
+		if entity == nil || entity.AISovereignty == nil {
+			continue
+		}
+		profiles = append(profiles, &sovereignty.AIProfile{
+			SubjectID:          entity.ID,
+			SubjectName:        entity.LegalName,
+			DataResidencyCA:    entity.AISovereignty.DataResidency >= 8,
+			ComputeResidencyCA: entity.AISovereignty.ComputeResidency >= 8,
+			CanadianOwnership:  entity.AISovereignty.CanadianOwnership / 10.0,
+			ForeignLegalRisk:   entity.AISovereignty.ForeignLegalRisk / 10.0,
+			LocalDeployment:    entity.AISovereignty.LocalDeployment >= 8,
+			OfflineCapability:  entity.AISovereignty.LocalDeployment >= 9,
+			BilingualCapacity:  entity.AISovereignty.BilingualCapacity / 10.0,
+			QuebecLaw25Ready:   entity.AISovereignty.QuebecLaw25 >= 8,
+			CleanEnergySource:  entity.AISovereignty.CleanEnergy / 10.0,
+		})
+	}
+	return profiles
 }

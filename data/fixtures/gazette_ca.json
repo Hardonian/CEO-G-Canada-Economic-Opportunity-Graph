@@ -1,0 +1,41 @@
+{
+  "source": "Canada Gazette",
+  "source_url": "https://gazette.gc.ca/",
+  "retrieved_at": "2026-09-13T00:00:00Z",
+  "effective_at": "2026-09-13T00:00:00Z",
+  "dataset_vintage": "2026-Q3",
+  "notices": [
+    {
+      "notice_id": "CG-2026-09-001",
+      "title": "Notice of Proposed Regulations: Nuclear Power Plant siting and licensing",
+      "content": "The Canadian Nuclear Safety Commission has published proposed regulations modernizing the siting, licensing, and decommissioning framework for new nuclear power plants, including small modular reactors. The regulatory amendment is expected to reduce approval timelines by 18 months for greenfield projects.",
+      "publish_date": "2026-09-08",
+      "source_url": "https://gazette.gc.ca/notice-2026-09-001",
+      "category": "Regulatory",
+      "proponent_name": "Ontario Power Generation",
+      "project_name": "Darlington New Nuclear Project",
+      "location": "Clarington, ON",
+      "amount_text": "C$12.5 billion",
+      "metadata": {
+        "naics_code": "221113",
+        "procurement_type": "nuclear"
+      }
+    },
+    {
+      "notice_id": "CG-2026-09-015",
+      "title": "Request for Qualifications: Trans-Canada Clean Energy Transmission Corridor",
+      "content": "Canada Infrastructure Bank has issued a request for qualifications for the Trans-Canada Clean Energy Transmission Corridor, a 3,000-kilometre HVDC link connecting hydroelectric generation in Labrador to industrial load centres in Ontario and Quebec. The project is estimated at C$8.2 billion in total capital deployment.",
+      "publish_date": "2026-09-11",
+      "source_url": "https://gazette.gc.ca/notice-2026-09-015",
+      "category": "Procurement",
+      "proponent_name": "TransCanada Clean Energy Consortium",
+      "project_name": "Trans-Canada Clean Energy Transmission Corridor",
+      "location": "NL-ON-QC",
+      "amount_text": "C$8.2 billion",
+      "metadata": {
+        "naics_code": "221122",
+        "procurement_type": "transmission"
+      }
+    }
+  ]
+}
