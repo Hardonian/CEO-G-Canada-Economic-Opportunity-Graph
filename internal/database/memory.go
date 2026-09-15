@@ -65,6 +65,14 @@ type MemoryStore struct {
 	ingestionJobDedupeIndex map[string]string
 	outboxEvents            map[string]*domain.OutboxEvent
 	outboxHashIndex         map[string]string
+
+	// Secondary indexes for O(1) lookups.
+	signalsByProject map[string][]string // projectID → signal IDs
+	eventsByProject  map[string][]string // projectID → event IDs
+
+	// Cached capex aggregate for O(1) radar stats.
+	cachedTotalCapex int64
+	capexDirty       bool
 }
 
 // NewMemoryStore initializes an empty in-memory repository.
