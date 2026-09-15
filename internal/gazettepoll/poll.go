@@ -84,6 +84,7 @@ func defaultFetcher(config Config) FetchFunc {
 // PollOnce performs a single polling cycle across all configured provinces.
 func (w *Worker) PollOnce(ctx context.Context) []PollResult {
 	results := make([]PollResult, 0, len(w.config.Provinces))
+	ch := make(chan PollResult, len(w.config.Provinces))
 	sem := make(chan struct{}, w.config.MaxConcurrent)
 	var wg sync.WaitGroup
 
@@ -93,10 +94,14 @@ func (w *Worker) PollOnce(ctx context.Context) []PollResult {
 			defer wg.Done()
 			sem <- struct{}{}
 			defer func() { <-sem }()
-			results = append(results, w.pollProvince(ctx, prov))
+			ch <- w.pollProvince(ctx, prov)
 		}(province)
 	}
 	wg.Wait()
+	close(ch)
+	for r := range ch {
+		results = append(results, r)
+	}
 	return results
 }
 
