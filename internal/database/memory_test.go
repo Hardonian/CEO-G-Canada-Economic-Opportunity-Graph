@@ -85,3 +85,111 @@ func TestSaveEventRequiresExistingProjectAndEvidence(t *testing.T) {
 		t.Fatal(err)
 	}
 }
+
+// ─── secondary index consistency ──────────────────────────────────────────────
+
+func TestEventsByProjectIndex_Consistency(t *testing.T) {
+	store := NewMemoryStore()
+	ctx := context.Background()
+
+	store.SaveProject(ctx, &domain.Project{ID: "proj-A", Slug: "proj-a"})
+	store.SaveProject(ctx, &domain.Project{ID: "proj-B", Slug: "proj-b"})
+	store.SaveEvidence(ctx, &domain.Evidence{ID: "ev-1"})
+	store.SaveEvidence(ctx, &domain.Evidence{ID: "ev-2"})
+	store.SaveEvidence(ctx, &domain.Evidence{ID: "ev-3"})
+
+	store.SaveEvent(ctx, &domain.Event{ID: "event-1", ProjectID: "proj-A", EvidenceID: "ev-1", Title: "Alpha"})
+	store.SaveEvent(ctx, &domain.Event{ID: "event-2", ProjectID: "proj-A", EvidenceID: "ev-2", Title: "Beta"})
+	store.SaveEvent(ctx, &domain.Event{ID: "event-3", ProjectID: "proj-B", EvidenceID: "ev-3", Title: "Gamma"})
+
+	eventsA, err := store.ListEventsByProject(ctx, "proj-A")
+	if err != nil {
+		t.Fatal(err)
+	}
+	if len(eventsA) != 2 {
+		t.Errorf("proj-A events: got %d, want 2", len(eventsA))
+	}
+
+	eventsB, err := store.ListEventsByProject(ctx, "proj-B")
+	if err != nil {
+		t.Fatal(err)
+	}
+	if len(eventsB) != 1 {
+		t.Errorf("proj-B events: got %d, want 1", len(eventsB))
+	}
+
+	eventsC, err := store.ListEventsByProject(ctx, "proj-MISSING")
+	if err != nil {
+		t.Fatal(err)
+	}
+	if len(eventsC) != 0 {
+		t.Errorf("missing project events: got %d, want 0", len(eventsC))
+	}
+}
+
+func TestSignalsByProjectIndex_Consistency(t *testing.T) {
+	store := NewMemoryStore()
+	ctx := context.Background()
+
+	store.SaveSignal(ctx, &domain.Signal{ID: "sig-1", ProjectID: "proj-X", Type: domain.SignalConstructionSignal, Magnitude: 0.8})
+	store.SaveSignal(ctx, &domain.Signal{ID: "sig-2", ProjectID: "proj-X", Type: domain.SignalRegulatoryProgress, Magnitude: 0.6})
+	store.SaveSignal(ctx, &domain.Signal{ID: "sig-3", ProjectID: "proj-Y", Type: domain.SignalFinancingAcceleration, Magnitude: 0.9})
+
+	// Rebuild index from scratch.
+	store.RebuildSignalIndex()
+
+	// Verify signal index is internally consistent by checking map sizes.
+	store.mu.RLock()
+	xIDs := store.signalsByProject["proj-X"]
+	yIDs := store.signalsByProject["proj-Y"]
+	store.mu.RUnlock()
+
+	if len(xIDs) != 2 {
+		t.Errorf("proj-X signal IDs: got %d, want 2", len(xIDs))
+	}
+	if len(yIDs) != 1 {
+		t.Errorf("proj-Y signal IDs: got %d, want 1", len(yIDs))
+	}
+}
+
+func TestCapexCacheDirty(t *testing.T) {
+	store := NewMemoryStore()
+	ctx := context.Background()
+
+	store.SaveProject(ctx, &domain.Project{ID: "proj-1", CapexCAD: 100_000_000, CapexStatus: domain.ConfidenceReported})
+	stats1, _ := store.GetRadarStats(ctx)
+	if stats1.TotalCapexCAD != 100_000_000 {
+		t.Errorf("capex = %d, want 100000000", stats1.TotalCapexCAD)
+	}
+
+	// Save another project — capex cache should be marked dirty.
+	store.SaveProject(ctx, &domain.Project{ID: "proj-2", CapexCAD: 50_000_000, CapexStatus: domain.ConfidenceVerified})
+	stats2, _ := store.GetRadarStats(ctx)
+	if stats2.TotalCapexCAD != 150_000_000 {
+		t.Errorf("capex = %d, want 150000000", stats2.TotalCapexCAD)
+	}
+}
+
+// ─── benchmarks ───────────────────────────────────────────────────────────────
+
+func BenchmarkListEventsByProject(b *testing.B) {
+	store := NewMemoryStore()
+	ctx := context.Background()
+
+	store.SaveProject(ctx, &domain.Project{ID: "proj-bench", Slug: "bench"})
+	store.SaveEvidence(ctx, &domain.Evidence{ID: "ev-bench"})
+
+	for i := 0; i < 500; i++ {
+		store.SaveEvent(ctx, &domain.Event{
+			ID:         "event-" + string(rune(i)) + "-" + string(rune(i/256)),
+			ProjectID:  "proj-bench",
+			EvidenceID: "ev-bench",
+			Title:      "bench event",
+		})
+	}
+
+	b.ResetTimer()
+	for i := 0; i < b.N; i++ {
+		store.ListEventsByProject(ctx, "proj-bench")
+	}
+}

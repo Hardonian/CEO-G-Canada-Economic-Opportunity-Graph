@@ -1,6 +1,7 @@
 package adaptersandbox
 
 import (
+	"fmt"
 	"testing"
 	"time"
 
@@ -217,5 +218,178 @@ func TestGetAbsent(t *testing.T) {
 func TestRegistryVersion(t *testing.T) {
 	if RegistryVersion != "adapter-sandbox-v1.0" {
 		t.Errorf("RegistryVersion = %q, want adapter-sandbox-v1.0", RegistryVersion)
+	}
+}
+
+func TestApprove_Success(t *testing.T) {
+	r := NewRegistry()
+	now := time.Now().UTC()
+	r.Register(&AdapterEntry{
+		Name:         "pending_adapter",
+		Version:      "1.0",
+		SourceURL:    "https://example.com/pending",
+		Tier:         domain.SourceTier2,
+		Contact:      "dev@example.com",
+		Description:  "Pending review",
+		RegisteredAt: now,
+		Approved:     false,
+	})
+	// Adapter should not be in Approved() initially.
+	if len(r.Approved()) != 0 {
+		t.Fatal("expected 0 approved entries before approval")
+	}
+	if err := r.Approve("pending_adapter"); err != nil {
+		t.Fatalf("Approve() error = %v", err)
+	}
+	// Now it should be approved.
+	approved := r.Approved()
+	if len(approved) != 1 {
+		t.Fatalf("expected 1 approved entry, got %d", len(approved))
+	}
+	if approved[0].Name != "pending_adapter" {
+		t.Errorf("approved[0].Name = %q, want pending_adapter", approved[0].Name)
+	}
+}
+
+func TestApprove_NotFound(t *testing.T) {
+	r := NewRegistry()
+	if err := r.Approve("nonexistent"); err == nil {
+		t.Fatal("expected error approving nonexistent adapter")
+	}
+}
+
+func TestApprove_Idempotent(t *testing.T) {
+	r := NewRegistry()
+	now := time.Now().UTC()
+	r.Register(&AdapterEntry{
+		Name:         "idem_adapter",
+		Version:      "1.0",
+		SourceURL:    "https://example.com/idem",
+		Tier:         domain.SourceTier1,
+		Contact:      "dev@example.com",
+		Description:  "Idempotency test",
+		RegisteredAt: now,
+		Approved:     false,
+	})
+	r.Approve("idem_adapter")
+	// Approve again — should not error.
+	if err := r.Approve("idem_adapter"); err != nil {
+		t.Fatalf("second Approve() error = %v", err)
+	}
+	if len(r.Approved()) != 1 {
+		t.Error("expected exactly 1 approved entry")
+	}
+}
+
+func TestReject_Success(t *testing.T) {
+	r := NewRegistry()
+	now := time.Now().UTC()
+	r.Register(&AdapterEntry{
+		Name:         "reject_me",
+		Version:      "1.0",
+		SourceURL:    "https://example.com/reject",
+		Tier:         domain.SourceTier3,
+		Contact:      "dev@example.com",
+		Description:  "To be rejected",
+		RegisteredAt: now,
+	})
+	if r.Count() != 1 {
+		t.Fatal("precondition: expected 1 entry")
+	}
+	if !r.Reject("reject_me") {
+		t.Fatal("Reject() returned false, expected true")
+	}
+	if r.Count() != 0 {
+		t.Errorf("expected 0 entries after reject, got %d", r.Count())
+	}
+	if got := r.Get("reject_me"); got != nil {
+		t.Error("rejected entry should not be retrievable")
+	}
+}
+
+func TestReject_NotFound(t *testing.T) {
+	r := NewRegistry()
+	if r.Reject("ghost") {
+		t.Fatal("Reject() returned true for nonexistent entry")
+	}
+}
+
+func TestDelete_AliasForReject(t *testing.T) {
+	r := NewRegistry()
+	now := time.Now().UTC()
+	r.Register(&AdapterEntry{
+		Name:         "delete_me",
+		Version:      "1.0",
+		SourceURL:    "https://example.com/delete",
+		Tier:         domain.SourceTier1,
+		Contact:      "dev@example.com",
+		Description:  "To be deleted",
+		RegisteredAt: now,
+	})
+	if !r.Delete("delete_me") {
+		t.Fatal("Delete() returned false, expected true")
+	}
+	if r.Count() != 0 {
+		t.Errorf("expected 0 entries after delete, got %d", r.Count())
+	}
+}
+
+func TestReject_PreservesOrder(t *testing.T) {
+	r := NewRegistry()
+	now := time.Now().UTC()
+	for _, name := range []string{"first", "middle", "last"} {
+		r.Register(&AdapterEntry{
+			Name:         name,
+			Version:      "1.0",
+			SourceURL:    "https://example.com/" + name,
+			Tier:         domain.SourceTier1,
+			Contact:      "dev@example.com",
+			Description:  name,
+			RegisteredAt: now,
+		})
+	}
+	r.Reject("middle")
+	names := r.Names()
+	if len(names) != 2 {
+		t.Fatalf("expected 2 remaining, got %d", len(names))
+	}
+	if names[0] != "first" || names[1] != "last" {
+		t.Errorf("names = %v, want [first last]", names)
+	}
+}
+
+func TestConcurrentAccess(t *testing.T) {
+	r := NewRegistry()
+	done := make(chan bool)
+	// Spawn writers.
+	for i := 0; i < 10; i++ {
+		go func(idx int) {
+			r.Register(&AdapterEntry{
+				Name:         fmt.Sprintf("adapter-%d", idx),
+				Version:      "1.0",
+				SourceURL:    fmt.Sprintf("https://example.com/%d", idx),
+				Tier:         domain.SourceTier1,
+				Contact:      "dev@example.com",
+				Description:  "concurrent test",
+				RegisteredAt: time.Now().UTC(),
+			})
+			done <- true
+		}(i)
+	}
+	// Spawn readers.
+	for i := 0; i < 10; i++ {
+		go func() {
+			_ = r.All()
+			_ = r.Names()
+			_ = r.Approved()
+			_ = r.Count()
+			done <- true
+		}()
+	}
+	for i := 0; i < 20; i++ {
+		<-done
+	}
+	if r.Count() != 10 {
+		t.Errorf("expected 10 entries after concurrent writes, got %d", r.Count())
 	}
 }
