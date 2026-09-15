@@ -16,6 +16,8 @@ import (
 	"github.com/Hardonian/CEO-G-Canada-Economic-Opportunity-Graph/adapters/official"
 	"github.com/Hardonian/CEO-G-Canada-Economic-Opportunity-Graph/internal/connector"
 	"github.com/Hardonian/CEO-G-Canada-Economic-Opportunity-Graph/internal/database"
+	"github.com/Hardonian/CEO-G-Canada-Economic-Opportunity-Graph/internal/gazettepoll"
+	"github.com/Hardonian/CEO-G-Canada-Economic-Opportunity-Graph/internal/indigenouslinker"
 	"github.com/Hardonian/CEO-G-Canada-Economic-Opportunity-Graph/internal/ingestion"
 	"github.com/Hardonian/CEO-G-Canada-Economic-Opportunity-Graph/internal/merkle"
 	"github.com/Hardonian/CEO-G-Canada-Economic-Opportunity-Graph/internal/reconciliation"
@@ -45,6 +47,24 @@ func main() {
 	sigChan := make(chan os.Signal, 1)
 	signal.Notify(sigChan, os.Interrupt, syscall.SIGTERM)
 
+	// Scheduled gazette polling worker — runs on its own interval (5 minutes)
+	// with change detection so unchanged gazettes are not re-parsed.
+	gazetteWorker := gazettepoll.NewWorker(gazettepoll.DefaultConfig())
+	go gazetteWorker.Run(ctx, func(results []gazettepoll.PollResult) {
+		changed := 0
+		for _, r := range results {
+			if r.Err != nil {
+				log.Printf("[GAZETTE-POLL] %s error: %v\n", r.Province, r.Err)
+				continue
+			}
+			if r.Changed {
+				changed++
+			}
+		}
+		log.Printf("[GAZETTE-POLL] Cycle complete: %d/%d provinces changed\n", changed, len(results))
+	})
+
+	// Main ingestion pipeline — runs every 60 seconds.
 	ticker := time.NewTicker(60 * time.Second)
 	defer ticker.Stop()
 
@@ -55,6 +75,7 @@ func main() {
 		select {
 		case <-sigChan:
 			log.Println("[INFO] Worker shutting down cleanly...")
+			cancel()
 			return
 		case <-ticker.C:
 			runIngestion(ctx, pipeline, store)
@@ -81,4 +102,13 @@ func runIngestion(ctx context.Context, p *ingestion.Pipeline, store database.Sto
 	if root := merkle.PublishRoot(ctx, store); root != "" {
 		log.Printf("[INFO] Merkle root: %s\n", root)
 	}
+
+	// Cross-reference Indigenous businesses for set-asides and partnerships.
+	if linkReport := indigenouslinker.Link(ctx, store); linkReport != nil {
+		log.Printf("[INFO] Indigenous linker: %d projects, %d procurements scanned, %d relationships created\n",
+			linkReport.ProjectsScanned, linkReport.ProcurementsScanned, linkReport.RelationshipsCreated)
+	}
 }
+
+// Ensure adapters import is used by the package.
+var _ = adapters.Adapter(nil)
