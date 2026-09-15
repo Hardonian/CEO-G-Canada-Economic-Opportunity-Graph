@@ -868,6 +868,338 @@ func (s *Server) handleOpenAPI(w http.ResponseWriter, r *http.Request) {
 	writeJSON(w, http.StatusOK, spec)
 }
 
+func (s *Server) publicEvidence(ctx context.Context, evidenceID string) bool {
+	if evidenceID == "" {
+		return false
+	}
+	e, err := s.store.GetEvidence(ctx, evidenceID)
+	if err != nil || e == nil {
+		return false
+	}
+	return publication.PublicEvidence(e)
+}
+
+func (s *Server) publicSignals(ctx context.Context, since time.Duration, limit int) ([]*domain.Signal, error) {
+	sigs, err := s.store.ListSignals(ctx, since, limit)
+	if err != nil {
+		return nil, err
+	}
+	filtered := make([]*domain.Signal, 0, len(sigs))
+	for _, sig := range sigs {
+		if sig.EvidenceID != "" && !s.publicEvidence(ctx, sig.EvidenceID) {
+			continue
+		}
+		filtered = append(filtered, sig)
+	}
+	return filtered, nil
+}
+
+func (s *Server) handleProjectCapitalStack(w http.ResponseWriter, r *http.Request) {
+	project, err := s.resolveProject(r.Context(), r.PathValue("id"))
+	if err != nil {
+		writeError(w, r, http.StatusNotFound, "project_not_found", "Project not found.")
+		return
+	}
+	items, err := s.store.ListCapitalItemsByProject(r.Context(), project.ID)
+	if err != nil {
+		writeError(w, r, http.StatusServiceUnavailable, "capital_stack_unavailable", "Capital stack is temporarily unavailable.")
+		return
+	}
+	public := make([]*domain.CapitalItem, 0, len(items))
+	for _, item := range items {
+		if publication.PublicCapitalItem(item) && s.publicEvidence(r.Context(), item.EvidenceID) {
+			public = append(public, item)
+		}
+	}
+	writeJSON(w, http.StatusOK, map[string]interface{}{
+		"project_id":   project.ID,
+		"capital_items": public,
+		"status":       domain.StatusHealthy,
+	})
+}
+
+func (s *Server) handleProjectOpportunities(w http.ResponseWriter, r *http.Request) {
+	project, err := s.resolveProject(r.Context(), r.PathValue("id"))
+	if err != nil {
+		writeError(w, r, http.StatusNotFound, "project_not_found", "Project not found.")
+		return
+	}
+	opps, err := s.store.ListOpportunitiesByProject(r.Context(), project.ID)
+	if err != nil {
+		writeError(w, r, http.StatusServiceUnavailable, "opportunities_unavailable", "Opportunities are temporarily unavailable.")
+		return
+	}
+	public := make([]*domain.Opportunity, 0, len(opps))
+	for _, opp := range opps {
+		if !publication.PublicOpportunity(opp) {
+			continue
+		}
+		valid := true
+		for _, eid := range opp.EvidenceIDs {
+			if !s.publicEvidence(r.Context(), eid) {
+				valid = false
+				break
+			}
+		}
+		if valid {
+			public = append(public, opp)
+		}
+	}
+	writeJSON(w, http.StatusOK, map[string]interface{}{
+		"project_id":    project.ID,
+		"opportunities": public,
+		"status":        domain.StatusHealthy,
+	})
+}
+
+func (s *Server) handleProjectReadiness(w http.ResponseWriter, r *http.Request) {
+	project, err := s.resolveProject(r.Context(), r.PathValue("id"))
+	if err != nil {
+		writeError(w, r, http.StatusNotFound, "project_not_found", "Project not found.")
+		return
+	}
+	milestones, err := s.store.ListMilestones(r.Context(), project.ID)
+	if err != nil {
+		writeError(w, r, http.StatusServiceUnavailable, "readiness_unavailable", "Readiness data is temporarily unavailable.")
+		return
+	}
+	capitalNeeds, err := s.store.ListCapitalNeeds(r.Context(), project.ID)
+	if err != nil {
+		writeError(w, r, http.StatusServiceUnavailable, "readiness_unavailable", "Readiness data is temporarily unavailable.")
+		return
+	}
+	capitalItems, err := s.store.ListCapitalItemsByProject(r.Context(), project.ID)
+	if err != nil {
+		writeError(w, r, http.StatusServiceUnavailable, "readiness_unavailable", "Readiness data is temporarily unavailable.")
+		return
+	}
+	score := readiness.CalculateCapitalReadiness(readiness.CapitalReadinessInputs{
+		Project:      project,
+		Milestones:   milestones,
+		CapitalNeeds: capitalNeeds,
+		CapitalItems: capitalItems,
+	}, time.Now().UTC())
+	writeJSON(w, http.StatusOK, score)
+}
+
+func (s *Server) handleProjectCorroboration(w http.ResponseWriter, r *http.Request) {
+	project, err := s.resolveProject(r.Context(), r.PathValue("id"))
+	if err != nil {
+		writeError(w, r, http.StatusNotFound, "project_not_found", "Project not found.")
+		return
+	}
+	claims, err := s.store.ListClaimsBySubject(r.Context(), project.ID)
+	if err != nil {
+		writeError(w, r, http.StatusServiceUnavailable, "corroboration_unavailable", "Corroboration data is temporarily unavailable.")
+		return
+	}
+	audits, err := s.store.ListAuditEntries(r.Context(), project.ID)
+	if err != nil {
+		writeError(w, r, http.StatusServiceUnavailable, "corroboration_unavailable", "Corroboration data is temporarily unavailable.")
+		return
+	}
+	publicClaims := make([]*domain.Claim, 0, len(claims))
+	for _, c := range claims {
+		if publication.PublicClaim(c) && s.publicEvidence(r.Context(), c.EvidenceID) {
+			publicClaims = append(publicClaims, c)
+		}
+	}
+	writeJSON(w, http.StatusOK, map[string]interface{}{
+		"project_id":   project.ID,
+		"claims":       publicClaims,
+		"audit_entries": audits,
+		"status":       domain.StatusHealthy,
+	})
+}
+
+func (s *Server) handleListOpportunities(w http.ResponseWriter, r *http.Request) {
+	q := r.URL.Query()
+	limit, err := boundedInt(q.Get("limit"), 50, 1, 500)
+	if err != nil {
+		writeError(w, r, http.StatusBadRequest, "invalid_limit", err.Error())
+		return
+	}
+	offset, err := boundedInt(q.Get("offset"), 0, 0, 1_000_000)
+	if err != nil {
+		writeError(w, r, http.StatusBadRequest, "invalid_offset", err.Error())
+		return
+	}
+	opps, err := s.store.ListAllOpportunities(r.Context())
+	if err != nil {
+		writeError(w, r, http.StatusServiceUnavailable, "opportunities_unavailable", "Opportunities are temporarily unavailable.")
+		return
+	}
+	public := make([]*domain.Opportunity, 0, len(opps))
+	for _, opp := range opps {
+		if !publication.PublicOpportunity(opp) {
+			continue
+		}
+		valid := true
+		for _, eid := range opp.EvidenceIDs {
+			if !s.publicEvidence(r.Context(), eid) {
+				valid = false
+				break
+			}
+		}
+		if valid {
+			public = append(public, opp)
+		}
+	}
+	start := offset
+	if start > len(public) {
+		start = len(public)
+	}
+	end := start + limit
+	if end > len(public) {
+		end = len(public)
+	}
+	writeJSON(w, http.StatusOK, map[string]interface{}{
+		"opportunities": public[start:end],
+		"total":         len(public),
+		"limit":         limit,
+		"offset":        offset,
+		"status":        domain.StatusHealthy,
+	})
+}
+
+func (s *Server) handleGetOpportunity(w http.ResponseWriter, r *http.Request) {
+	id := r.PathValue("id")
+	ctx := r.Context()
+	opp, err := s.store.GetOpportunity(ctx, id)
+	if err != nil || opp == nil {
+		writeError(w, r, http.StatusNotFound, "opportunity_not_found", "Opportunity not found.")
+		return
+	}
+	if !publication.PublicOpportunity(opp) {
+		writeError(w, r, http.StatusNotFound, "opportunity_not_found", "Opportunity not found.")
+		return
+	}
+	valid := true
+	for _, eid := range opp.EvidenceIDs {
+		if !s.publicEvidence(ctx, eid) {
+			valid = false
+			break
+		}
+	}
+	if !valid {
+		writeError(w, r, http.StatusNotFound, "opportunity_not_found", "Opportunity not found.")
+		return
+	}
+	writeJSON(w, http.StatusOK, opp)
+}
+
+func (s *Server) handleListCapitalNeeds(w http.ResponseWriter, r *http.Request) {
+	q := r.URL.Query()
+	limit, err := boundedInt(q.Get("limit"), 50, 1, 500)
+	if err != nil {
+		writeError(w, r, http.StatusBadRequest, "invalid_limit", err.Error())
+		return
+	}
+	offset, err := boundedInt(q.Get("offset"), 0, 0, 1_000_000)
+	if err != nil {
+		writeError(w, r, http.StatusBadRequest, "invalid_offset", err.Error())
+		return
+	}
+	projects, _, err := s.store.ListProjects(r.Context(), database.ProjectFilter{Limit: 500})
+	if err != nil {
+		writeError(w, r, http.StatusServiceUnavailable, "capital_needs_unavailable", "Capital needs are temporarily unavailable.")
+		return
+	}
+	public := make([]*domain.CapitalNeed, 0)
+	for _, p := range projects {
+		needs, err := s.store.ListCapitalNeeds(r.Context(), p.ID)
+		if err != nil {
+			continue
+		}
+		for _, need := range needs {
+			if !publication.PublicCapitalNeed(need) {
+				continue
+			}
+			valid := len(need.EvidenceIDs) > 0
+			for _, eid := range need.EvidenceIDs {
+				if !s.publicEvidence(r.Context(), eid) {
+					valid = false
+					break
+				}
+			}
+			if valid {
+				public = append(public, need)
+			}
+		}
+	}
+	start := offset
+	if start > len(public) {
+		start = len(public)
+	}
+	end := start + limit
+	if end > len(public) {
+		end = len(public)
+	}
+	writeJSON(w, http.StatusOK, map[string]interface{}{
+		"capital_needs": public[start:end],
+		"total":         len(public),
+		"limit":         limit,
+		"offset":        offset,
+		"status":        domain.StatusHealthy,
+	})
+}
+
+func (s *Server) handleListMilestones(w http.ResponseWriter, r *http.Request) {
+	q := r.URL.Query()
+	limit, err := boundedInt(q.Get("limit"), 50, 1, 500)
+	if err != nil {
+		writeError(w, r, http.StatusBadRequest, "invalid_limit", err.Error())
+		return
+	}
+	offset, err := boundedInt(q.Get("offset"), 0, 0, 1_000_000)
+	if err != nil {
+		writeError(w, r, http.StatusBadRequest, "invalid_offset", err.Error())
+		return
+	}
+	projects, _, err := s.store.ListProjects(r.Context(), database.ProjectFilter{Limit: 500})
+	if err != nil {
+		writeError(w, r, http.StatusServiceUnavailable, "milestones_unavailable", "Milestones are temporarily unavailable.")
+		return
+	}
+	public := make([]*domain.Milestone, 0)
+	for _, p := range projects {
+		milestones, err := s.store.ListMilestones(r.Context(), p.ID)
+		if err != nil {
+			continue
+		}
+		for _, m := range milestones {
+			if !publication.PublicMilestone(m) {
+				continue
+			}
+			valid := len(m.EvidenceIDs) > 0
+			for _, eid := range m.EvidenceIDs {
+				if !s.publicEvidence(r.Context(), eid) {
+					valid = false
+					break
+				}
+			}
+			if valid {
+				public = append(public, m)
+			}
+		}
+	}
+	start := offset
+	if start > len(public) {
+		start = len(public)
+	}
+	end := start + limit
+	if end > len(public) {
+		end = len(public)
+	}
+	writeJSON(w, http.StatusOK, map[string]interface{}{
+		"milestones": public[start:end],
+		"total":      len(public),
+		"limit":      limit,
+		"offset":     offset,
+		"status":     domain.StatusHealthy,
+	})
+}
+
 func (s *Server) resolveProject(ctx context.Context, id string) (*domain.Project, error) {
 	if err := validateResourceID(id); err != nil {
 		return nil, err
