@@ -1,4 +1,4 @@
-.PHONY: all bootstrap build test cegs-validate release-check seed demo api worker web-build web-dev verify clean
+.PHONY: all bootstrap build test bench vet lint cegs-validate release-check seed demo api worker web-build web-dev verify clean
 
 all: build test
 
@@ -14,6 +14,15 @@ build:
 
 test:
 	go test -v -race ./...
+
+bench:
+	go test -bench=. -benchmem ./...
+
+vet:
+	go vet ./...
+
+lint: vet
+	@which staticcheck >/dev/null 2>&1 && staticcheck ./... || echo "staticcheck not installed; skipping"
 
 cegs-validate: build
 	go test -v ./internal/cegs -run TestSpecExamples
@@ -46,7 +55,7 @@ web-build:
 web-dev:
 	cd apps/web && pnpm dev
 
-verify: build seed test release-check cegs-validate demo web-build
+verify: build vet test bench release-check cegs-validate demo web-build
 	@echo "=== ALL VERIFICATION GATES PASSED ==="
 
 clean:

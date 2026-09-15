@@ -121,7 +121,6 @@ func NewMemoryStore() *MemoryStore {
 		eventsByProject:         make(map[string][]string),
 		capexDirty:              true,
 	}
-	}
 }
 
 func (m *MemoryStore) SaveProject(ctx context.Context, p *domain.Project) error {
@@ -166,6 +165,8 @@ func (m *MemoryStore) SaveProject(ctx context.Context, p *domain.Project) error 
 	if p.Slug != "" {
 		m.slugIndex[p.Slug] = p.ID
 	}
+	// Mark capex aggregate dirty for lazy recompute.
+	m.capexDirty = true
 	return nil
 }
 
@@ -368,9 +369,10 @@ func (m *MemoryStore) SaveEvent(ctx context.Context, ev *domain.Event) error {
 func (m *MemoryStore) ListEventsByProject(ctx context.Context, projectID string) ([]*domain.Event, error) {
 	m.mu.RLock()
 	defer m.mu.RUnlock()
-	var list []*domain.Event
-	for _, ev := range m.events {
-		if ev.ProjectID == projectID {
+	ids := m.eventsByProject[projectID]
+	list := make([]*domain.Event, 0, len(ids))
+	for _, id := range ids {
+		if ev, ok := m.events[id]; ok {
 			list = append(list, ev)
 		}
 	}
@@ -590,6 +592,10 @@ func (m *MemoryStore) SaveSignal(ctx context.Context, s *domain.Signal) error {
 	m.mu.Lock()
 	defer m.mu.Unlock()
 	m.signals[s.ID] = s
+	// Maintain signals-by-project secondary index.
+	if s.ProjectID != "" {
+		m.signalsByProject[s.ProjectID] = append(m.signalsByProject[s.ProjectID], s.ID)
+	}
 	return nil
 }
 
@@ -825,10 +831,21 @@ func (m *MemoryStore) ListTradeMetrics(ctx context.Context, geography string) ([
 
 func (m *MemoryStore) GetRadarStats(ctx context.Context) (*RadarStats, error) {
 	m.mu.RLock()
-	defer m.mu.RUnlock()
+	// Use cached capex when clean; recompute lazily when dirty.
+	totalCapex := m.cachedTotalCapex
+	if m.capexDirty {
+		m.mu.RUnlock()
+		m.mu.Lock()
+		totalCapex = m.recomputeCapexLocked()
+		m.cachedTotalCapex = totalCapex
+		m.capexDirty = false
+		m.mu.Unlock()
+		m.mu.RLock()
+	}
 
 	stats := &RadarStats{
 		TotalProjects:     len(m.projects),
+		TotalCapexCAD:     totalCapex,
 		SectorBreakdown:   make(map[string]int64),
 		ProvinceBreakdown: make(map[string]int64),
 		DataStatus:        domain.StatusHealthy,
@@ -836,13 +853,13 @@ func (m *MemoryStore) GetRadarStats(ctx context.Context) (*RadarStats, error) {
 	}
 	if len(m.projects) == 0 {
 		stats.DataStatus = domain.StatusUnavailable
+		m.mu.RUnlock()
 		return stats, nil
 	}
 
 	weekAgo := time.Now().Add(-7 * 24 * time.Hour)
 	for _, p := range m.projects {
 		if p.CapexStatus == domain.ConfidenceVerified || p.CapexStatus == domain.ConfidenceSupported || p.CapexStatus == domain.ConfidenceReported {
-			stats.TotalCapexCAD += p.CapexCAD
 			stats.SectorBreakdown[string(p.Sector)] += p.CapexCAD
 			stats.ProvinceBreakdown[p.Province] += p.CapexCAD
 		} else {
@@ -863,9 +880,13 @@ func (m *MemoryStore) GetRadarStats(ctx context.Context) (*RadarStats, error) {
 			accelerating[signal.ProjectID] = true
 		}
 	}
+	m.mu.RUnlock()
+
 	stats.AcceleratingProjectsCount = len(accelerating)
 	stats.StalledProjectsCount = len(stalled)
 
+	// Capital items and procurements — iterate without holding the lock.
+	m.mu.RLock()
 	for _, item := range m.capitalItems {
 		if item.CreatedAt.After(weekAgo) && item.AmountType == "exact" && (item.Status == domain.CapitalCommitted || item.Status == domain.CapitalClosed || item.Status == domain.CapitalDisbursed) {
 			stats.CapitalMovingWeekCAD += item.AmountCAD
@@ -880,7 +901,22 @@ func (m *MemoryStore) GetRadarStats(ctx context.Context) (*RadarStats, error) {
 	if stats.UnknownCapexProjects > 0 {
 		stats.DataStatus = domain.StatusPartial
 	}
+	m.mu.RUnlock()
 	return stats, nil
+}
+
+// recomputeCapexLocked recalculates the total CAPEX from all projects. Must be
+// called with the write lock held.
+func (m *MemoryStore) recomputeCapexLocked() int64 {
+	var total int64
+	for _, p := range m.projects {
+		if p.CapexStatus == domain.ConfidenceVerified ||
+			p.CapexStatus == domain.ConfidenceSupported ||
+			p.CapexStatus == domain.ConfidenceReported {
+			total += p.CapexCAD
+		}
+	}
+	return total
 }
 
 func mergeStrings(left, right []string) []string {
