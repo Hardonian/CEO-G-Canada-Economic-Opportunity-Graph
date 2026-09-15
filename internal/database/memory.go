@@ -117,6 +117,10 @@ func NewMemoryStore() *MemoryStore {
 		ingestionJobDedupeIndex: make(map[string]string),
 		outboxEvents:            make(map[string]*domain.OutboxEvent),
 		outboxHashIndex:         make(map[string]string),
+		signalsByProject:        make(map[string][]string),
+		eventsByProject:         make(map[string][]string),
+		capexDirty:              true,
+	}
 	}
 }
 
@@ -356,6 +360,8 @@ func (m *MemoryStore) SaveEvent(ctx context.Context, ev *domain.Event) error {
 		return fmt.Errorf("event evidence %q: %w", ev.EvidenceID, ErrNotFound)
 	}
 	m.events[ev.ID] = ev
+	// Maintain events-by-project secondary index.
+	m.eventsByProject[ev.ProjectID] = append(m.eventsByProject[ev.ProjectID], ev.ID)
 	return nil
 }
 
