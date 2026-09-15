@@ -1,9 +1,3 @@
-// Package gazettepoll provides a scheduled polling worker for provincial
-// gazettes. It wraps the gazette adapters in a change-detection loop that
-// re-fetches each gazette on a configurable interval, compares the document
-// hash against the previous cycle, and only re-parses when content has
-// actually changed. This keeps the ingestion pipeline cheap while still
-// picking up new notices as they are published.
 package gazettepoll
 
 import (
@@ -27,8 +21,7 @@ type Config struct {
 	MaxConcurrent int
 }
 
-// DefaultConfig returns a safe default configuration: poll every 5 minutes,
-// watch all four jurisdictions, and process at most 2 adapters concurrently.
+// DefaultConfig returns a safe default configuration.
 func DefaultConfig() Config {
 	return Config{
 		Interval:      5 * time.Minute,
@@ -50,11 +43,16 @@ type PollResult struct {
 	Err              error
 }
 
+// FetchFunc fetches raw bytes for a province. Returning nil, nil signals
+// "no change" to the polling loop.
+type FetchFunc func(ctx context.Context, province string) ([]byte, *adapters.SourceHealth, error)
+
 // Worker runs the gazette polling loop until ctx is cancelled.
 type Worker struct {
-	config    Config
+	config     Config
 	lastHashes map[string]string
 	mu         sync.RWMutex
+	fetcher    FetchFunc
 }
 
 // NewWorker constructs a gazette polling worker.
@@ -62,16 +60,32 @@ func NewWorker(config Config) *Worker {
 	return &Worker{
 		config:     config,
 		lastHashes: make(map[string]string),
+		fetcher:    defaultFetcher(config),
+	}
+}
+
+// NewTestWorker constructs a polling worker that uses a custom fetch function.
+// This is useful for unit tests that inject inline fixtures.
+func NewTestWorker(config Config, fetcher FetchFunc) *Worker {
+	return &Worker{
+		config:     config,
+		lastHashes: make(map[string]string),
+		fetcher:    fetcher,
+	}
+}
+
+func defaultFetcher(config Config) FetchFunc {
+	return func(ctx context.Context, province string) ([]byte, *adapters.SourceHealth, error) {
+		fixturePath := fmt.Sprintf(config.FixtureBase, strings.ToLower(province))
+		adp := gazette.NewGazetteAdapter(province, fixturePath)
+		raw, err := adp.Fetch(ctx)
+		return raw, adp.Health(), err
 	}
 }
 
 // PollOnce performs a single polling cycle across all configured provinces.
-// It returns one PollResult per province. Adapters whose document hash is
-// unchanged since the last cycle report Changed=false and skip re-parsing.
 func (w *Worker) PollOnce(ctx context.Context) []PollResult {
 	results := make([]PollResult, 0, len(w.config.Provinces))
-
-	// Bound concurrency with a semaphore.
 	sem := make(chan struct{}, w.config.MaxConcurrent)
 	var wg sync.WaitGroup
 
@@ -88,13 +102,11 @@ func (w *Worker) PollOnce(ctx context.Context) []PollResult {
 	return results
 }
 
-// Run starts the polling loop. It calls onCycle for every cycle, including
-// the initial one, so callers can react to changes in real time.
+// Run starts the polling loop.
 func (w *Worker) Run(ctx context.Context, onCycle func([]PollResult)) {
 	ticker := time.NewTicker(w.config.Interval)
 	defer ticker.Stop()
 
-	// Initial cycle — run immediately so the worker is useful on startup.
 	onCycle(w.PollOnce(ctx))
 
 	for {
@@ -109,19 +121,16 @@ func (w *Worker) Run(ctx context.Context, onCycle func([]PollResult)) {
 
 func (w *Worker) pollProvince(ctx context.Context, province string) PollResult {
 	result := PollResult{Province: province}
-	fixturePath := fmt.Sprintf(w.config.FixtureBase, strings.ToLower(province))
-	adp := gazette.NewGazetteAdapter(province, fixturePath)
 
-	raw, err := adp.Fetch(ctx)
+	raw, health, err := w.fetcher(ctx, province)
+	result.Health = health
 	if err != nil {
 		result.Err = fmt.Errorf("fetch %s gazette: %w", province, err)
-		result.Health = adp.Health()
 		return result
 	}
 
 	currentHash := adapters.HashDocument(raw)
 	result.CurrentHash = currentHash
-	result.Health = adp.Health()
 
 	w.mu.RLock()
 	prev := w.lastHashes[province]
@@ -130,10 +139,15 @@ func (w *Worker) pollProvince(ctx context.Context, province string) PollResult {
 
 	if prev != "" && prev == currentHash {
 		result.Changed = false
-		result.DocumentsSeen = adp.Health().DocumentsSeen
+		if health != nil {
+			result.DocumentsSeen = health.DocumentsSeen
+		}
 		return result
 	}
 
+	// Parse the changed document.
+	fixturePath := fmt.Sprintf(w.config.FixtureBase, strings.ToLower(province))
+	adp := gazette.NewGazetteAdapter(province, fixturePath)
 	parsed, err := adp.Parse(raw)
 	if err != nil {
 		result.Err = fmt.Errorf("parse %s gazette: %w", province, err)
@@ -141,7 +155,9 @@ func (w *Worker) pollProvince(ctx context.Context, province string) PollResult {
 	}
 
 	result.Changed = true
-	result.DocumentsSeen = adp.Health().DocumentsSeen
+	if health != nil {
+		result.DocumentsSeen = health.DocumentsSeen
+	}
 	result.DocumentsChanged = len(parsed.Projects)
 
 	w.mu.Lock()
@@ -172,5 +188,5 @@ func (w *Worker) LastHash(province string) string {
 	return w.lastHashes[province]
 }
 
-// Ensure domain import is used (health status constants are referenced by callers).
+// Ensure domain import is used.
 var _ = domain.StatusHealthy
