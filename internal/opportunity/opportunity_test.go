@@ -55,7 +55,7 @@ func TestGenerateOpportunities_Requirements(t *testing.T) {
 	now := time.Now()
 	project := &domain.Project{ID: "p1", Name: "Test", Sector: domain.SectorNuclearEnergy, CurrentStage: domain.StageFEED, CapexCAD: 1_000_000_000, UpdatedAt: now}
 	reqs := []*domain.ProjectRequirement{
-		{ID: "r1", Type: domain.RequirePower, Description: "Power needed", Confidence: domain.RequirementDerived, Visibility: domain.VisibilityPublic, Publishable: true, EvidenceIDs: []string{"e1"}},
+		{ID: "r1", Type: domain.RequirePower, Description: "Power needed", Confidence: domain.RequirementInferred, Visibility: domain.VisibilityPublic, Publishable: true, EvidenceIDs: []string{"e1"}},
 		{ID: "r2", Type: domain.RequireRoad, Description: "Road needed", Confidence: domain.RequirementStated, Visibility: domain.VisibilityPublic, Publishable: true, EvidenceIDs: []string{"e2"}},
 	}
 	got := GenerateOpportunities(Context{

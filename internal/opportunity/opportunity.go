@@ -36,7 +36,7 @@ func GenerateOpportunities(ctx Context, generatedAt time.Time) []*domain.Opportu
 	if ctx.Project == nil {
 		return nil
 	}
-	var result []*domain.Opportunity
+	result := make([]*domain.Opportunity, 0)
 	result = append(result, capitalOpportunities(ctx, generatedAt)...)
 	result = append(result, requirementOpportunities(ctx, generatedAt)...)
 	result = append(result, offtakeOpportunities(ctx, generatedAt)...)
